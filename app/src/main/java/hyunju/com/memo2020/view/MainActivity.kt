@@ -6,10 +6,10 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.Util
@@ -20,7 +20,7 @@ import hyunju.com.memo2020.viewmodel.MainAcitivityViewmodel
 import java.io.File
 import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MemoAdapter.OnItemClickListener {
 
     protected lateinit var binding: ActivityMainBinding
     protected val mainViewModel: MainAcitivityViewmodel by lazy {
@@ -32,8 +32,22 @@ class MainActivity : AppCompatActivity() {
 
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        binding.btn.setOnClickListener { test3() }
 
+
+        val adapter = MemoAdapter()
+        adapter.setOnItemClickListener(this)
+        binding.rv.adapter = adapter
+
+        mainViewModel.allMemos.observe(this,
+                androidx.lifecycle.Observer {
+                    adapter.submitList(it)
+                    Log.d("testsObserver", "in observe " + it.size)
+                }
+        )
+
+
+
+        binding.btn.setOnClickListener { test3() }
         test2()
 
     }
@@ -56,25 +70,21 @@ class MainActivity : AppCompatActivity() {
 
     fun test2() {
         // set memo list
-        val adapter = MemoAdapter()
-        mainViewModel.memoList.observe(this, Observer {
-            Log.d("testsObserver", it.size.toString())
-            adapter.submitList(it)
-        })
-        binding.rv.adapter = adapter
-        mainViewModel.getMemoList(this)
+
+//        mainViewModel.allMemos.observe(this,
+//                Observer(adapter::submitList))
+
+//        mainViewModel.getMemoList(this)
 
     }
 
     fun test3() {
-
-        val id = Date().time.toInt()
-
-        val memo = Memo(id = id, title = "test", contents = "contents", date = Date(),
+        val memo = Memo(title = Date().time.toString(), contents = "contents", date = Date(),
                 images = "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory&fname=https://k.kakaocdn.net/dn/EShJF/btquPLT192D/SRxSvXqcWjHRTju3kHcOQK/img.png"
         )
         mainViewModel.insert(memo)
 
+//        mainViewModel.deleteAll()
         Log.d("testsObserver", "test3 in")
     }
 
@@ -157,6 +167,17 @@ class MainActivity : AppCompatActivity() {
             }
             Log.d("testCR", "onActivityResult")
         }
+    }
+
+    // TODO listener 문법 바꾸기
+    override fun onItemClick(v: View, memo: Memo) {
+        Log.d("testsObserver", "in onItemClick id = " + memo.id)
+
+//        mainViewModel.delete(memo.id)
+
+        memo.contents += "수정"
+        mainViewModel.update(memo)
+
     }
 
 }

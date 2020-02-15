@@ -8,11 +8,11 @@ import java.util.*
 
 @Entity
 data class Memo(
-        @PrimaryKey(autoGenerate = true) val id: Int,
-        val title: String,
-        val contents: String,
-        val images: String,
-        val date: Date
+        @PrimaryKey(autoGenerate = true) val id: Long = 0,
+        var title: String,
+        var contents: String,
+        var images: String,
+        var date: Date
         )
 
 class Converters {

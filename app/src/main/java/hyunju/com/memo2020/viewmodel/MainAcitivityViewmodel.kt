@@ -1,12 +1,10 @@
 package hyunju.com.memo2020.viewmodel
 
 import android.app.Application
-import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import hyunju.com.memo2020.db.MemoDatabase
@@ -14,28 +12,35 @@ import hyunju.com.memo2020.model.Memo
 
 class MainAcitivityViewmodel(application: Application) : AndroidViewModel(application) {
 
-    val app = application
-    val dao = MemoDatabase.get(app).memoDao()
-    var memoList: LiveData<PagedList<Memo>> = MutableLiveData()
+    val dao = MemoDatabase.get(application).memoDao()
+    var allMemos: LiveData<PagedList<Memo>> = LivePagedListBuilder(
+            dao.getAllMemo(),
+            20
+    ).build()
 
-
-    fun getMemoList(context: Context) {
-        memoList = LivePagedListBuilder(
-                dao.getMemoById(),
-                20
-        ).build()
-
-        Log.d("testsObserver", "viewmodel " + memoList.value?.size.toString())
-
-    }
 
     fun insert(memo: Memo) {
         doAsync {
             dao.insert(memo)
         }.execute()
+    }
 
-        Log.d("testsObserver", "after insert " + memoList.value?.size)
+    fun delete(id: Long) {
+        doAsync {
+            dao.deleteById(id)
+        }.execute()
+    }
 
+    fun deleteAll() {
+        doAsync {
+            dao.deleteAll()
+        }.execute()
+    }
+
+    fun update(memo : Memo) {
+        doAsync {
+            dao.update(memo)
+        }.execute()
     }
 
     class doAsync(val handler: () -> Unit) : AsyncTask<Void, Void, Void>() {
@@ -50,6 +55,8 @@ class MainAcitivityViewmodel(application: Application) : AndroidViewModel(applic
 
         }
     }
+
+
 }
 
 
