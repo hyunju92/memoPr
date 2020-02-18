@@ -26,29 +26,5 @@ abstract class MemoDatabase : RoomDatabase() {
         }
 
 
-//        fun getInstance(context: Context) :MemoDatabase {
-//            return instance ?: synchronized(MemoDatabase::class) {
-//                instance ?: Room.databaseBuilder(context.applicationContext,
-//                        MemoDatabase::class.java, "memo.db").build().also { instance = it }
-//            }
-//        }
-//
-//        fun destroyInstance() {
-//            instance = null
-//        }
-
-//        fun getInstance(context: Context): MemoDatabase =
-//                INSTANCE ?: synchronized(this) {
-//                    INSTANCE
-//                            ?: buildDatabase(context).also { INSTANCE = it }
-//                }
-//
-//        private fun buildDatabase(context: Context) =
-//                Room.databaseBuilder(context.applicationContext,
-//                        MemoDatabase::class.java, "Github.db")
-//                        .build()
-
-
-
     }
 }

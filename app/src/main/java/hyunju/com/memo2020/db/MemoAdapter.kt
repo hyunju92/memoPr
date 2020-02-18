@@ -1,6 +1,5 @@
 package hyunju.com.memo2020.db
 
-import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +7,7 @@ import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.model.Memo
 import kotlinx.android.synthetic.main.memo_item.view.*
@@ -16,6 +16,8 @@ class MemoAdapter :
         PagedListAdapter<Memo, MemoAdapter.MemoViewholder>(DIFF_CALLBACK) {
 
     var mListener: OnItemClickListener? = null
+    var mParent : ViewGroup? = null
+
 
     interface OnItemClickListener {
         fun onItemClick(v: View, memo: Memo)
@@ -28,17 +30,22 @@ class MemoAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewholder {
         Log.d("testsObserver", "onCreateViewHolder = ")
+        mParent = parent
 
         return MemoViewholder(parent)
     }
 
     override fun onBindViewHolder(holder: MemoViewholder, position: Int) {
         val memo = getItem(position)
+        Log.d("testsObserver", "onBindViewHolder ini = ")
+
         if (memo != null) {
             Log.d("testsObserver", "onBindViewHolder = ")
 
             holder.bindTo(memo)
         } else {
+            Log.d("testsObserver", "onBindViewHolder null = ")
+
 //            holder.clear()
         }
     }
@@ -79,7 +86,14 @@ class MemoAdapter :
             Log.d("testsObserver", "bindTo = " + memo?.title)
             Log.d("testsObserver", "bindTo id = " + memo?.id)
 
-            thumIv.setImageURI(Uri.parse(memo?.images))
+            Glide.with(mParent as View)
+                    .load(memo?.images)
+                    .into(thumIv)
+
+//        Glide.with()
+//                .load("https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory&fname=https://k.kakaocdn.net/dn/EShJF/btquPLT192D/SRxSvXqcWjHRTju3kHcOQK/img.png")
+//                .into(binding.iv)
+
             titleTv.text = memo?.id.toString()
             contentsTv.text = memo?.contents
 
