@@ -1,6 +1,7 @@
 package hyunju.com.memo2020.viewmodel
 
 import android.app.Application
+import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import android.view.View
@@ -13,15 +14,13 @@ import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.model.Memo
 import hyunju.com.memo2020.view.ListFragmentDirections
 
-class MainAcitivityViewmodel(application: Application) : AndroidViewModel(application) {
+class ListFragmentViewmodel(application: Application) : AndroidViewModel(application) {
 
     val dao = MemoDatabase.get(application).memoDao()
     var allMemos: LiveData<PagedList<Memo>> = LivePagedListBuilder(
             dao.getAllMemo(),
             20
     ).build()
-
-    val listViewModel: ListFragmentViewmodel = ListFragmentViewmodel(application)
 
 
     fun insert(memo: Memo) {
@@ -61,16 +60,19 @@ class MainAcitivityViewmodel(application: Application) : AndroidViewModel(applic
         }
     }
 
-    fun testNav(view: View) {
-
+    fun moveDetailFrag(view: View, memoItem: Memo?) {
         val action =
-                ListFragmentDirections.actionListFragmentToDetailFragment()
+                ListFragmentDirections.actionListFragmentToDetailFragment(memoItem)
+
         Navigation.findNavController(view).navigate(action)
     }
 
-    fun testViewmodelReUse() : Int{
-        return listViewModel.getScreenWidth(getApplication())
+
+    fun getScreenWidth(context: Context): Int {
+        Log.d("testBinding", "getScreenWidth ")
+        return 40
     }
+
 
 }
 

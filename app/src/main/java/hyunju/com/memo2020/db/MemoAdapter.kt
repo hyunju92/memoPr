@@ -16,7 +16,6 @@ class MemoAdapter :
         PagedListAdapter<Memo, MemoAdapter.MemoViewholder>(DIFF_CALLBACK) {
 
     var mListener: OnItemClickListener? = null
-    var mParent : ViewGroup? = null
 
 
     interface OnItemClickListener {
@@ -30,7 +29,6 @@ class MemoAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewholder {
         Log.d("testsObserver", "onCreateViewHolder = ")
-        mParent = parent
 
         return MemoViewholder(parent)
     }
@@ -86,8 +84,11 @@ class MemoAdapter :
             Log.d("testsObserver", "bindTo = " + memo?.title)
             Log.d("testsObserver", "bindTo id = " + memo?.id)
 
-            Glide.with(mParent as View)
-                    .load(memo?.images)
+            val imgList = memo?.getImageList()
+            val thmImg = imgList?.get(imgList.size - 1)
+
+            Glide.with(itemView)
+                    .load(thmImg)
                     .into(thumIv)
 
 //        Glide.with()

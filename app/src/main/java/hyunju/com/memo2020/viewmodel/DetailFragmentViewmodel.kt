@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.Navigation
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -13,7 +14,7 @@ import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.model.Memo
 import hyunju.com.memo2020.view.ListFragmentDirections
 
-class MainAcitivityViewmodel(application: Application) : AndroidViewModel(application) {
+class DetailFragmentViewmodel(application: Application) : AndroidViewModel(application) {
 
     val dao = MemoDatabase.get(application).memoDao()
     var allMemos: LiveData<PagedList<Memo>> = LivePagedListBuilder(
@@ -21,7 +22,8 @@ class MainAcitivityViewmodel(application: Application) : AndroidViewModel(applic
             20
     ).build()
 
-    val listViewModel: ListFragmentViewmodel = ListFragmentViewmodel(application)
+    var imgList: LiveData<ArrayList<String>> = MutableLiveData()
+    val memoItem: MutableLiveData<Memo> = MutableLiveData()
 
 
     fun insert(memo: Memo) {
@@ -48,6 +50,7 @@ class MainAcitivityViewmodel(application: Application) : AndroidViewModel(applic
         }.execute()
     }
 
+
     class doAsync(val handler: () -> Unit) : AsyncTask<Void, Void, Void>() {
         override fun doInBackground(vararg params: Void?): Void? {
             handler()
@@ -61,16 +64,29 @@ class MainAcitivityViewmodel(application: Application) : AndroidViewModel(applic
         }
     }
 
-    fun testNav(view: View) {
-
+    fun moveDetailFrag(view: View) {
         val action =
                 ListFragmentDirections.actionListFragmentToDetailFragment()
         Navigation.findNavController(view).navigate(action)
     }
 
-    fun testViewmodelReUse() : Int{
-        return listViewModel.getScreenWidth(getApplication())
+    fun getScreenWidth(): Int {
+        Log.d("testBinding", "getScreenWidth ")
+//        val pxWidth = view.getResources().getDisplayMetrics().widthPixels
+//        Log.d("testBinding", "getScreenWidth ")
+
+        return 400
     }
+
+
+    fun getMemoItemById(id: Long) {
+//        memoItem.value = dao.getMemoById(id)
+//
+//        doAsync {
+//            dao.getMemoById(id)
+//        }.execute()
+    }
+
 
 }
 

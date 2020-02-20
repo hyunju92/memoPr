@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:memo="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="hyunju.com.memo2020.viewmodel.DetailFragmentViewmodel" />
+    </data>
+
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!--Recycler View widget-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/img_rv"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0"
+                memo:match_height_to_device_width="@{true}" />
+
+
+            <LinearLayout
+                android:id="@+id/text_cl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/img_rv">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/title_et"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:enabled="false"
+                        android:text="titlelkaj sfjlka jsdlkfjalksdjflkasjdflkaslkdfjlkasdjfklajsdflkadsf"
+                        android:textSize="24sp" />
+
+                    <EditText
+                        android:id="@+id/date_et"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:enabled="false"
+                        android:paddingLeft="16dp"
+                        android:text="2002121234"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+
+                <EditText
+                    android:id="@+id/contents_et"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="32dp"
+                    android:background="@null"
+                    android:enabled="false"
+                    android:paddingBottom="100dp"
+                    android:text="testtext\n\n\n\n\n\n\n\n\n\nlkajdflkaskdjflkasdjfalk
+                sdfjlkajdsflkajsdsdfjlkajdsflkaj
+                sdsdfjlkajdsflkajsdsdfjlkajds
+                sdfjlkajdsflkajsd
+                sdfjlkajdsflkajsd
+                sdfjlkajdsflkajsd
+                sdfjlkajdsflkajsd
+                flkajsdlkfja;lksdjflkadsflkaskdfjkasdjflkjasdfklj
+                lkadsflkaskdfjkasdjflkjasdfklj
+                flkadsflkaskdfjkasdjflkjasdfklj THE END--"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <!--        <TextView-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:text="test"-->
+        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--            app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+    </androidx.core.widget.NestedScrollView>
+</layout>

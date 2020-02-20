@@ -3,6 +3,9 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+
+apply plugin: "androidx.navigation.safeargs.kotlin"
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.0"
@@ -28,6 +31,10 @@ android {
     dataBinding {
         enabled = true
     }
+
+    androidExtensions {
+        experimental = true
+    }
 }
 
 dependencies {
@@ -50,7 +57,8 @@ dependencies {
     kapt "android.arch.persistence.room:compiler:$room_version"
 
     def paging_version = "2.1.1"
-    implementation "androidx.paging:paging-runtime:$paging_version" // For Kotlin use paging-runtime-ktx
+    implementation "androidx.paging:paging-runtime:$paging_version"
+    // For Kotlin use paging-runtime-ktx
 
 
     def lifecycle_version = "2.2.0"
@@ -69,6 +77,14 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
 
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.10"
+
+
+    def nav_version = "2.2.1"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+
+    kapt 'com.android.databinding:compiler:3.1.4'
 
 }
 repositories {
