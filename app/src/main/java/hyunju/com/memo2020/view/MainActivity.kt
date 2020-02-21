@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         val navController = Navigation.findNavController(this, R.id.main_fragment)
         NavigationUI.setupActionBarWithNavController(this, navController)
 
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -46,22 +47,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        val currentFrag = Navigation.findNavController(this, R.id.main_fragment).getCurrentDestination()?.getId()
-        Log.d("testNav", "onSupportNavigateUp currentFrag = " + currentFrag)
-        Log.d("testReuse", "onSupportNavigateUp = " + mainViewModel.testViewmodelReUse().toString()
-        )
-
-        if (currentFrag == R.id.detailFragment) {
-            Log.d("testNav", "onSupportNavigateUp detailFragment")
-
+        if (!Navigation.findNavController(this, R.id.main_fragment).popBackStack()) {
+            // Call finish() on your Activity
+            finish()
         } else {
-            Log.d("testNav", "onSupportNavigateUp no detailFragment")
-
+            Log.d("testNav", "onBackPressed no detailFragment")
+            Navigation.findNavController(this, R.id.main_fragment).navigateUp()
         }
 
-        windowManager
-
-        super.onBackPressed()
     }
 
 

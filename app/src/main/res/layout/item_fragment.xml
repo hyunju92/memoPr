@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="hyunju.com.memo2020.viewmodel.DetailFragmentViewmodel" />
+            type="hyunju.com.memo2020.viewmodel.ItemFragmentViewmodel" />
     </data>
 
 

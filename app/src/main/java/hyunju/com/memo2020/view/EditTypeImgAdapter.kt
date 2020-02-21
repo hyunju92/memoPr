@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import hyunju.com.memo2020.R
 
-class EditImgAdapter(val imgList: ArrayList<String>)
-    : RecyclerView.Adapter<EditImgAdapter.MemoImgViewholder>() {
+class EditTypeImgAdapter(val imgList: ArrayList<String>)
+    : RecyclerView.Adapter<EditTypeImgAdapter.MemoImgViewholder>() {
 
     override fun getItemCount(): Int {
         Log.d("testImgAd", "onBindViewHolder imgList.size = " + imgList.size)

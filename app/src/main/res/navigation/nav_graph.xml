@@ -23,9 +23,9 @@
 
     <fragment
         android:id="@+id/detailFragment"
-        android:name="hyunju.com.memo2020.view.DetailFragment"
+        android:name="hyunju.com.memo2020.view.ItemFragment"
         android:label="fragment_detail"
-        tools:layout="@layout/detail_fragment">
+        tools:layout="@layout/item_fragment">
 
         <argument
             android:name="memo_item"
