@@ -8,11 +8,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import hyunju.com.memo2020.databinding.CaptureImgDialogFragmentBinding
+import hyunju.com.memo2020.viewmodel.ItemFragmentViewmodel
 
 class CaptureImgDialogFragment : DialogFragment() {
     protected lateinit var binding: CaptureImgDialogFragmentBinding
+
+
+//    protected val viewmodel: CaptureImgDialogFragmentViewmodel by lazy {
+//        ViewModelProvider(this).get(CaptureImgDialogFragmentViewmodel::class.java)
+//    }
+
+    protected val viewmodel: ItemFragmentViewmodel by lazy {
+        ViewModelProvider(requireActivity()).get(ItemFragmentViewmodel::class.java)
+    }
+
     var imgUri: String? = null
 
 
@@ -51,9 +63,11 @@ class CaptureImgDialogFragment : DialogFragment() {
                 .fitCenter()
                 .into(binding.screenIv)
 
-        binding.saveBtn.setOnClickListener({
+        binding.saveBtn.setOnClickListener {
             Log.d("testDialog", "uri " + imgUri)
-        })
+            val savedUri = viewmodel.saveCapture(requireContext(), binding.screenIv)
+            viewmodel.moveItemFragment(it, savedUri)
+        }
 
         return binding.root
     }

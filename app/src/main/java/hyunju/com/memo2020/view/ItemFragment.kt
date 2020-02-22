@@ -17,7 +17,7 @@ class ItemFragment : Fragment() {
 
     protected lateinit var binding: ItemFragmentBinding
     protected val viewmodel: ItemFragmentViewmodel by lazy {
-        ViewModelProvider(this).get(ItemFragmentViewmodel::class.java)
+        ViewModelProvider(requireActivity()).get(ItemFragmentViewmodel::class.java)
     }
 
     private var menu: Menu? = null
@@ -83,7 +83,7 @@ class ItemFragment : Fragment() {
 
         // receive arg (a memo item) from previous frag
         ItemFragmentArgs.fromBundle(arguments!!).memoItem.let {
-            viewmodel.memoItem.value = it
+            viewmodel.setMemoItem(it)
         }
     }
 
@@ -97,7 +97,9 @@ class ItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        ItemFragmentArgs.fromBundle(arguments!!).imgUri.let {
+            Log.d("testBack", "it = $it")
+        }
         observerLiveData()
         setLayout()
     }
@@ -107,12 +109,17 @@ class ItemFragment : Fragment() {
             // observe when mode status changed
             setLayoutByMode()
         })
-
+        viewmodel.imgList.observe(requireActivity(), Observer {
+            if (binding.imgRv.adapter != null) {
+                binding.imgRv.adapter!!.notifyDataSetChanged()
+            }
+        })
     }
 
     private fun setLayoutByMode() {
         val isEditMode = viewmodel.isEditMode()
-        val imgList = viewmodel.getImgList()
+        val imgList = viewmodel.imgList.value!!
+
 
         // set editable mode
         binding.titleEt.isEnabled = isEditMode

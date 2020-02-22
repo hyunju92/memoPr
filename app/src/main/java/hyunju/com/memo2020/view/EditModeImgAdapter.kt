@@ -13,13 +13,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import hyunju.com.memo2020.R
 
-class EditModeImgAdapter(val imgList: ArrayList<String>)
+class EditModeImgAdapter(var imgList: ArrayList<String>)
     : RecyclerView.Adapter<EditModeImgAdapter.MemoImgViewholder>() {
+
+    init {
+        imgList.add("")
+    }
 
     override fun getItemCount(): Int {
         Log.d("testImgAd", "onBindViewHolder imgList.size = " + imgList.size)
 
-        return imgList.size + 1
+        return imgList.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoImgViewholder {
@@ -29,18 +33,15 @@ class EditModeImgAdapter(val imgList: ArrayList<String>)
     override fun onBindViewHolder(holder: MemoImgViewholder, position: Int) {
         Log.d("testImgAd", "onBindViewHolder position = " + position)
 
-        val isLast = position == imgList.size
-        val imgStr = if (!isLast) imgList.get(position) else ""
-
-        holder.bindTo(imgStr, isLast)
+        holder.bindTo(position, imgList.get(position))
     }
 
 
     inner class MemoImgViewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val memoIv = itemView.findViewById<ImageView>(R.id.memo_iv)
 
-        fun bindTo(imgStr: String, isLast: Boolean) {
-            if (isLast) {
+        fun bindTo(position: Int, imgStr: String) {
+            if (imgList.size == position + 1) {
                 itemView.findViewById<ConstraintLayout>(R.id.item_cl).visibility = GONE
                 itemView.findViewById<ConstraintLayout>(R.id.add_cl).visibility = VISIBLE
                 return

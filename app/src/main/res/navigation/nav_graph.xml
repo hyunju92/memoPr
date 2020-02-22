@@ -33,9 +33,16 @@
             app:argType="hyunju.com.memo2020.model.Memo"
             app:nullable="true" />
 
+        <argument
+            android:name="img_uri"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
         <action
             android:id="@+id/action_ItemFragment_to_CaptureImgDialogFragment"
             app:destination="@+id/captureImgDialogFragment" />
+
     </fragment>
 
     <fragment
@@ -43,6 +50,12 @@
         android:name="hyunju.com.memo2020.CaptureImgDialogFragment"
         android:label="fragment_capture_dialog"
         tools:layout="@layout/capture_img_dialog_fragment">
+
+        <action
+            android:id="@+id/action_CaptureImgDialogFragment_to_ItemFragment"
+            app:destination="@+id/itemFragment"
+            app:popUpTo="@id/captureImgDialogFragment"
+            app:popUpToInclusive="true" />
         <argument
             android:name="img_uri"
             app:argType="string" />
