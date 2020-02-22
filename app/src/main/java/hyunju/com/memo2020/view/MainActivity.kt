@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val currentFrag = Navigation.findNavController(this, R.id.main_fragment).getCurrentDestination()?.getId()
         Log.d("testNav", "onSupportNavigateUp currentFrag = " + currentFrag)
-        if (currentFrag == R.id.detailFragment) {
+        if (currentFrag == R.id.itemFragment) {
             Log.d("testNav", "onSupportNavigateUp detailFragment")
 
         } else {

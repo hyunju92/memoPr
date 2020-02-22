@@ -11,8 +11,8 @@
         android:label="fragment_list"
         tools:layout="@layout/list_fragment">
         <action
-            android:id="@+id/action_ListFragment_to_DetailFragment"
-            app:destination="@id/detailFragment">
+            android:id="@+id/action_ListFragment_to_ItemFragment"
+            app:destination="@id/itemFragment">
             <argument
                 android:name="memo_item"
                 android:defaultValue="@null"
@@ -22,7 +22,7 @@
     </fragment>
 
     <fragment
-        android:id="@+id/detailFragment"
+        android:id="@+id/itemFragment"
         android:name="hyunju.com.memo2020.view.ItemFragment"
         android:label="fragment_detail"
         tools:layout="@layout/item_fragment">
@@ -32,6 +32,20 @@
             android:defaultValue="@null"
             app:argType="hyunju.com.memo2020.model.Memo"
             app:nullable="true" />
+
+        <action
+            android:id="@+id/action_ItemFragment_to_CaptureImgDialogFragment"
+            app:destination="@+id/captureImgDialogFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/captureImgDialogFragment"
+        android:name="hyunju.com.memo2020.CaptureImgDialogFragment"
+        android:label="fragment_capture_dialog"
+        tools:layout="@layout/capture_img_dialog_fragment">
+        <argument
+            android:name="img_uri"
+            app:argType="string" />
     </fragment>
 
 

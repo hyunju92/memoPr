@@ -62,7 +62,7 @@ class ListFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
     fun moveDetailFrag(view: View, memoItem: Memo?) {
         val action =
-                ListFragmentDirections.actionListFragmentToDetailFragment(memoItem)
+                ListFragmentDirections.actionListFragmentToItemFragment(memoItem)
 
         Navigation.findNavController(view).navigate(action)
     }

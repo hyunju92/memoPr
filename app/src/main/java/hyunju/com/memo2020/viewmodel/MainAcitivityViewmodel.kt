@@ -64,7 +64,7 @@ class MainAcitivityViewmodel(application: Application) : AndroidViewModel(applic
     fun testNav(view: View) {
 
         val action =
-                ListFragmentDirections.actionListFragmentToDetailFragment()
+                ListFragmentDirections.actionListFragmentToItemFragment()
         Navigation.findNavController(view).navigate(action)
     }
 

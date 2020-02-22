@@ -7,7 +7,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ItemFragmentBinding
@@ -22,10 +21,14 @@ class ItemFragment : Fragment() {
     }
 
     private var menu: Menu? = null
+    private var isDeleteAction: Boolean = false
 
+
+    // menu setting
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.detail_frag_menu, menu)
+        inflater.inflate(R.menu.item_frag_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
+
         this.menu = menu
         Log.d("testMenCre", "onCreateOptionsMenu = " + android.R.id.home)
     }
@@ -35,23 +38,35 @@ class ItemFragment : Fragment() {
         Log.d("testOtpItem", "item = " + android.R.id.home)
 
         when (item.itemId) {
+            // prevent parsing toolbar back btn
             android.R.id.home -> {
                 return false
             }
+
+            // when default clicked, set inner menu by mode status
             R.id.default_menu -> {
-                setMenuItem(viewmodel.isEdit())
+                setMenuItem(viewmodel.isEditMode())
             }
+
+
+            // * (real) inner menu item 3
             R.id.edit -> {
-                viewmodel.setType(viewmodel.TYPE_EDIT)
+                viewmodel.changeViewMode(viewmodel.EDIT_MODE)
             }
             R.id.save -> {
-                viewmodel.save(requireContext(), binding.titleEt.text.toString(), binding.contentsEt.text.toString())
-                viewmodel.setType(viewmodel.TYPE_DETAIL)
+                viewmodel.save(requireContext(),
+                        binding.titleEt.text.toString(), binding.contentsEt.text.toString())
+                viewmodel.changeViewMode(viewmodel.DETAIL_MODE)
             }
             R.id.delete -> {
-                viewmodel.delete(requireContext())
-                Navigation.findNavController(requireActivity(), R.id.main_fragment).navigateUp()
+//                viewmodel.delete(requireContext())
+//
+//                isDeleteAction = true
+//                Navigation.findNavController(requireActivity(), R.id.main_fragment).navigateUp()
+
+                viewmodel.moveCaptureImgDialogFrag(view!!, "testUrl")
             }
+
         }
         return true
     }
@@ -62,65 +77,78 @@ class ItemFragment : Fragment() {
         menu!!.findItem(R.id.edit).isVisible = !isEdit
     }
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // receive arg (a memo item) from previous frag
+        ItemFragmentArgs.fromBundle(arguments!!).memoItem.let {
+            viewmodel.memoItem.value = it
+        }
+    }
+
+    // fragment lifecycle
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.item_fragment, container, false)
-
         setHasOptionsMenu(true)
-        viewmodel.memoItem.value = ItemFragmentArgs.fromBundle(arguments!!).memoItem
 
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         observerLiveData()
         setLayout()
     }
 
     private fun observerLiveData() {
-        viewmodel.type.observe(this, Observer {
-            Log.d("testObsever", "observerLiveData type = " + it.toString())
-            setLayoutByType()
+        viewmodel.mode.observe(this, Observer {
+            // observe when mode status changed
+            setLayoutByMode()
         })
+
+    }
+
+    private fun setLayoutByMode() {
+        val isEditMode = viewmodel.isEditMode()
+        val imgList = viewmodel.getImgList()
+
+        // set editable mode
+        binding.titleEt.isEnabled = isEditMode
+        binding.contentsEt.isEnabled = isEditMode
+
+        // set img list adapter
+        binding.imgRv.adapter = if (isEditMode) {
+            EditModeImgAdapter(imgList) // can edit img list
+        } else {
+            DetailModeImgAdapter(imgList) // just view img list
+        }
+
     }
 
     private fun setLayout() {
-        // set image recycler view
-        val horizontalLayoutManagaer = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
-        binding.imgRv.setLayoutManager(horizontalLayoutManagaer)
+        // set img recycler view
+        val horizonLayoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
+        binding.imgRv.setLayoutManager(horizonLayoutManager)
 
-        viewmodel.memoItem.value.let {
-            if (it == null) {
-                viewmodel.setType(viewmodel.TYPE_EDIT)
+        // set text contents
+        binding.titleEt.setText(viewmodel.memoItem.value?.title ?: "")
+        binding.contentsEt.setText(viewmodel.memoItem.value?.contents ?: "")
 
-            } else {
-                viewmodel.setType(viewmodel.TYPE_DETAIL)
+        // set mode
+        val mode = if (viewmodel.memoItem.value == null) viewmodel.EDIT_MODE else viewmodel.DETAIL_MODE
+        viewmodel.changeViewMode(mode)
 
-                binding.titleEt.setText(it.title)
-                binding.contentsEt.setText(it.contents)
-
-            }
-        }
-    }
-
-    private fun setLayoutByType() {
-        val isEdit = viewmodel.isEdit()
-        val imgList = viewmodel.getImgList()
-        // 텍스트
-        binding.titleEt.isEnabled = isEdit
-        binding.contentsEt.isEnabled = isEdit
-
-        // 이미지 어댑터
-        binding.imgRv.adapter = if (isEdit) {
-            EditTypeImgAdapter(imgList)
-        } else {
-            DetailTypeImgAdapter(imgList)
-        }
     }
 
 
     override fun onStop() {
-        viewmodel.save(requireContext(), binding.titleEt.text.toString(), binding.contentsEt.text.toString())
+        if (!isDeleteAction) {
+            // save item excluding from deleting
+            viewmodel.save(requireContext(),
+                    binding.titleEt.text.toString(), binding.contentsEt.text.toString())
+        }
         super.onStop()
     }
 
