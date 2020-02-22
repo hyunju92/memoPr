@@ -1,5 +1,6 @@
 package hyunju.com.memo2020.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,7 +12,9 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ActivityMainBinding
+import hyunju.com.memo2020.viewmodel.ItemFragmentViewmodel
 import hyunju.com.memo2020.viewmodel.MainAcitivityViewmodel
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -54,6 +57,17 @@ class MainActivity : AppCompatActivity() {
             Log.d("testNav", "onBackPressed no detailFragment")
             Navigation.findNavController(this, R.id.main_fragment).navigateUp()
         }
+
+    }
+
+
+    protected val viewmodel: ItemFragmentViewmodel by lazy {
+        ViewModelProvider(this).get(ItemFragmentViewmodel::class.java)
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        viewmodel.onActivityResult(requestCode,resultCode,data)
 
     }
 

@@ -1,9 +1,13 @@
 package hyunju.com.memo2020.viewmodel
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.AsyncTask
+import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -12,18 +16,21 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.Navigation
+import hyunju.com.memo2020.R
+import hyunju.com.memo2020.Util
 import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.model.Memo
 import hyunju.com.memo2020.view.ItemFragmentDirections
-import java.io.File
-import java.io.FileOutputStream
+import org.apache.commons.io.IOUtils
+import java.io.*
 import java.util.*
 import kotlin.collections.ArrayList
 
 class ItemFragmentViewmodel(application: Application) : AndroidViewModel(application) {
 
+
     val dao = MemoDatabase.get(application).memoDao()
-    val mode: MutableLiveData<Int> = MutableLiveData()
+    val currentMode: MutableLiveData<Int> = MutableLiveData()
 
     var memoItem: MutableLiveData<Memo?> = MutableLiveData()
     var imgList: MutableLiveData<ArrayList<String>> = MutableLiveData()
@@ -34,49 +41,54 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
     // mode when first init
     // (from list item click or edit btn click)
-    private var firstInitMode: Int = 0
+    var firstInitMode: Int = 0
 
-    fun changeViewMode(currentMode: Int) {
-        if (firstInitMode == 0) firstInitMode = currentMode
-        this.mode.value = currentMode
+    fun setCurrentMode(mode: Int) {
+        if (firstInitMode == 0) {
+            firstInitMode = mode
+        }
+        currentMode.value = mode
     }
+
 
     fun isEditMode(): Boolean {
-        return this.mode.value == EDIT_MODE
+        return this.currentMode.value == EDIT_MODE
     }
-
 
     fun setMemoItem(memo: Memo?) {
         memoItem.value = memo
         imgList.value = memo?.getImageList() ?: ArrayList()
-    }
 
-    //  * get memo img list
-//    fun getImgList(): ArrayList<String> {
-//        return if (memoItem.value != null) memoItem.value!!.getImageList() else ArrayList()
-//    }
+        if (imgList.value!!.size > 0) {
+            Log.d("imgListV", "v = " + imgList.value?.toString())
+            Log.d("imgListV", "v 0 = " + imgList.value?.get(0))
+            Log.d("imgListV", "v size= " + imgList.value?.size)
+        }
+    }
 
 
     // * core action (need db)
     fun save(context: Context, title: String, contents: String) {
-        val newMemo = memoItem.value?.apply {
-            this.title = title
-            this.contents = contents
-            this.date = Date()
+        if (memoItem.value != null) {
+            memoItem.value!!.let {
+                it.title = title
+                it.contents = contents
+                it.date = Date()
+                it.setImgStr(imgList.value!!)
+                Log.d("testSave", "size " + it.getImageList().size.toString())
 
-        } ?: Memo(title = title, contents = contents, images = "", date = Date())
-
-
-        if (firstInitMode == EDIT_MODE) {   // from edit btn
-            insert(newMemo)
-            Toast.makeText(context, "저장되었습니다.", Toast.LENGTH_SHORT).show()
-            firstInitMode = DETAIL_MODE
+                update(it)
+                Toast.makeText(context, "수정되었습니다.", Toast.LENGTH_SHORT).show()
+            }
 
         } else {
-            update(newMemo)
-            Toast.makeText(context, "수정되었습니다.", Toast.LENGTH_SHORT).show()
+            val newMemo = Memo(title = title, contents = contents, images = "", date = Date())
+            insert(newMemo)
+            Toast.makeText(context, "저장되었습니다.", Toast.LENGTH_SHORT).show()
 
         }
+
+
     }
 
     fun delete(context: Context) {
@@ -124,6 +136,8 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
     fun moveCaptureImgDialogFrag(view: View, uriStr: String?) {
         if (TextUtils.isEmpty(uriStr)) return
 
+        Log.d("moveItemFragment", "moveCaptureImgDialogFrag size = " + imgList.value?.size)
+
 //        val testUrl = "https://postfiles.pstatic.net/MjAxNzA5MjVfMjcg/MDAxNTA2MzA0Mzc1MTM4.prbIrhy_KnEJAq0I4WGX0yHDuCRhQsbKcHU6RGDVVNog.5o4kxdfkv-bGtI4-gXRwXjh045Yz77L8WnFFOt6PCQIg.JPEG.rla2945/13402575_643830889104534_68262404_n.jpg?type=w580"
 //        val testUrl = "http://blogfiles.naver.net/MjAxODEyMjBfMTI3/MDAxNTQ1Mjg4ODgzMTc3.o6BqoojNTIKMzP2SPe3Idpx_mo6bE1XaRh1OF7QGk-Ig.9eL4YyOfa1v_6aejx5gK1Bpoe78UmUGvz5AUQ2jr7YAg.JPEG.petgeek/20181220_110730.jpg"
 //        val testUrl = "https://blogfiles.pstatic.net/MjAxOTA5MDRfNiAg/MDAxNTY3NTc5NTQ2ODI0.J_Hb7GFGIp5X1aosH-Mo9p73gMul6MznKEL-yrjpw1Mg.mgRAWlZU5_3XRcWudMrCJQezo_c2KcvU2rjZ6slyT3Mg.JPEG.cgdong10/%ED%81%AC%EA%B8%B0%EB%B3%80%ED%99%98_%ED%81%AC%EB%9F%AC%EC%89%AC-%EB%82%98%EB%B9%A0.jpg?type=w1"
@@ -134,8 +148,31 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
         val testUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTQlHniwP20JZYMssUzLYRpPfGTndcxsPNkwRK9S3aKADifMEel"
 
-        val action = ItemFragmentDirections.actionItemFragmentToCaptureImgDialogFragment(testUrl!!)
+        val action = ItemFragmentDirections.actionItemFragmentToCaptureImgDialogFragment()
         Navigation.findNavController(view).navigate(action)
+    }
+
+    // nav
+    fun moveItemFragFromCaptureFrag(view: View, uriStr: String?) {
+        if (TextUtils.isEmpty(uriStr)) return
+//        val action = CaptureImgDialogFragmentDirections.actionCaptureImgDialogFragmentToItemFragment(null, uriStr!!)
+//        Navigation.findNavController(view).navigate(action)
+
+        Log.d("moveItemFragment", "size = " + imgList.value?.size)
+        imgList.value!!.add(uriStr!!)
+
+        Log.d("moveItemFragment", "size = " + imgList.value?.size)
+        Navigation.findNavController(view).popBackStack()
+    }
+
+
+    // edit imgList
+    fun addImgList(uriStr: String?) {
+        if (TextUtils.isEmpty(uriStr)) return
+
+        val tempList: ArrayList<String> = imgList.value!!
+        tempList.add(uriStr!!)
+        imgList.value = tempList
     }
 
 
@@ -154,7 +191,7 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
         return photoUri.toString()
     }
 
-    fun createFilePath(context: Context): File {
+    private fun createFilePath(context: Context): File {
         val dirPath = context.getExternalFilesDir(null)?.absolutePath
         val dir = File(dirPath).apply { if (!this.exists()) this.mkdir() }
 
@@ -166,15 +203,112 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
     }
 
 
-    // nav
-    fun moveItemFragment(view: View, uriStr: String?) {
-        if (TextUtils.isEmpty(uriStr)) return
-//        val action = CaptureImgDialogFragmentDirections.actionCaptureImgDialogFragmentToItemFragment(null, uriStr!!)
-//        Navigation.findNavController(view).navigate(action)
+    fun getFilePathFromContentUri(context: Context, contentUri: Uri): Uri? {
+        val fileName = getFileName(contentUri)
 
-        imgList.value!!.add(uriStr!!)
-        Navigation.findNavController(view).popBackStack()
+        if (!TextUtils.isEmpty(fileName)) {
+            val filePath = createFilePath(context)
+            val photoUri = FileProvider.getUriForFile(context, "hyunju.com.memo2020.provider", filePath)
 
+            copy(context, contentUri, filePath)
+            Log.d("testPickAlbum", "saveFile = copyFile.absolutePath " + filePath.absolutePath)
+            Log.d("testPickAlbum", "saveFile = copyFile. photoUri " + photoUri)
+
+            return photoUri
+        }
+        return null
+    }
+
+    fun getFileName(uri: Uri?): String? {
+        if (uri == null) return null
+        var fileName: String? = null
+        val path = uri.path
+        val cut = path!!.lastIndexOf('/')
+        if (cut != -1) {
+            fileName = path.substring(cut + 1)
+        }
+        return fileName
+    }
+
+    fun copy(context: Context, srcUri: Uri, dstFile: File) {
+        try {
+            val inputStream: InputStream = context.getContentResolver().openInputStream(srcUri)
+                    ?: return
+            val outputStream: OutputStream = FileOutputStream(dstFile)
+            IOUtils.copy(inputStream, outputStream)
+            inputStream.close()
+            outputStream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+
+    val REQ_PICK_FROM_ALBUM = 1000
+    val REQ_PICK_FROM_CAMERA = 1001
+    val REQ_PICK_FROM_URL = 1002
+
+    fun getImgByReqcode(activity: Activity, context: Context, request: Int) {
+        var reqCode = 0
+
+        Intent().apply {
+            when (request) {
+                R.id.album_btn_edit_img -> {
+                    reqCode = REQ_PICK_FROM_ALBUM
+                    this.action = Intent.ACTION_PICK
+                    this.type = MediaStore.Images.Media.CONTENT_TYPE
+
+                }
+                R.id.camera_btn_edit_img -> {
+                    reqCode = REQ_PICK_FROM_CAMERA
+                    // 1
+                    val dirPath = context.getExternalFilesDir(null)?.absolutePath
+                    val dir = File(dirPath).apply { if (!this.exists()) this.mkdir() }
+
+                    val filePath = File.createTempFile("IMG", ".jpg", dir).apply {
+                        if (!this.exists()) this.createNewFile()
+                    }
+
+                    val photoUri = FileProvider.getUriForFile(context, "hyunju.com.memo2020.provider", filePath)
+                    Util.savePref(context, "uriFromCamera", photoUri.toString())
+
+
+                    this.action = MediaStore.ACTION_IMAGE_CAPTURE
+                    this.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+
+//                            this.action = MediaStore.ACTION_IMAGE_CAPTURE
+
+                }
+                else -> {
+                }
+            }
+
+        }.let {
+            activity.startActivityForResult(it, reqCode)
+        }
+
+    }
+
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQ_PICK_FROM_ALBUM -> {
+                    if (resultCode == Activity.RESULT_OK) {
+                        getFilePathFromContentUri(getApplication(), data!!.data!!)?.let {
+                            addImgList(it.toString())
+                        }
+
+                        Log.d("testPickAlbum", "onactivity saveFile = data!!.data! " + data!!.data!!)
+                    }
+                }
+                REQ_PICK_FROM_CAMERA -> {
+                    Util.getPref(getApplication(), "uriFromCamera").let {
+                        if (it.isNotEmpty()) Log.d("testPickAlbum", "uri e= " + it)
+                        addImgList(it)
+                    }
+                }
+            }
+        }
     }
 
 

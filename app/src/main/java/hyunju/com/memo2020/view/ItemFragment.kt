@@ -7,13 +7,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ItemFragmentBinding
 import hyunju.com.memo2020.viewmodel.ItemFragmentViewmodel
 
 
-class ItemFragment : Fragment() {
+class ItemFragment : Fragment(), EditModeImgAdapter.OnItemBtnClickListener {
 
     protected lateinit var binding: ItemFragmentBinding
     protected val viewmodel: ItemFragmentViewmodel by lazy {
@@ -48,23 +49,25 @@ class ItemFragment : Fragment() {
                 setMenuItem(viewmodel.isEditMode())
             }
 
-
             // * (real) inner menu item 3
             R.id.edit -> {
-                viewmodel.changeViewMode(viewmodel.EDIT_MODE)
+//                viewmodel.currentMode.value = viewmodel.EDIT_MODE
+                viewmodel.setCurrentMode(viewmodel.EDIT_MODE)
             }
+
             R.id.save -> {
                 viewmodel.save(requireContext(),
                         binding.titleEt.text.toString(), binding.contentsEt.text.toString())
-                viewmodel.changeViewMode(viewmodel.DETAIL_MODE)
+                viewmodel.currentMode.value = viewmodel.DETAIL_MODE
+
+
             }
             R.id.delete -> {
-//                viewmodel.delete(requireContext())
-//
-//                isDeleteAction = true
-//                Navigation.findNavController(requireActivity(), R.id.main_fragment).navigateUp()
+                viewmodel.delete(requireContext())
 
-                viewmodel.moveCaptureImgDialogFrag(view!!, "testUrl")
+                isDeleteAction = true
+                Navigation.findNavController(requireActivity(), R.id.main_fragment).navigateUp()
+
             }
 
         }
@@ -78,6 +81,7 @@ class ItemFragment : Fragment() {
     }
 
 
+    // fragment lifecycle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -85,9 +89,16 @@ class ItemFragment : Fragment() {
         ItemFragmentArgs.fromBundle(arguments!!).memoItem.let {
             viewmodel.setMemoItem(it)
         }
+        // receive arg (a memo item) from previous frag
+        ItemFragmentArgs.fromBundle(arguments!!).initMode.let {
+            //            viewmodel.currentMode.value = it
+
+            viewmodel.setCurrentMode(it)
+
+        }
+
     }
 
-    // fragment lifecycle
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.item_fragment, container, false)
         setHasOptionsMenu(true)
@@ -97,37 +108,50 @@ class ItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ItemFragmentArgs.fromBundle(arguments!!).imgUri.let {
-            Log.d("testBack", "it = $it")
-        }
+
         observerLiveData()
         setLayout()
     }
 
     private fun observerLiveData() {
-        viewmodel.mode.observe(this, Observer {
+        viewmodel.currentMode.observe(this, Observer {
             // observe when mode status changed
+            Log.d("testImgList", "Observer currentmode = " + it)
             setLayoutByMode()
         })
-        viewmodel.imgList.observe(requireActivity(), Observer {
-            if (binding.imgRv.adapter != null) {
-                binding.imgRv.adapter!!.notifyDataSetChanged()
-            }
+
+        viewmodel.imgList.observe(this, Observer {
+            val imgList = it
+
+            binding.imgRv.adapter =
+                    if (viewmodel.isEditMode()) {
+                        EditModeImgAdapter(imgList).apply {
+                            this.setOnItemBtnClickListener(this@ItemFragment)
+                        }
+                    } else {
+                        DetailModeImgAdapter(imgList) // just view img list
+                    }
+
+
+            Log.d("testImgListobserve", "remove " + viewmodel.imgList.value!!.size)
         })
+
     }
 
     private fun setLayoutByMode() {
         val isEditMode = viewmodel.isEditMode()
         val imgList = viewmodel.imgList.value!!
 
-
         // set editable mode
         binding.titleEt.isEnabled = isEditMode
         binding.contentsEt.isEnabled = isEditMode
 
+
         // set img list adapter
         binding.imgRv.adapter = if (isEditMode) {
-            EditModeImgAdapter(imgList) // can edit img list
+            EditModeImgAdapter(imgList).apply {
+                this.setOnItemBtnClickListener(this@ItemFragment)
+            }
         } else {
             DetailModeImgAdapter(imgList) // just view img list
         }
@@ -144,8 +168,8 @@ class ItemFragment : Fragment() {
         binding.contentsEt.setText(viewmodel.memoItem.value?.contents ?: "")
 
         // set mode
-        val mode = if (viewmodel.memoItem.value == null) viewmodel.EDIT_MODE else viewmodel.DETAIL_MODE
-        viewmodel.changeViewMode(mode)
+//        viewmodel.currentMode.value = viewmodel.firstInitMode
+        Log.d("testImgList", "setLayout mode " + viewmodel.currentMode.value)
 
     }
 
@@ -160,4 +184,35 @@ class ItemFragment : Fragment() {
     }
 
 
+    val REQ_PICK_FROM_ALBUM = 1000
+    val REQ_PICK_FROM_CAMERA = 1001
+    val REQ_PICK_FROM_URL = 1002
+
+    // EditModeImgAdapter.OnItemBtnClickListener
+    override fun onItemBtnClick(v: View, postion: Int, request: Int) {
+        Log.d("testItemonItemBtnClick", "postion " + postion)
+        Log.d("testItemonItemBtnClick", "request " + request)
+
+        when (request) {
+            R.id.delete_btn_edit_img -> {
+                val tempList: ArrayList<String> = viewmodel.imgList.value!!
+                tempList.removeAt(postion)
+                viewmodel.imgList.value = tempList
+            }
+
+            R.id.uri_btn_edit_img -> {
+                Log.d("testItemonItemBtnClick", "init uri_btn_edit_img ")
+                viewmodel.moveCaptureImgDialogFrag(view!!, "testUrl")
+            }
+
+            R.id.camera_btn_edit_img -> {
+                viewmodel.getImgByReqcode(requireActivity(), requireContext(), request)
+            }
+
+            R.id.album_btn_edit_img -> {
+                viewmodel.getImgByReqcode(requireActivity(), requireContext(), request)
+            }
+        }
+    }
 }
+

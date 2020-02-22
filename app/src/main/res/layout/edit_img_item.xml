@@ -7,12 +7,12 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/item_cl"
+        android:id="@+id/item_cl_edit_img"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/memo_iv"
+            android:id="@+id/memo_iv_edit_img"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -21,23 +21,24 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:id="@+id/delete_btn"
+            android:id="@+id/delete_btn_edit_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="1dp"
             android:background="@color/colorPrimary"
             android:padding="12dp"
             android:src="@drawable/ic_delete_white_24dp"
-            app:layout_constraintRight_toLeftOf="@id/edit_btn"
-            app:layout_constraintTop_toTopOf="@id/edit_btn" />
+            app:layout_constraintRight_toLeftOf="@id/edit_btn_edit_img"
+            app:layout_constraintTop_toTopOf="@id/edit_btn_edit_img" />
 
         <ImageButton
-            android:id="@+id/edit_btn"
+            android:id="@+id/edit_btn_edit_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:padding="12dp"
             android:src="@drawable/ic_mode_edit_white_24dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="1"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -48,38 +49,38 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/add_cl"
+        android:id="@+id/add_cl_edit_img"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
 
         <ImageButton
-            android:id="@+id/album_btn"
+            android:id="@+id/album_btn_edit_img"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:background="@drawable/ic_photo_primary_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/camera_btn"
+            app:layout_constraintRight_toLeftOf="@+id/camera_btn_edit_img"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:id="@+id/camera_btn"
+            android:id="@+id/camera_btn_edit_img"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:background="@drawable/ic_photo_camera_primary_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/album_btn"
-            app:layout_constraintRight_toLeftOf="@+id/uri_btn"
+            app:layout_constraintLeft_toRightOf="@+id/album_btn_edit_img"
+            app:layout_constraintRight_toLeftOf="@+id/uri_btn_edit_img"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
-            android:id="@+id/uri_btn"
+            android:id="@+id/uri_btn_edit_img"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:background="@drawable/ic_web_asset_primary_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/camera_btn"
+            app:layout_constraintLeft_toRightOf="@id/camera_btn_edit_img"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

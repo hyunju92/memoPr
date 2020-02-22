@@ -84,8 +84,10 @@ class MemoAdapter :
             Log.d("testsObserver", "bindTo = " + memo?.title)
             Log.d("testsObserver", "bindTo id = " + memo?.id)
 
-            val imgList = memo?.getImageList()
-            val thmImg = imgList?.get(imgList.size - 1)
+            val imgList = memo?.getImageList()!!
+            val thmImg = imgList.let {
+                if(it.size > 0) it[0] else null
+            }
 
             Glide.with(itemView)
                     .load(thmImg)

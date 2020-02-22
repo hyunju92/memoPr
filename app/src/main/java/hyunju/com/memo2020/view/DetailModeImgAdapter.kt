@@ -31,7 +31,7 @@ class DetailModeImgAdapter(val imgList: ArrayList<String>)
 
 
     inner class MemoImgViewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val memoIv = itemView.findViewById<ImageView>(R.id.memo_iv)
+        val memoIv = itemView.findViewById<ImageView>(R.id.memo_iv_edit_img)
 
         fun bindTo(imgStr: String) {
             if (!TextUtils.isEmpty(imgStr)) {

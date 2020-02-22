@@ -3,15 +3,12 @@ package hyunju.com.memo2020.viewmodel
 import android.app.Application
 import android.os.AsyncTask
 import android.util.Log
-import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.navigation.Navigation
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.model.Memo
-import hyunju.com.memo2020.view.ListFragmentDirections
 
 class MainAcitivityViewmodel(application: Application) : AndroidViewModel(application) {
 
@@ -61,12 +58,12 @@ class MainAcitivityViewmodel(application: Application) : AndroidViewModel(applic
         }
     }
 
-    fun testNav(view: View) {
-
-        val action =
-                ListFragmentDirections.actionListFragmentToItemFragment()
-        Navigation.findNavController(view).navigate(action)
-    }
+//    fun testNav(view: View) {
+//
+//        val action =
+//                ListFragmentDirections.actionListFragmentToItemFragment()
+//        Navigation.findNavController(view).navigate(action)
+//    }
 
     fun testViewmodelReUse() : Int{
         return listViewModel.getScreenWidth(getApplication())

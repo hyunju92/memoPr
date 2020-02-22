@@ -59,7 +59,7 @@ class ListFragment : Fragment(), MemoAdapter.OnItemClickListener {
         }
 
         binding.addBtn.setOnClickListener {
-            listFragViewmodel.moveDetailFrag(view = it, memoItem = null)
+            listFragViewmodel.moveDetailFrag(view = it, memoItem = null, mode = 2)
 
         }
     }
@@ -74,7 +74,7 @@ class ListFragment : Fragment(), MemoAdapter.OnItemClickListener {
 //        memo.images += " " + "https://postfiles.pstatic.net/MjAxODEwMjVfMTc3/MDAxNTQwNDY2MjY2MDM1.TovTMgYAZn8WJggpdZvlHWqBxsVCCf_Z6897OJ0WNTgg.o-KiNShXVmEh8ZJxdrVNELLzCe1XRh-T1ZfP84xSDq8g.JPEG.hyelim5012/IMG_20181023_061859.jpg?type=w966"
 //        listFragViewmodel.update(memo)
 
-        listFragViewmodel.moveDetailFrag(v, memo)
+        listFragViewmodel.moveDetailFrag(v, memo, 1)
 
     }
 

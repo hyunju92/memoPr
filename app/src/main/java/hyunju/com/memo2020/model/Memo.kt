@@ -1,6 +1,7 @@
 package hyunju.com.memo2020.model
 
 import android.os.Parcelable
+import android.util.Log
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
@@ -18,11 +19,34 @@ data class Memo(
         var date: Date
 ) : Parcelable {
     fun getImageList(): ArrayList<String> {
+        val tempList = images.split(" ").let {
+            if (it.size == 1 && it[0].isEmpty()) ArrayList() else it
+        }
+        Log.d("imgListV", "images = " + images)
+        Log.d("imgListV", "tempList size = " + tempList.size)
+
         val arrayList = ArrayList<String>()
-        arrayList.addAll(images.split(" "))
+        arrayList.addAll(tempList)
 
         return arrayList
     }
+
+    fun setImgStr(imgList: ArrayList<String>) {
+        var imgStr = ""
+
+        for (i in 1..imgList.size) {
+            val item = imgList[i - 1]
+
+            if (item.isNotEmpty()) {
+                imgStr += item
+                if (i != imgList.size)
+                    imgStr += " "
+            }
+        }
+
+        this.images = imgStr
+    }
+
 }
 
 //

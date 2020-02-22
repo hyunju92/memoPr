@@ -3,19 +3,17 @@ package hyunju.com.memo2020.viewmodel
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
-import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import androidx.core.content.FileProvider
 import androidx.lifecycle.AndroidViewModel
-import androidx.navigation.Navigation
 import java.io.File
 import java.io.FileOutputStream
 
 class CaptureImgDialogFragmentViewmodel(application: Application) : AndroidViewModel(application) {
 
     // save capture view as file path uri
-    fun saveCapture(context: Context, captureView: View) : String {
+    fun saveCapture(context: Context, captureView: View): String {
         captureView.buildDrawingCache()
         val cacheBitmap = captureView.drawingCache
 
@@ -40,16 +38,6 @@ class CaptureImgDialogFragmentViewmodel(application: Application) : AndroidViewM
         return filePath
     }
 
-
-    // nav
-    fun moveItemFragment(view: View, uriStr: String?) {
-        if (TextUtils.isEmpty(uriStr)) return
-//        val action = CaptureImgDialogFragmentDirections.actionCaptureImgDialogFragmentToItemFragment(null, uriStr!!)
-//        Navigation.findNavController(view).navigate(action)
-
-        Navigation.findNavController(view).popBackStack()
-
-    }
 
 }
 
