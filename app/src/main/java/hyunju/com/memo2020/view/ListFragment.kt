@@ -1,7 +1,6 @@
 package hyunju.com.memo2020.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +10,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ListFragmentBinding
-import hyunju.com.memo2020.db.MemoAdapter
+import hyunju.com.memo2020.db.ListItemAdapter
 import hyunju.com.memo2020.model.Memo
 import hyunju.com.memo2020.viewmodel.ListFragmentViewmodel
 
-class ListFragment : Fragment(), MemoAdapter.OnItemClickListener {
+class ListFragment : Fragment(), ListItemAdapter.OnItemClickListener {
     protected lateinit var binding: ListFragmentBinding
     protected val listFragViewmodel: ListFragmentViewmodel by lazy {
         ViewModelProvider(this).get(ListFragmentViewmodel::class.java)
@@ -37,9 +36,7 @@ class ListFragment : Fragment(), MemoAdapter.OnItemClickListener {
     private fun observerLiveData() {
         listFragViewmodel.allMemos.observe(this,
                 androidx.lifecycle.Observer {
-                    val adapter = binding.listRv.adapter as MemoAdapter
-
-                    Log.d("testsObserver", "in observe " + it.size)
+                    val adapter = binding.listRv.adapter as ListItemAdapter
                     adapter.submitList(it)
                     adapter.notifyDataSetChanged()
                 }
@@ -50,12 +47,9 @@ class ListFragment : Fragment(), MemoAdapter.OnItemClickListener {
         binding.listRv.setLayoutManager(LinearLayoutManager(requireContext()))
         binding.listRv.setHasFixedSize(true)
 
-        MemoAdapter().let {
+        ListItemAdapter().let {
             it.setOnItemClickListener(this)
             binding.listRv.adapter = it
-        }
-
-        binding.testBtn.setOnClickListener {
         }
 
         binding.addBtn.setOnClickListener {
@@ -67,15 +61,7 @@ class ListFragment : Fragment(), MemoAdapter.OnItemClickListener {
 
     // MemoAdapter.OnItemClickListener
     override fun onItemClick(v: View, memo: Memo) {
-        Log.d("testsObserver", "in onItemClick id = " + memo.id)
-//
-//        val newContents = memo.contents + " 수정"
-//        memo.contents = newContents
-//        memo.images += " " + "https://postfiles.pstatic.net/MjAxODEwMjVfMTc3/MDAxNTQwNDY2MjY2MDM1.TovTMgYAZn8WJggpdZvlHWqBxsVCCf_Z6897OJ0WNTgg.o-KiNShXVmEh8ZJxdrVNELLzCe1XRh-T1ZfP84xSDq8g.JPEG.hyelim5012/IMG_20181023_061859.jpg?type=w966"
-//        listFragViewmodel.update(memo)
-
         listFragViewmodel.moveDetailFrag(v, memo, 1)
-
     }
 
 

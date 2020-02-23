@@ -28,7 +28,6 @@ import kotlin.collections.ArrayList
 
 class ItemFragmentViewmodel(application: Application) : AndroidViewModel(application) {
 
-
     val dao = MemoDatabase.get(application).memoDao()
 
     val currentMode: MutableLiveData<Int> = MutableLiveData()

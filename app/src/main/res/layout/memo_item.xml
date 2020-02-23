@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/thumb_iv"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:src="@color/colorPrimary"
         app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -31,6 +31,7 @@
         app:layout_constraintStart_toEndOf="@+id/thumb_iv"
         app:layout_constraintTop_toTopOf="parent" />
 
+   
     <TextView
         android:id="@+id/contents_tv"
         android:layout_width="0dp"

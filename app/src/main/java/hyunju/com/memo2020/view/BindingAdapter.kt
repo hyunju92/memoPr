@@ -42,18 +42,4 @@ object BindingAdapter {
 
 
 
-
-//    @BindingAdapter("set_heigh")
-//    @JvmStatic
-//    fun setLayoutHeightAtWidth(view: View) {
-//        val displayMetrics: DisplayMetrics = view.getResources().getDisplayMetrics()
-//        val dpHeight = displayMetrics.heightPixels / displayMetrics.density
-//        val dpWidth = displayMetrics.widthPixels / displayMetrics.density
-//
-//
-//        val layoutParams: ViewGroup.LayoutParams = view.layoutParams
-//        layoutParams.height = dpWidth.toInt()
-//        view.layoutParams = layoutParams
-//    }
-
 }

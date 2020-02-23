@@ -20,7 +20,7 @@ import com.bumptech.glide.Glide
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.Util
 import hyunju.com.memo2020.databinding.ActivityMain2Binding
-import hyunju.com.memo2020.db.MemoAdapter
+import hyunju.com.memo2020.db.ListItemAdapter
 import hyunju.com.memo2020.model.Memo
 import hyunju.com.memo2020.viewmodel.MainAcitivityViewmodel
 import org.apache.commons.io.IOUtils
@@ -28,7 +28,7 @@ import java.io.*
 import java.util.*
 
 
-class MainActivity2 : AppCompatActivity(), MemoAdapter.OnItemClickListener {
+class MainActivity2 : AppCompatActivity(), ListItemAdapter.OnItemClickListener {
 
     protected lateinit var binding: ActivityMain2Binding
     protected val mainViewModel: MainAcitivityViewmodel by lazy {
@@ -43,7 +43,7 @@ class MainActivity2 : AppCompatActivity(), MemoAdapter.OnItemClickListener {
         binding.rv.setLayoutManager(LinearLayoutManager(this))
         binding.rv.setHasFixedSize(true)
 
-        val adapter = MemoAdapter()
+        val adapter = ListItemAdapter()
         adapter.setOnItemClickListener(this)
         binding.rv.adapter = adapter
 
