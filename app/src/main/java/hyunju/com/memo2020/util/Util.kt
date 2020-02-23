@@ -1,10 +1,7 @@
-package hyunju.com.memo2020
+package hyunju.com.memo2020.util
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.gun0912.tedpermission.PermissionListener
-import com.gun0912.tedpermission.TedPermission
-import java.util.*
 
 
 class Util {

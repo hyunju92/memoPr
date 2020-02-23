@@ -10,8 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ListFragmentBinding
-import hyunju.com.memo2020.db.ListItemAdapter
 import hyunju.com.memo2020.model.Memo
+import hyunju.com.memo2020.view.adapter.ListItemAdapter
 import hyunju.com.memo2020.viewmodel.ListFragmentViewmodel
 
 class ListFragment : Fragment(), ListItemAdapter.OnItemClickListener {
@@ -53,7 +53,7 @@ class ListFragment : Fragment(), ListItemAdapter.OnItemClickListener {
         }
 
         binding.addBtn.setOnClickListener {
-            listFragViewmodel.moveDetailFrag(view = it, memoItem = null, mode = 2)
+            listFragViewmodel.moveItemFragment(view = it, memoItem = null, mode = 2)
 
         }
     }
@@ -61,7 +61,7 @@ class ListFragment : Fragment(), ListItemAdapter.OnItemClickListener {
 
     // MemoAdapter.OnItemClickListener
     override fun onItemClick(v: View, memo: Memo) {
-        listFragViewmodel.moveDetailFrag(v, memo, 1)
+        listFragViewmodel.moveItemFragment(v, memo, 1)
     }
 
 

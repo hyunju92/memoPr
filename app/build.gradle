@@ -51,43 +51,47 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
 
-    def room_version = "2.2.3"
+    def room_version = "2.2.4"
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
     kapt "android.arch.persistence.room:compiler:$room_version"
 
     def paging_version = "2.1.1"
     implementation "androidx.paging:paging-runtime:$paging_version"
-    // For Kotlin use paging-runtime-ktx
-
 
     def lifecycle_version = "2.2.0"
-    // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
 
     def archComponentsVersion = "2.0.0"
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$archComponentsVersion"
 
-    // recyclerview
-    implementation "androidx.recyclerview:recyclerview:1.1.0"
-
-    implementation 'commons-io:commons-io:2.4'
-
-    implementation 'com.google.code.gson:gson:2.8.5'
-
-    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.10"
-
+    def recyclerview_version = "1.1.0"
+    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
 
     def nav_version = "2.2.1"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
+    def databinding_version = "3.1.4"
+    kapt "com.android.databinding:compiler:$databinding_version"
 
-    kapt 'com.android.databinding:compiler:3.1.4'
+    // Apache Commons IO
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation 'commons-io:commons-io:2.4'
 
-    // 권한 허용을 위한 라이브러리
+    // TedPermission
+    // https://github.com/ParkSangGwon/TedPermission
     implementation 'gun0912.ted:tedpermission:2.2.0'
+
+
+    // Mockito framework
+    testImplementation 'org.mockito:mockito-core:2.22.0'
+
+    // Espresso framework
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
 
 }
 repositories {

@@ -1,6 +1,5 @@
-package hyunju.com.memo2020
+package hyunju.com.memo2020.view
 
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,39 +11,27 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.CaptureImgDialogFragmentBinding
+import hyunju.com.memo2020.util.ImgUtil
 import hyunju.com.memo2020.viewmodel.ItemFragmentViewmodel
 
 class CaptureImgDialogFragment : DialogFragment() {
     protected lateinit var binding: CaptureImgDialogFragmentBinding
-
-//    protected val viewmodel: CaptureImgDialogFragmentViewmodel by lazy {
-//        ViewModelProvider(this).get(CaptureImgDialogFragmentViewmodel::class.java)
-//    }
-
     protected val itemFragViewmodel: ItemFragmentViewmodel by lazy {
         ViewModelProvider(requireActivity()).get(ItemFragmentViewmodel::class.java)
     }
-
 
     companion object {
         private var INSTANCE: CaptureImgDialogFragment? = null
 
         @Synchronized
-        fun get(imgUri: Uri): CaptureImgDialogFragment {
+        fun get(): CaptureImgDialogFragment {
             if (INSTANCE == null) {
-                val dialog = CaptureImgDialogFragment()
-
-                // put Args (imgUri)
-                return dialog
+                return CaptureImgDialogFragment()
             }
             return INSTANCE!!
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -55,19 +42,12 @@ class CaptureImgDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setLayout()
-
     }
 
     private fun setLayout() {
         setSecreenWebview()
         binding.inputBtn.setOnClickListener {
             val imgUrl = binding.urlInputEt.text.toString()
-
-//            Glide.with(binding.screenIv.rootView)
-//                    .load(imgUrl)
-//                    .override(600, 600)
-//                    .fitCenter()
-//                    .into(binding.screenIv)
 
             binding.screenWv.loadUrl(imgUrl)
 
@@ -86,9 +66,9 @@ class CaptureImgDialogFragment : DialogFragment() {
         }
 
         binding.saveBtn.setOnClickListener {
-            //            val savedUri = itemFragViewmodel.saveCapture(requireContext(), binding.screenIv)
-            val savedUri = itemFragViewmodel.saveCapture(requireContext(), binding.screenWv)
+            val savedUri = ImgUtil.getCapturedImgUri(requireContext(), binding.screenWv)
 
+            // share viewmodel to access other fragment
             itemFragViewmodel.addImgList(savedUri)
             Navigation.findNavController(it).popBackStack()
         }

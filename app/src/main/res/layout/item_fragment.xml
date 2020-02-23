@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!--Recycler View widget-->
+            <!-- image list view-->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/img_rv"
                 android:layout_width="match_parent"
@@ -35,6 +35,7 @@
                 memo:match_height_to_device_width="@{true}" />
 
 
+            <!-- text contents view -->
             <LinearLayout
                 android:id="@+id/text_cl"
                 android:layout_width="0dp"
@@ -52,14 +53,13 @@
                     android:orientation="horizontal">
 
                     <EditText
-                        android:hint="제목"
                         android:id="@+id/title_et"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="@null"
                         android:enabled="false"
-                        android:text="titlelkaj sfjlka jsdlkfjalksdjflkasjdflkaslkdfjlkasdjfklajsdflkadsf"
+                        android:hint="제목"
                         android:textSize="24sp" />
 
                     <EditText
@@ -67,14 +67,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:enabled="false"
+                        android:hint="작성일"
                         android:paddingLeft="16dp"
-                        android:text="2002121234"
                         android:textSize="12sp" />
                 </LinearLayout>
 
-
                 <EditText
-                    android:hint="내용"
                     android:id="@+id/contents_et"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -82,30 +80,12 @@
                     android:layout_marginTop="32dp"
                     android:background="@null"
                     android:enabled="false"
+                    android:hint="내용"
                     android:paddingBottom="100dp"
-                    android:text="testtext\n\n\n\n\n\n\n\n\n\nlkajdflkaskdjflkasdjfalk
-                sdfjlkajdsflkajsdsdfjlkajdsflkaj
-                sdsdfjlkajdsflkajsdsdfjlkajds
-                sdfjlkajdsflkajsd
-                sdfjlkajdsflkajsd
-                sdfjlkajdsflkajsd
-                sdfjlkajdsflkajsd
-                flkajsdlkfja;lksdjflkadsflkaskdfjkasdjflkjasdfklj
-                lkadsflkaskdfjkasdjflkjasdfklj
-                flkadsflkaskdfjkasdjflkjasdfklj THE END--"
                     android:textSize="16sp" />
 
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        <!--        <TextView-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:text="test"-->
-        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--            app:layout_constraintLeft_toLeftOf="parent"-->
-        <!--            app:layout_constraintTop_toTopOf="parent" />-->
 
     </androidx.core.widget.NestedScrollView>
 </layout>

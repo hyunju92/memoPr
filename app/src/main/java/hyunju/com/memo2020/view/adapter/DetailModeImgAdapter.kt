@@ -1,7 +1,5 @@
-package hyunju.com.memo2020.view
+package hyunju.com.memo2020.view.adapter
 
-import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +12,6 @@ class DetailModeImgAdapter(val imgList: ArrayList<String>)
     : RecyclerView.Adapter<DetailModeImgAdapter.MemoImgViewholder>() {
 
     override fun getItemCount(): Int {
-        Log.d("testImgAd", "onBindViewHolder imgList.size = " + imgList.size)
-
         return imgList.size
     }
 
@@ -24,25 +20,22 @@ class DetailModeImgAdapter(val imgList: ArrayList<String>)
     }
 
     override fun onBindViewHolder(holder: MemoImgViewholder, position: Int) {
-        Log.d("testImgAd", "onBindViewHolder position = " + position)
-
         holder.bindTo(imgList.get(position))
     }
 
 
     inner class MemoImgViewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val memoIv = itemView.findViewById<ImageView>(R.id.memo_iv_edit_img)
-
         fun bindTo(imgStr: String) {
-            if (!TextUtils.isEmpty(imgStr)) {
-                Log.d("testImgAd", "imgStr = " + imgStr)
-//
-                Glide.with(itemView.context)
-                        .load(imgStr)
-                        .into(memoIv)
+            val memoIv = itemView.findViewById<ImageView>(R.id.memo_iv_edit_img)
 
-            }
+            var loadImg = if (imgStr.isNotEmpty()) imgStr else R.drawable.ic_image_black_24dp
+            val errorImg = R.drawable.ic_sms_failed_black_24dp
+
+            Glide.with(itemView.context)
+                    .load(loadImg)
+                    .error(errorImg)
+                    .into(memoIv)
         }
-
     }
+
 }

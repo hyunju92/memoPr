@@ -56,8 +56,8 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        // send back it to ItemFragment,
         // when result was from startactivityforresult of ItemFragment (to get image)
-        // send back it to ItemFragment
         val currentFrag = Navigation.findNavController(this, R.id.main_fragment).getCurrentDestination()?.getId()
 
         if (currentFrag == R.id.itemFragment) {

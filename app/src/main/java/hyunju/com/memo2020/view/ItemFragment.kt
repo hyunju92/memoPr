@@ -10,6 +10,8 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ItemFragmentBinding
+import hyunju.com.memo2020.view.adapter.DetailModeImgAdapter
+import hyunju.com.memo2020.view.adapter.EditModeImgAdapter
 import hyunju.com.memo2020.viewmodel.ItemFragmentViewmodel
 
 
@@ -40,11 +42,16 @@ class ItemFragment : Fragment(), EditModeImgAdapter.OnItemBtnClickListener {
 
 
             // * (real) inner menu item 3
-            R.id.edit -> viewmodel.currentMode.value = viewmodel.EDIT_MODE
+            R.id.edit -> {
+                viewmodel.currentMode.value = viewmodel.EDIT_MODE
+                if (!viewmodel.isEdittedAtLeastOnce) viewmodel.isEdittedAtLeastOnce = true
+            }
 
             R.id.save -> {
-                viewmodel.save(requireContext(),
-                        binding.titleEt.text.toString(), binding.contentsEt.text.toString())
+//                viewmodel.save(requireContext(),
+//                        binding.titleEt.text.toString(), binding.contentsEt.text.toString())
+//                Navigation.findNavController(requireActivity(), R.id.main_fragment).navigateUp()
+
                 viewmodel.currentMode.value = viewmodel.DETAIL_MODE
             }
 
@@ -75,6 +82,7 @@ class ItemFragment : Fragment(), EditModeImgAdapter.OnItemBtnClickListener {
         // receive arg (mode) from previous frag
         ItemFragmentArgs.fromBundle(arguments!!).initMode.let {
             viewmodel.currentMode.value = it
+            viewmodel.isEdittedAtLeastOnce = it == viewmodel.EDIT_MODE
         }
 
     }
@@ -104,7 +112,6 @@ class ItemFragment : Fragment(), EditModeImgAdapter.OnItemBtnClickListener {
             viewmodel.isNeedToSaveIfFinished = true
             setImgRvAdapter(viewmodel.isEditMode(), it)
         })
-
     }
 
     private fun setLayout() {
@@ -114,6 +121,7 @@ class ItemFragment : Fragment(), EditModeImgAdapter.OnItemBtnClickListener {
 
         // set text contents
         binding.titleEt.setText(viewmodel.memoItem.value?.title ?: "")
+        binding.dateEt.setText(viewmodel.memoItem.value?.getDateText())
         binding.contentsEt.setText(viewmodel.memoItem.value?.contents ?: "")
     }
 
@@ -141,39 +149,19 @@ class ItemFragment : Fragment(), EditModeImgAdapter.OnItemBtnClickListener {
     }
 
 
-    val REQ_PICK_FROM_ALBUM = 1000
-    val REQ_PICK_FROM_CAMERA = 1001
-    val REQ_PICK_FROM_URL = 1002
-
     // EditModeImgAdapter.OnItemBtnClickListener
-    override fun onItemBtnClick(v: View, postion: Int, request: Int) {
+    override fun onItemBtnClick(v: View, postion: Int, requestBtnId: Int) {
         viewmodel.isNeedToSaveIfFinished = false
+        viewmodel.onEditAdapterItemClickEvent(requireContext(), requireActivity(),
+                v, postion, requestBtnId)
 
-        when (request) {
-            R.id.delete_btn_edit_img -> {
-                val tempList: ArrayList<String> = viewmodel.imgList.value!!
-                tempList.removeAt(postion)
-                viewmodel.imgList.value = tempList
-            }
-
-            R.id.uri_btn_edit_img -> {
-                viewmodel.moveCaptureImgDialogFrag(view!!, "testUrl")
-            }
-
-            R.id.camera_btn_edit_img -> {
-                viewmodel.getImgByReqcode(requireActivity(), requireContext(), request)
-            }
-
-            R.id.album_btn_edit_img -> {
-                viewmodel.getImgByReqcode(requireActivity(), requireContext(), request)
-            }
-        }
     }
+
 
     override fun onStop() {
         super.onStop()
-        if (viewmodel.isNeedToSaveIfFinished) {
-            //  save memo except some case
+        if (viewmodel.isNeedToSaveIfFinished && viewmodel.isEdittedAtLeastOnce) {
+            //  save memo
             viewmodel.save(requireContext(), binding.titleEt.text.toString(), binding.contentsEt.text.toString())
         }
     }

@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.AsyncTask
 import android.provider.MediaStore
@@ -12,17 +11,16 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.core.content.FileProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.Navigation
 import hyunju.com.memo2020.R
-import hyunju.com.memo2020.Util
 import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.model.Memo
+import hyunju.com.memo2020.util.ImgUtil
+import hyunju.com.memo2020.util.ImgUtil.Companion.getProviderUri
+import hyunju.com.memo2020.util.Util
 import hyunju.com.memo2020.view.ItemFragmentDirections
-import org.apache.commons.io.IOUtils
-import java.io.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -31,10 +29,12 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
     val dao = MemoDatabase.get(application).memoDao()
 
     val currentMode: MutableLiveData<Int> = MutableLiveData()
+
     val memoItem: MutableLiveData<Memo?> = MutableLiveData()
     val imgList: MutableLiveData<ArrayList<String>> = MutableLiveData()
 
     var isNeedToSaveIfFinished: Boolean = true
+    var isEdittedAtLeastOnce: Boolean = false
 
 
     // * 2 mode (detail/edit)
@@ -54,7 +54,7 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
     }
 
 
-    // * core action (need db)
+    // * data modify (need to access db)
     fun save(context: Context, title: String, contents: String) {
         if (memoItem.value != null) {
             memoItem.value!!.let {
@@ -118,41 +118,7 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
     }
 
 
-    // nav
-    fun moveCaptureImgDialogFrag(view: View, uriStr: String?) {
-        if (TextUtils.isEmpty(uriStr)) return
-
-        Log.d("moveItemFragment", "moveCaptureImgDialogFrag size = " + imgList.value?.size)
-
-//        val testUrl = "https://postfiles.pstatic.net/MjAxNzA5MjVfMjcg/MDAxNTA2MzA0Mzc1MTM4.prbIrhy_KnEJAq0I4WGX0yHDuCRhQsbKcHU6RGDVVNog.5o4kxdfkv-bGtI4-gXRwXjh045Yz77L8WnFFOt6PCQIg.JPEG.rla2945/13402575_643830889104534_68262404_n.jpg?type=w580"
-//        val testUrl = "http://blogfiles.naver.net/MjAxODEyMjBfMTI3/MDAxNTQ1Mjg4ODgzMTc3.o6BqoojNTIKMzP2SPe3Idpx_mo6bE1XaRh1OF7QGk-Ig.9eL4YyOfa1v_6aejx5gK1Bpoe78UmUGvz5AUQ2jr7YAg.JPEG.petgeek/20181220_110730.jpg"
-//        val testUrl = "https://blogfiles.pstatic.net/MjAxOTA5MDRfNiAg/MDAxNTY3NTc5NTQ2ODI0.J_Hb7GFGIp5X1aosH-Mo9p73gMul6MznKEL-yrjpw1Mg.mgRAWlZU5_3XRcWudMrCJQezo_c2KcvU2rjZ6slyT3Mg.JPEG.cgdong10/%ED%81%AC%EA%B8%B0%EB%B3%80%ED%99%98_%ED%81%AC%EB%9F%AC%EC%89%AC-%EB%82%98%EB%B9%A0.jpg?type=w1"
-//        val testUrl = "http://imgnews.naver.net/image/215/2019/12/03/A201912030013_1_20191203071403938.jpg"
-//        val testUrl = "https://search.pstatic.net/common/?src=http%3A%2F%2Fmusicmeta.phinf.naver.net%2Fphoto%2F000%2F079%2F79132.jpg&type=b400"
-//        val testUrl = "http://blogfiles.naver.net/20140605_23/qwerz00_14018944939128amlJ_JPEG/Teaser_Crush%28_%AC%EB%9F%AC_____%27Crush_On_You%27_Preview_%281080p%29.mp4_20140605_000624.135.jpg"
-//        val testUrl = "http://image.nmv.naver.net/blog_2019_09_20_2925/ba9b42c1-db4e-11e9-bc16-0000000049a8_02.jpg"
-
-        val testUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTQlHniwP20JZYMssUzLYRpPfGTndcxsPNkwRK9S3aKADifMEel"
-
-        val action = ItemFragmentDirections.actionItemFragmentToCaptureImgDialogFragment()
-        Navigation.findNavController(view).navigate(action)
-    }
-
-    // nav
-    fun moveItemFragFromCaptureFrag(view: View, uriStr: String?) {
-        if (TextUtils.isEmpty(uriStr)) return
-//        val action = CaptureImgDialogFragmentDirections.actionCaptureImgDialogFragmentToItemFragment(null, uriStr!!)
-//        Navigation.findNavController(view).navigate(action)
-
-        Log.d("moveItemFragment", "size = " + imgList.value?.size)
-        imgList.value!!.add(uriStr!!)
-
-        Log.d("moveItemFragment", "size = " + imgList.value?.size)
-        Navigation.findNavController(view).popBackStack()
-    }
-
-
-    // edit imgList
+    // * edit imgList of item view
     fun addImgList(uriStr: String?) {
         if (TextUtils.isEmpty(uriStr)) return
 
@@ -161,110 +127,50 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
         imgList.value = tempList
     }
 
+    fun deleteImgList(context: Context, position: Int) {
+        val tempList: ArrayList<String> = imgList.value!!
+        Log.d("testUrl", "" + tempList[position])
+        context.contentResolver.delete(Uri.parse(tempList[position]), null, null);
+        tempList.removeAt(position)
 
-    // save capture view as file path uri
-    fun saveCapture(context: Context, captureView: View): String {
-        captureView.buildDrawingCache()
-        val cacheBitmap = captureView.drawingCache
-
-        val filePath = createFilePath(context)
-        val photoUri = FileProvider.getUriForFile(context, "hyunju.com.memo2020.provider", filePath)
-        Log.d("testPickAlbum", "onactivity saveCapture = photoUri " + photoUri)
-
-        val fos = FileOutputStream(filePath)
-        cacheBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-
-        return photoUri.toString()
-    }
-
-    private fun createFilePath(context: Context): File {
-        val dirPath = context.getExternalFilesDir(null)?.absolutePath
-        val dir = File(dirPath).apply { if (!this.exists()) this.mkdir() }
-
-        val filePath = File.createTempFile("IMG", ".jpg", dir).apply {
-            if (!this.exists()) this.createNewFile()
-        }
-
-        return filePath
+        imgList.value = tempList
     }
 
 
-    fun getFilePathFromContentUri(context: Context, contentUri: Uri): Uri? {
-        val fileName = getFileName(contentUri)
+    // * from EditModeImgAdapter's 4-event
+    // (delete img / get img from uri / get img from camera / get img from album)
+    fun onEditAdapterItemClickEvent(context: Context, activity: Activity, v: View, postion: Int, requestBtnId: Int) {
+        when (requestBtnId) {
+            R.id.delete_btn_edit_img -> deleteImgList(context, postion)
 
-        if (!TextUtils.isEmpty(fileName)) {
-            val filePath = createFilePath(context)
-            val photoUri = FileProvider.getUriForFile(context, "hyunju.com.memo2020.provider", filePath)
+            R.id.uri_btn_edit_img -> moveCaptureImgDialogFrag(v)
 
-            copy(context, contentUri, filePath)
-            Log.d("testPickAlbum", "saveFile = copyFile.absolutePath " + filePath.absolutePath)
-            Log.d("testPickAlbum", "saveFile = copyFile. photoUri " + photoUri)
-
-            return photoUri
-        }
-        return null
-    }
-
-    fun getFileName(uri: Uri?): String? {
-        if (uri == null) return null
-        var fileName: String? = null
-        val path = uri.path
-        val cut = path!!.lastIndexOf('/')
-        if (cut != -1) {
-            fileName = path.substring(cut + 1)
-        }
-        return fileName
-    }
-
-    fun copy(context: Context, srcUri: Uri, dstFile: File) {
-        try {
-            val inputStream: InputStream = context.getContentResolver().openInputStream(srcUri)
-                    ?: return
-            val outputStream: OutputStream = FileOutputStream(dstFile)
-            IOUtils.copy(inputStream, outputStream)
-            inputStream.close()
-            outputStream.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
+            R.id.camera_btn_edit_img, R.id.album_btn_edit_img -> getImgByReqcode(context, activity, requestBtnId)
         }
     }
 
+    private val REQ_PICK_FROM_ALBUM = 1000
+    private val REQ_PICK_FROM_CAMERA = 1001
+    private var reqCode = 0
 
-    val REQ_PICK_FROM_ALBUM = 1000
-    val REQ_PICK_FROM_CAMERA = 1001
-    val REQ_PICK_FROM_URL = 1002
-
-    fun getImgByReqcode(activity: Activity, context: Context, request: Int) {
-        var reqCode = 0
-
+    private fun getImgByReqcode(context: Context, activity: Activity, requestBtnId: Int) {
         Intent().apply {
-            when (request) {
+            when (requestBtnId) {
                 R.id.album_btn_edit_img -> {
                     reqCode = REQ_PICK_FROM_ALBUM
                     this.action = Intent.ACTION_PICK
                     this.type = MediaStore.Images.Media.CONTENT_TYPE
 
                 }
+
                 R.id.camera_btn_edit_img -> {
                     reqCode = REQ_PICK_FROM_CAMERA
-                    // 1
-                    val dirPath = context.getExternalFilesDir(null)?.absolutePath
-                    val dir = File(dirPath).apply { if (!this.exists()) this.mkdir() }
-
-                    val filePath = File.createTempFile("IMG", ".jpg", dir).apply {
-                        if (!this.exists()) this.createNewFile()
-                    }
-
-                    val photoUri = FileProvider.getUriForFile(context, "hyunju.com.memo2020.provider", filePath)
-                    Util.setPref(context, "uriFromCamera", photoUri.toString())
-
+                    val providerImgUri = getProviderUri(context = context, filePath = null)
+                    Util.setPref(context, "uriFromCamera", providerImgUri.toString())
 
                     this.action = MediaStore.ACTION_IMAGE_CAPTURE
-                    this.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+                    this.putExtra(MediaStore.EXTRA_OUTPUT, providerImgUri)
 
-
-                }
-                else -> {
                 }
             }
 
@@ -274,12 +180,22 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
     }
 
+    // move to CaptureImgDialogFragment
+    // to get external url
+    fun moveCaptureImgDialogFrag(view: View) {
+        val action = ItemFragmentDirections.actionItemFragmentToCaptureImgDialogFragment()
+        Navigation.findNavController(view).navigate(action)
+    }
+
+
+    // * result of startactivityforresult to get image
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 REQ_PICK_FROM_ALBUM -> {
-                    getFilePathFromContentUri(getApplication(), data!!.data!!)?.let {
-                        addImgList(it.toString())
+                    if (data?.data != null) {
+                        val providerUri = ImgUtil.copyUriIntoProvider(getApplication(), data.data!!)
+                        addImgList(providerUri?.toString())
                     }
                 }
                 REQ_PICK_FROM_CAMERA -> {

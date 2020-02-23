@@ -1,4 +1,4 @@
-package hyunju.com.memo2020.db
+package hyunju.com.memo2020.view.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -14,13 +14,13 @@ import kotlinx.android.synthetic.main.memo_item.view.*
 class ListItemAdapter :
         PagedListAdapter<Memo, ListItemAdapter.MemoViewholder>(DIFF_CALLBACK) {
 
-    var mListener: OnItemClickListener? = null
+     var mListener: OnItemClickListener? = null
 
-    interface OnItemClickListener {
+     interface OnItemClickListener {
         fun onItemClick(v: View, memo: Memo)
     }
 
-    fun setOnItemClickListener(listener: OnItemClickListener) {
+     fun setOnItemClickListener(listener: OnItemClickListener) {
         mListener = listener
     }
 
@@ -49,14 +49,13 @@ class ListItemAdapter :
     inner class MemoViewholder(parent: ViewGroup) : RecyclerView.ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.memo_item, parent, false)) {
 
+        var memo: Memo? = null
+
         init {
             itemView.setOnClickListener {
                 mListener?.onItemClick(it, memo!!)
             }
         }
-
-        var memo: Memo? = null
-
 
         fun bindTo(memo: Memo?) {
             this.memo = memo
@@ -73,6 +72,7 @@ class ListItemAdapter :
                     .into(itemView.thumb_iv)
 
             itemView.title_tv.text = memo.title
+            itemView.date_tv.text = memo.getDateText()
             itemView.contents_tv.text = memo.contents
 
         }

@@ -1,11 +1,11 @@
 package hyunju.com.memo2020.model
 
 import android.os.Parcelable
-import android.util.Log
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import kotlinx.android.parcel.Parcelize
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -20,11 +20,8 @@ data class Memo(
 ) : Parcelable {
     fun getImageList(): ArrayList<String> {
         val tempList = images.split(" ").let {
-            if (it.size == 1 && it[0].isEmpty()) ArrayList() else it
+            if (it.size == 1 && it[0].isEmpty()) ArrayList() else it    // delte default value ""
         }
-        Log.d("imgListV", "images = " + images)
-        Log.d("imgListV", "tempList size = " + tempList.size)
-
         val arrayList = ArrayList<String>()
         arrayList.addAll(tempList)
 
@@ -47,17 +44,12 @@ data class Memo(
         this.images = imgStr
     }
 
-}
+    fun getDateText(): String {
+//        return SimpleDateFormat("yyyy-MM-dd").format(date)
+        return SimpleDateFormat("yyyy년 MM월 dd일 HH:mm").format(date)
+    }
 
-//
-//@Entity(foreignKeys = arrayOf(ForeignKey(entity = Memo::class,
-//        parentColumns = arrayOf("id"),
-//        childColumns = arrayOf("id"),
-//        onDelete = ForeignKey.CASCADE)))
-//data class ImageData(
-//        @PrimaryKey(autoGenerate = true) val id: Long = 0,
-//        var uriPath: String
-//)
+}
 
 class Converters {
     @TypeConverter

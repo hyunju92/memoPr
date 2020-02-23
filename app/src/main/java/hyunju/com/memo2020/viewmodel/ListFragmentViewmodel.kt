@@ -1,9 +1,6 @@
 package hyunju.com.memo2020.viewmodel
 
 import android.app.Application
-import android.content.Context
-import android.os.AsyncTask
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -22,57 +19,12 @@ class ListFragmentViewmodel(application: Application) : AndroidViewModel(applica
             8
     ).build()
 
-
-    fun insert(memo: Memo) {
-        doAsync {
-            dao.insert(memo)
-        }.execute()
-    }
-
-    fun delete(id: Long) {
-        doAsync {
-            dao.deleteById(id)
-        }.execute()
-    }
-
-    fun deleteAll() {
-        doAsync {
-            dao.deleteAll()
-        }.execute()
-    }
-
-    fun update(memo: Memo) {
-        doAsync {
-            dao.update(memo)
-        }.execute()
-    }
-
-    class doAsync(val handler: () -> Unit) : AsyncTask<Void, Void, Void>() {
-        override fun doInBackground(vararg params: Void?): Void? {
-            handler()
-            return null
-        }
-
-        override fun onPostExecute(result: Void?) {
-            super.onPostExecute(result)
-            Log.d("testsObserver", "onPostExecute ")
-
-        }
-    }
-
-    fun moveDetailFrag(view: View, memoItem: Memo?, mode: Int) {
+    fun moveItemFragment(view: View, memoItem: Memo?, mode: Int) {
         val action =
                 ListFragmentDirections.actionListFragmentToItemFragment(memoItem, mode)
 
         Navigation.findNavController(view).navigate(action)
     }
-
-
-    fun getScreenWidth(context: Context): Int {
-        Log.d("testBinding", "getScreenWidth ")
-        return 40
-    }
-
 
 }
 

@@ -49,7 +49,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/add_cl_edit_img"
+        android:id="@+id/last_cl_edit_img"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
