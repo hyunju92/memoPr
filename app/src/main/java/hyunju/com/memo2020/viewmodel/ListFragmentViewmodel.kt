@@ -18,8 +18,8 @@ class ListFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
     val dao = MemoDatabase.get(application).memoDao()
     var allMemos: LiveData<PagedList<Memo>> = LivePagedListBuilder(
-            dao.getAllMemo(),
-            20
+            dao.getAllMemoByDate(),
+            8
     ).build()
 
 

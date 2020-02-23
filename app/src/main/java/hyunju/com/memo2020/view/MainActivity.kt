@@ -2,7 +2,6 @@ package hyunju.com.memo2020.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -23,52 +22,51 @@ class MainActivity : AppCompatActivity() {
         ViewModelProvider(this).get(MainAcitivityViewmodel::class.java)
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
+        // sync toolbar and navigation
         setSupportActionBar(findViewById<View>(R.id.main_toolbar) as Toolbar)
         val navController = Navigation.findNavController(this, R.id.main_fragment)
         NavigationUI.setupActionBarWithNavController(this, navController)
 
-
+        // permission check
+        mainViewModel.checkPermission(this, this)
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val currentFrag = Navigation.findNavController(this, R.id.main_fragment).getCurrentDestination()?.getId()
-        Log.d("testNav", "onSupportNavigateUp currentFrag = " + currentFrag)
-        if (currentFrag == R.id.itemFragment) {
-            Log.d("testNav", "onSupportNavigateUp detailFragment")
-
-        } else {
-            Log.d("testNav", "onSupportNavigateUp no detailFragment")
-
-        }
-
         return Navigation.findNavController(this, R.id.main_fragment).navigateUp()
     }
 
     override fun onBackPressed() {
         if (!Navigation.findNavController(this, R.id.main_fragment).popBackStack()) {
-            // Call finish() on your Activity
+            // finish when not exist back stack
             finish()
+
         } else {
-            Log.d("testNav", "onBackPressed no detailFragment")
             Navigation.findNavController(this, R.id.main_fragment).navigateUp()
+
         }
-
     }
 
 
-    protected val viewmodel: ItemFragmentViewmodel by lazy {
-        ViewModelProvider(this).get(ItemFragmentViewmodel::class.java)
-    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        viewmodel.onActivityResult(requestCode,resultCode,data)
+        // when result was from startactivityforresult of ItemFragment (to get image)
+        // send back it to ItemFragment
+        val currentFrag = Navigation.findNavController(this, R.id.main_fragment).getCurrentDestination()?.getId()
 
+        if (currentFrag == R.id.itemFragment) {
+            val itemFragViemodel: ItemFragmentViewmodel =
+                    ViewModelProvider(this).get(ItemFragmentViewmodel::class.java)
+
+            itemFragViemodel.onActivityResult(requestCode, resultCode, data)
+
+        }
     }
 
 

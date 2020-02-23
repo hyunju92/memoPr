@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/listFragment"
         android:name="hyunju.com.memo2020.view.ListFragment"
-        android:label="fragment_list"
+        android:label="메모 리스트"
         tools:layout="@layout/list_fragment">
         <action
             android:id="@+id/action_ListFragment_to_ItemFragment"
@@ -24,7 +24,7 @@
     <fragment
         android:id="@+id/itemFragment"
         android:name="hyunju.com.memo2020.view.ItemFragment"
-        android:label="fragment_detail"
+        android:label="메모 상세/편집"
         tools:layout="@layout/item_fragment">
 
         <argument
@@ -46,7 +46,7 @@
     <fragment
         android:id="@+id/captureImgDialogFragment"
         android:name="hyunju.com.memo2020.CaptureImgDialogFragment"
-        android:label="fragment_capture_dialog"
+        android:label="외부 이미지 가져오기"
         tools:layout="@layout/capture_img_dialog_fragment">
 
         <action

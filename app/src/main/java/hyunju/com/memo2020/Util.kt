@@ -2,13 +2,18 @@ package hyunju.com.memo2020
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
+import java.util.*
 
 
 class Util {
     companion object {
+
+        // shared prefrence set/get
         private const val FILE_NAME = "memePref"
 
-        fun savePref(context: Context, key: String, value: String) {
+        fun setPref(context: Context, key: String, value: String) {
             val prefs: SharedPreferences = context.getSharedPreferences(FILE_NAME, 0)
             prefs.edit().putString(key, value).apply()
         }
@@ -18,19 +23,6 @@ class Util {
             return prefs.getString(key, "") ?: ""
         }
 
-        @JvmStatic
-        fun getScreenWidth(context: Context) : Int{
-            val pxWidth = context.getResources().getDisplayMetrics().widthPixels
-            return pxWidth
-        }
-
-//        fun matchHeightToDeviceWidth(view: View, boolean: Boolean) {
-//            val pxWidth = view.getResources().getDisplayMetrics().widthPixels
-//            val layoutParams: ViewGroup.LayoutParams = view.layoutParams
-//            layoutParams.height = pxWidth
-//            Log.d("testBinding", "heigt " + pxWidth)
-//            view.layoutParams = layoutParams
-//        }
 
 
     }

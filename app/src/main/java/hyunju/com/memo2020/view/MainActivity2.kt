@@ -116,8 +116,6 @@ class MainActivity2 : AppCompatActivity(), MemoAdapter.OnItemClickListener {
     }
 
     fun testCapture() {
-
-
         binding.testIv.buildDrawingCache()
         val btm = binding.testIv.drawingCache
         saveCapture(this, btm)
@@ -148,7 +146,7 @@ class MainActivity2 : AppCompatActivity(), MemoAdapter.OnItemClickListener {
                             }
 
                             val photoUri = FileProvider.getUriForFile(this@MainActivity2, "hyunju.com.memo2020.provider", filePath)
-                            Util.savePref(this@MainActivity2, "uriFromCamera", photoUri.toString())
+                            Util.setPref(this@MainActivity2, "uriFromCamera", photoUri.toString())
 
 
                             this.action = MediaStore.ACTION_IMAGE_CAPTURE
@@ -231,7 +229,6 @@ class MainActivity2 : AppCompatActivity(), MemoAdapter.OnItemClickListener {
         }
     }
 
-    // TODO listener 문법 바꾸기
     override fun onItemClick(v: View, memo: Memo) {
         Log.d("testsObserver", "in onItemClick id = " + memo.id)
 

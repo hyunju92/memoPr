@@ -86,6 +86,9 @@ dependencies {
 
     kapt 'com.android.databinding:compiler:3.1.4'
 
+    // 권한 허용을 위한 라이브러리
+    implementation 'gun0912.ted:tedpermission:2.2.0'
+
 }
 repositories {
     mavenCentral()

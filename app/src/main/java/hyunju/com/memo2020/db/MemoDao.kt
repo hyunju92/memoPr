@@ -7,10 +7,13 @@ import hyunju.com.memo2020.model.Memo
 @Dao
 interface MemoDao {
     @Query("SELECT * FROM Memo ORDER BY id DESC")
-    fun getAllMemo(): DataSource.Factory<Int, Memo>
+    fun getAllMemoById(): DataSource.Factory<Int, Memo>
+
+    @Query("SELECT * FROM Memo ORDER BY date DESC")
+    fun getAllMemoByDate(): DataSource.Factory<Int, Memo>
 
     @Query("SELECT * FROM Memo WHERE id = :id")
-    fun getMemoById(id: Long) : Memo
+    fun getMemoById(id: Long): Memo
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(memoList: List<Memo?>?)

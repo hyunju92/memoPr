@@ -1,7 +1,6 @@
 package hyunju.com.memo2020.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -22,54 +21,38 @@ class ItemFragment : Fragment(), EditModeImgAdapter.OnItemBtnClickListener {
     }
 
     private var menu: Menu? = null
-    private var isDeleteAction: Boolean = false
 
 
-    // menu setting
+    // set toolbar menu
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.item_frag_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
-
         this.menu = menu
-        Log.d("testMenCre", "onCreateOptionsMenu = " + android.R.id.home)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d("testOtpItem", "item = " + item.itemId)
-        Log.d("testOtpItem", "item = " + android.R.id.home)
-
         when (item.itemId) {
             // prevent parsing toolbar back btn
-            android.R.id.home -> {
-                return false
-            }
+            android.R.id.home -> return false
 
             // when default clicked, set inner menu by mode status
-            R.id.default_menu -> {
-                setMenuItem(viewmodel.isEditMode())
-            }
+            R.id.default_menu -> setMenuItem(viewmodel.isEditMode())
+
 
             // * (real) inner menu item 3
-            R.id.edit -> {
-//                viewmodel.currentMode.value = viewmodel.EDIT_MODE
-                viewmodel.setCurrentMode(viewmodel.EDIT_MODE)
-            }
+            R.id.edit -> viewmodel.currentMode.value = viewmodel.EDIT_MODE
 
             R.id.save -> {
                 viewmodel.save(requireContext(),
                         binding.titleEt.text.toString(), binding.contentsEt.text.toString())
                 viewmodel.currentMode.value = viewmodel.DETAIL_MODE
-
-
             }
+
             R.id.delete -> {
+                viewmodel.isNeedToSaveIfFinished = false
                 viewmodel.delete(requireContext())
-
-                isDeleteAction = true
                 Navigation.findNavController(requireActivity(), R.id.main_fragment).navigateUp()
-
             }
-
         }
         return true
     }
@@ -89,20 +72,17 @@ class ItemFragment : Fragment(), EditModeImgAdapter.OnItemBtnClickListener {
         ItemFragmentArgs.fromBundle(arguments!!).memoItem.let {
             viewmodel.setMemoItem(it)
         }
-        // receive arg (a memo item) from previous frag
+        // receive arg (mode) from previous frag
         ItemFragmentArgs.fromBundle(arguments!!).initMode.let {
-            //            viewmodel.currentMode.value = it
-
-            viewmodel.setCurrentMode(it)
-
+            viewmodel.currentMode.value = it
         }
 
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.item_fragment, container, false)
-        setHasOptionsMenu(true)
 
+        setHasOptionsMenu(true)
         return binding.root
     }
 
@@ -114,47 +94,16 @@ class ItemFragment : Fragment(), EditModeImgAdapter.OnItemBtnClickListener {
     }
 
     private fun observerLiveData() {
+        // observe mode status
         viewmodel.currentMode.observe(this, Observer {
-            // observe when mode status changed
-            Log.d("testImgList", "Observer currentmode = " + it)
             setLayoutByMode()
         })
 
+        // observe imgList (changed when editing)
         viewmodel.imgList.observe(this, Observer {
-            val imgList = it
-
-            binding.imgRv.adapter =
-                    if (viewmodel.isEditMode()) {
-                        EditModeImgAdapter(imgList).apply {
-                            this.setOnItemBtnClickListener(this@ItemFragment)
-                        }
-                    } else {
-                        DetailModeImgAdapter(imgList) // just view img list
-                    }
-
-
-            Log.d("testImgListobserve", "remove " + viewmodel.imgList.value!!.size)
+            viewmodel.isNeedToSaveIfFinished = true
+            setImgRvAdapter(viewmodel.isEditMode(), it)
         })
-
-    }
-
-    private fun setLayoutByMode() {
-        val isEditMode = viewmodel.isEditMode()
-        val imgList = viewmodel.imgList.value!!
-
-        // set editable mode
-        binding.titleEt.isEnabled = isEditMode
-        binding.contentsEt.isEnabled = isEditMode
-
-
-        // set img list adapter
-        binding.imgRv.adapter = if (isEditMode) {
-            EditModeImgAdapter(imgList).apply {
-                this.setOnItemBtnClickListener(this@ItemFragment)
-            }
-        } else {
-            DetailModeImgAdapter(imgList) // just view img list
-        }
 
     }
 
@@ -166,21 +115,29 @@ class ItemFragment : Fragment(), EditModeImgAdapter.OnItemBtnClickListener {
         // set text contents
         binding.titleEt.setText(viewmodel.memoItem.value?.title ?: "")
         binding.contentsEt.setText(viewmodel.memoItem.value?.contents ?: "")
-
-        // set mode
-//        viewmodel.currentMode.value = viewmodel.firstInitMode
-        Log.d("testImgList", "setLayout mode " + viewmodel.currentMode.value)
-
     }
 
+    private fun setLayoutByMode() {
+        val isEditMode = viewmodel.isEditMode()
 
-    override fun onStop() {
-        if (!isDeleteAction) {
-            // save item excluding from deleting
-            viewmodel.save(requireContext(),
-                    binding.titleEt.text.toString(), binding.contentsEt.text.toString())
+        // set editable mode
+        binding.titleEt.isEnabled = isEditMode
+        binding.contentsEt.isEnabled = isEditMode
+
+        // set img list adapter
+        setImgRvAdapter(isEditMode, viewmodel.imgList.value!!)
+    }
+
+    private fun setImgRvAdapter(isEditMode: Boolean, imgList: ArrayList<String>) {
+        binding.imgRv.adapter = if (isEditMode) {
+            // adapter for editing
+            EditModeImgAdapter(imgList).apply {
+                this.setOnItemBtnClickListener(this@ItemFragment)
+            }
+        } else {
+            // adapter just show image
+            DetailModeImgAdapter(imgList)
         }
-        super.onStop()
     }
 
 
@@ -190,8 +147,7 @@ class ItemFragment : Fragment(), EditModeImgAdapter.OnItemBtnClickListener {
 
     // EditModeImgAdapter.OnItemBtnClickListener
     override fun onItemBtnClick(v: View, postion: Int, request: Int) {
-        Log.d("testItemonItemBtnClick", "postion " + postion)
-        Log.d("testItemonItemBtnClick", "request " + request)
+        viewmodel.isNeedToSaveIfFinished = false
 
         when (request) {
             R.id.delete_btn_edit_img -> {
@@ -201,7 +157,6 @@ class ItemFragment : Fragment(), EditModeImgAdapter.OnItemBtnClickListener {
             }
 
             R.id.uri_btn_edit_img -> {
-                Log.d("testItemonItemBtnClick", "init uri_btn_edit_img ")
                 viewmodel.moveCaptureImgDialogFrag(view!!, "testUrl")
             }
 
@@ -214,5 +169,14 @@ class ItemFragment : Fragment(), EditModeImgAdapter.OnItemBtnClickListener {
             }
         }
     }
+
+    override fun onStop() {
+        super.onStop()
+        if (viewmodel.isNeedToSaveIfFinished) {
+            //  save memo except some case
+            viewmodel.save(requireContext(), binding.titleEt.text.toString(), binding.contentsEt.text.toString())
+        }
+    }
+
 }
 

@@ -30,40 +30,28 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
 
     val dao = MemoDatabase.get(application).memoDao()
-    val currentMode: MutableLiveData<Int> = MutableLiveData()
 
-    var memoItem: MutableLiveData<Memo?> = MutableLiveData()
-    var imgList: MutableLiveData<ArrayList<String>> = MutableLiveData()
+    val currentMode: MutableLiveData<Int> = MutableLiveData()
+    val memoItem: MutableLiveData<Memo?> = MutableLiveData()
+    val imgList: MutableLiveData<ArrayList<String>> = MutableLiveData()
+
+    var isNeedToSaveIfFinished: Boolean = true
+
 
     // * 2 mode (detail/edit)
     val DETAIL_MODE = 1 // just view to show detail memo
     val EDIT_MODE = 2   // edit contents view
 
-    // mode when first init
-    // (from list item click or edit btn click)
-    var firstInitMode: Int = 0
-
-    fun setCurrentMode(mode: Int) {
-        if (firstInitMode == 0) {
-            firstInitMode = mode
-        }
-        currentMode.value = mode
-    }
-
-
     fun isEditMode(): Boolean {
         return this.currentMode.value == EDIT_MODE
     }
 
+
+    // * set memo item (received as argument)
     fun setMemoItem(memo: Memo?) {
         memoItem.value = memo
         imgList.value = memo?.getImageList() ?: ArrayList()
 
-        if (imgList.value!!.size > 0) {
-            Log.d("imgListV", "v = " + imgList.value?.toString())
-            Log.d("imgListV", "v 0 = " + imgList.value?.get(0))
-            Log.d("imgListV", "v size= " + imgList.value?.size)
-        }
     }
 
 
@@ -83,11 +71,10 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
         } else {
             val newMemo = Memo(title = title, contents = contents, images = "", date = Date())
+            newMemo.setImgStr(imgList.value!!)
             insert(newMemo)
             Toast.makeText(context, "저장되었습니다.", Toast.LENGTH_SHORT).show()
-
         }
-
 
     }
 
@@ -270,13 +257,12 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
                     }
 
                     val photoUri = FileProvider.getUriForFile(context, "hyunju.com.memo2020.provider", filePath)
-                    Util.savePref(context, "uriFromCamera", photoUri.toString())
+                    Util.setPref(context, "uriFromCamera", photoUri.toString())
 
 
                     this.action = MediaStore.ACTION_IMAGE_CAPTURE
                     this.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
 
-//                            this.action = MediaStore.ACTION_IMAGE_CAPTURE
 
                 }
                 else -> {
@@ -290,23 +276,19 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
     }
 
     fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK) {
+        if (resultCode != Activity.RESULT_OK) {
             when (requestCode) {
                 REQ_PICK_FROM_ALBUM -> {
-                    if (resultCode == Activity.RESULT_OK) {
-                        getFilePathFromContentUri(getApplication(), data!!.data!!)?.let {
-                            addImgList(it.toString())
-                        }
-
-                        Log.d("testPickAlbum", "onactivity saveFile = data!!.data! " + data!!.data!!)
+                    getFilePathFromContentUri(getApplication(), data!!.data!!)?.let {
+                        addImgList(it.toString())
                     }
                 }
                 REQ_PICK_FROM_CAMERA -> {
                     Util.getPref(getApplication(), "uriFromCamera").let {
-                        if (it.isNotEmpty()) Log.d("testPickAlbum", "uri e= " + it)
-                        addImgList(it)
+                        if (it.isNotEmpty()) addImgList(it)
                     }
                 }
+
             }
         }
     }
