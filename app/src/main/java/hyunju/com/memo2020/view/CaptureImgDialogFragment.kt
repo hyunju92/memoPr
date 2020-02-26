@@ -28,7 +28,7 @@ class CaptureImgDialogFragment : DialogFragment() {
         @Synchronized
         fun get(): CaptureImgDialogFragment {
             if (INSTANCE == null) {
-                return CaptureImgDialogFragment()
+                INSTANCE = CaptureImgDialogFragment()
             }
             return INSTANCE!!
         }
