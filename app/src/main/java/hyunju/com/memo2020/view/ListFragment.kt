@@ -59,7 +59,7 @@ class ListFragment : Fragment(), ListItemAdapter.OnItemClickListener {
     }
 
 
-    // MemoAdapter.OnItemClickListener
+    // ListAdapter.OnItemClickListener
     override fun onItemClick(v: View, memo: Memo) {
         listFragViewmodel.moveItemFragment(v, memo, 1)
     }
