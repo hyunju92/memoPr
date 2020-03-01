@@ -20,7 +20,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class getImgTest {
+public class GetImgTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActvityRule = new ActivityTestRule<>(MainActivity.class);
