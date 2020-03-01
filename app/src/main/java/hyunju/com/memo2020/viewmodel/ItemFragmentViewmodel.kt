@@ -194,7 +194,7 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
             when (requestCode) {
                 REQ_PICK_FROM_ALBUM -> {
                     if (data?.data != null) {
-                        val providerUri = ImgUtil.copyUriIntoProvider(getApplication(), data.data!!)
+                        val providerUri = ImgUtil.copyUri(getApplication(), data.data!!)
                         addImgList(providerUri?.toString())
                     }
                 }
