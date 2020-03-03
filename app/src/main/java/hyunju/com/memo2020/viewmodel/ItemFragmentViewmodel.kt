@@ -70,6 +70,7 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
                 Toast.makeText(context, "수정되었습니다.", Toast.LENGTH_SHORT).show()
             }
 
+
         } else {
             val newMemo = Memo(title = title, contents = contents, images = "", date = Date())
             newMemo.setImgStr(imgList.value!!)
