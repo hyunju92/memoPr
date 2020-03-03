@@ -5,7 +5,6 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.AsyncTask
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
@@ -13,6 +12,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.Navigation
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.db.MemoDatabase
@@ -21,6 +21,8 @@ import hyunju.com.memo2020.util.ImgUtil
 import hyunju.com.memo2020.util.ImgUtil.Companion.getProviderUri
 import hyunju.com.memo2020.util.Util
 import hyunju.com.memo2020.view.ItemFragmentDirections
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -87,33 +89,20 @@ class ItemFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
     // * access db
     private fun update(memo: Memo?) {
-        doAsync {
+        viewModelScope.launch(Dispatchers.IO) {
             dao.update(memo)
-        }.execute()
+        }
     }
 
     private fun insert(memo: Memo) {
-        doAsync {
+        viewModelScope.launch(Dispatchers.IO) {
             dao.insert(memo)
-        }.execute()
+        }
     }
 
     private fun delete(id: Long) {
-        doAsync {
+        viewModelScope.launch(Dispatchers.IO) {
             dao.deleteById(id)
-        }.execute()
-    }
-
-    class doAsync(val handler: () -> Unit) : AsyncTask<Void, Void, Void>() {
-        override fun doInBackground(vararg params: Void?): Void? {
-            handler()
-            return null
-        }
-
-        override fun onPostExecute(result: Void?) {
-            super.onPostExecute(result)
-            Log.d("testsObserver", "onPostExecute ")
-
         }
     }
 

@@ -13,7 +13,7 @@ interface MemoDao {
     fun getAllMemoByDate(): DataSource.Factory<Int, Memo>
 
     @Query("SELECT * FROM Memo WHERE id = :id")
-    fun getMemoById(id: Long): Memo
+    fun getMemoById(id: Long) : Memo
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(memoList: List<Memo?>?)
