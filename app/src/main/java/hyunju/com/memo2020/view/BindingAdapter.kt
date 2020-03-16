@@ -10,6 +10,7 @@ object BindingAdapter {
     @BindingAdapter("memo:match_height_to_device_width")
     @JvmStatic
     fun matchHeightToDeviceWidth(view: View, boolean: Boolean) {
+
         val pxWidth = view.getResources().getDisplayMetrics().widthPixels
         val layoutParams: ViewGroup.LayoutParams = view.layoutParams
         layoutParams.height = pxWidth

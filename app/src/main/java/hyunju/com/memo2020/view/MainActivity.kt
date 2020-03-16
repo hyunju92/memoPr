@@ -11,7 +11,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ActivityMainBinding
-import hyunju.com.memo2020.viewmodel.ItemFragmentViewmodel
+import hyunju.com.memo2020.viewmodel.EditFragmentViewmodel
 import hyunju.com.memo2020.viewmodel.MainAcitivityViewmodel
 
 
@@ -41,30 +41,18 @@ class MainActivity : AppCompatActivity() {
         return Navigation.findNavController(this, R.id.main_fragment).navigateUp()
     }
 
-    override fun onBackPressed() {
-        if (!Navigation.findNavController(this, R.id.main_fragment).popBackStack()) {
-            // finish when not exist back stack
-            finish()
-
-        } else {
-            Navigation.findNavController(this, R.id.main_fragment).navigateUp()
-
-        }
-    }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // send back it to ItemFragment,
-        // when result was from startactivityforresult of ItemFragment (to get image)
+        // send back it to EditFragment,
+        // when result was from startactivityforresult of EditFragment (to get image)
         val currentFrag = Navigation.findNavController(this, R.id.main_fragment).getCurrentDestination()?.getId()
+        if (currentFrag == R.id.EditFragment) {
+            val itemFragViemodel: EditFragmentViewmodel =
+                    ViewModelProvider(this).get(EditFragmentViewmodel::class.java)
 
-        if (currentFrag == R.id.itemFragment) {
-            val itemFragViemodel: ItemFragmentViewmodel =
-                    ViewModelProvider(this).get(ItemFragmentViewmodel::class.java)
-
-            itemFragViemodel.onActivityResult(requestCode, resultCode, data)
+            itemFragViemodel.onActivityResult(this, requestCode, resultCode, data)
 
         }
     }

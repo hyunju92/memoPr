@@ -8,18 +8,18 @@
             <LayoutPositions>
               <option name="myPositions">
                 <map>
-                  <entry key="captureImgDialogFragment">
+                  <entry key="EditFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="492" />
-                            <option name="y" value="13" />
+                            <option name="x" value="12" />
+                            <option name="y" value="12" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_CaptureImgDialogFragment_to_ItemFragment">
+                            <entry key="action_EditFragment_to_CaptureImgDialogFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -29,23 +29,35 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="itemFragment">
+                  <entry key="ViewFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="256" />
+                            <option name="x" value="12" />
                             <option name="y" value="12" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_ItemFragment_to_CaptureImgDialogFragment">
+                            <entry key="action_ViewFragment_to_EditFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
                             </entry>
                           </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="captureImgDialogFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="294" />
+                            <option name="y" value="14" />
+                          </Point>
                         </option>
                       </LayoutPositions>
                     </value>
@@ -61,7 +73,12 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_ListFragment_to_ItemFragment">
+                            <entry key="action_ListFragment_to_EditFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_ListFragment_to_ViewFragment">
                               <value>
                                 <LayoutPositions />
                               </value>

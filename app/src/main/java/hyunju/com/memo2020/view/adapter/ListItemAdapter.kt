@@ -11,28 +11,18 @@ import hyunju.com.memo2020.R
 import hyunju.com.memo2020.model.Memo
 import kotlinx.android.synthetic.main.memo_item.view.*
 
-class ListItemAdapter :
-        PagedListAdapter<Memo, ListItemAdapter.MemoViewholder>(DIFF_CALLBACK) {
+class ListItemAdapter(val itemClick: (View, Memo) -> Unit, val itemLongClick: (View, Memo) -> Unit) :
+        PagedListAdapter<Memo, ListItemAdapter.ListItemViewholder>(DIFF_CALLBACK) {
 
-     var mListener: OnItemClickListener? = null
 
-     interface OnItemClickListener {
-        fun onItemClick(v: View, memo: Memo)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListItemViewholder {
+        return ListItemViewholder(parent)
     }
 
-     fun setOnItemClickListener(listener: OnItemClickListener) {
-        mListener = listener
-    }
-
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewholder {
-        return MemoViewholder(parent)
-    }
-
-    override fun onBindViewHolder(holder: MemoViewholder, position: Int) {
+    override fun onBindViewHolder(holder: ListItemViewholder, position: Int) {
         val memo = getItem(position)
         if (memo != null) {
-            holder.bindTo(memo)
+            holder.bind(memo)
         }
     }
 
@@ -46,21 +36,17 @@ class ListItemAdapter :
         }
     }
 
-    inner class MemoViewholder(parent: ViewGroup) : RecyclerView.ViewHolder(
+    inner class ListItemViewholder(parent: ViewGroup) : RecyclerView.ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.memo_item, parent, false)) {
 
-        var memo: Memo? = null
-
-        init {
-            itemView.setOnClickListener {
-                mListener?.onItemClick(it, memo!!)
+        fun bind(memo: Memo) {
+            itemView.setOnLongClickListener {
+                itemLongClick(it, memo)
+                true
             }
-        }
+            itemView.setOnClickListener { itemClick(it, memo) }
 
-        fun bindTo(memo: Memo?) {
-            this.memo = memo
-
-            val loadImg = memo?.getImageList()!!.let {
+            val loadImg = memo.getImageList().let {
                 if (it.size > 0) it[0] else null
             } ?: R.drawable.ic_image_black_24dp
 
@@ -72,7 +58,7 @@ class ListItemAdapter :
                     .into(itemView.thumb_iv)
 
             itemView.title_tv.text = memo.title
-            itemView.date_tv.text = memo.getDateText()
+            itemView.date_tv.text = memo.getDateText(itemView.context)
             itemView.contents_tv.text = memo.contents
 
         }

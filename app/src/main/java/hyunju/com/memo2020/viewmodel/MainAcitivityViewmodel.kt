@@ -6,7 +6,9 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import hyunju.com.memo2020.R
 import java.util.*
+
 
 class MainAcitivityViewmodel(application: Application) : AndroidViewModel(application) {
 
@@ -25,8 +27,8 @@ class MainAcitivityViewmodel(application: Application) : AndroidViewModel(applic
 
         TedPermission.with(context)
                 .setPermissionListener(permissionListener)
-                .setRationaleMessage("메모 기능 사용을 위해 권한이 필요합니다.")
-                .setDeniedMessage("권한을 허용하지 않아 앱을 실행할 수 없습니다. \n[설정]-[권한]에서 권한을 다시 허용할 수 있습니다.")
+                .setRationaleMessage(context.getString(R.string.permission_rationale_msg))
+                .setDeniedMessage(context.getString(R.string.permission_denied_msg))
                 .setPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE,
                         android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .check()

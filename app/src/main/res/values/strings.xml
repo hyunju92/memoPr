@@ -1,3 +1,71 @@
 <resources>
     <string name="app_name">Memo2020</string>
+
+    // * db
+    <string name="db_file_name">memoDb</string>
+
+
+    // * model
+    <string name="date_format">yyyy년 MM월 dd일 HH:mm</string>
+
+
+    // * util
+    <string name="provider_authority">hyunju.com.memo2020.provider</string>
+    // pref
+    <string name="pref_file_name">memePref</string>
+    <string name="pref_key_uri_from_camera">uriFromCamera</string>
+
+
+    // * view
+    <string name="fail_img_loading">이미지를 가져오는데에 실패하였습니다.</string>
+
+
+    // * viewmodel
+    // memo db access
+    <string name="memo_insert">저장되었습니다.</string>
+    <string name="memo_update">수정되었습니다.</string>
+    <string name="memo_empty">입력 내용이 없습니다.</string>
+    <string name="memo_delete">삭제되었습니다.</string>
+    // permission
+    <string name="permission_rationale_msg">메모 기능 사용을 위해 권한이 필요합니다.</string>
+    <string name="permission_denied_msg">권한을 허용하지 않아 앱을 실행할 수 없습니다. [설정]-[권한]에서 권한을 다시 허용할 수 있습니다.</string>
+
+
+    // * res
+    // - layout
+    // capture dialog
+    <string name="url_load_title">외부 url을 입력해주세요.</string>
+    <string name="url_load_btn">이미지 불러오기</string>
+    <string name="url_save_btn">이미지 저장히기</string>
+    <string name="url_retry_btn">다시 시도하기</string>
+    // edit frag, view frag
+    <string name="title_hint">제목</string>
+    <string name="date_hint">작성일</string>
+    <string name="contents_hint">내용</string>
+
+    <string name="edit_date_hint">작성중</string>
+
+    // memo item
+    <string name="memo_item_title_hint">제목없음</string>
+    <string name="memo_item_date_hint">작성일</string>
+    <string name="memo_item_contents_hint">내용없음</string>
+    // select dialog
+    <string name="select_dialog_title">원하는 동작을 선택해주세요.</string>
+    // menu
+    <string name="delete">삭제</string>
+    <string name="save">저장</string>
+    <string name="edidt">편집</string>
+
+
+    // * nav graph label
+    <string name="lable_list_frag">메모 리스트</string>
+    <string name="lable_view_frag">메모 상세</string>
+    <string name="lable_edit_frag">메모 편집</string>
+    <string name="lable_capture_frag">외부 이미지 가져오기</string>
+
+
+
+
+
+
 </resources>

@@ -6,16 +6,16 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.view.View
 import androidx.core.content.FileProvider
+import hyunju.com.memo2020.R
 import org.apache.commons.io.IOUtils
 import java.io.*
 
 class ImgUtil {
     companion object {
 
-        private const val providerAuthority = "hyunju.com.memo2020.provider"
 
         fun getProviderUri(context: Context, filePath: File?): Uri {
-            return FileProvider.getUriForFile(context, providerAuthority,
+            return FileProvider.getUriForFile(context, context.getString(R.string.provider_authority),
                     filePath ?: createNewFilePath(context))
         }
 
@@ -34,7 +34,7 @@ class ImgUtil {
 
         fun copyUri(context: Context, originalUri: Uri): Uri? {
             val copiedFilePath = createNewFilePath(context)
-            val copiedUri = FileProvider.getUriForFile(context, providerAuthority, copiedFilePath)
+            val copiedUri = FileProvider.getUriForFile(context, context.getString(R.string.provider_authority), copiedFilePath)
 
             copyUri(context, originalUri, copiedFilePath)
 

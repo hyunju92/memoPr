@@ -1,9 +1,11 @@
 package hyunju.com.memo2020.model
 
+import android.content.Context
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
+import hyunju.com.memo2020.R
 import kotlinx.android.parcel.Parcelize
 import java.text.SimpleDateFormat
 import java.util.*
@@ -18,6 +20,7 @@ data class Memo(
         var images: String,       // image uri
         var date: Date
 ) : Parcelable {
+
     fun getImageList(): ArrayList<String> {
         val tempList = images.split(" ").let {
             if (it.size == 1 && it[0].isEmpty()) ArrayList() else it    // delte default value ""
@@ -44,9 +47,8 @@ data class Memo(
         this.images = imgStr
     }
 
-    fun getDateText(): String {
-//        return SimpleDateFormat("yyyy-MM-dd").format(date)
-        return SimpleDateFormat("yyyy년 MM월 dd일 HH:mm").format(date)
+    fun getDateText(context: Context): String {
+        return SimpleDateFormat(context.getString(R.string.date_format)).format(date)
     }
 
 }

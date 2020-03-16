@@ -49,8 +49,8 @@ public class GetImgTest {
         String uri = "https://image.chosun.com/sitedata/image/201410/30/2014103000633_0.jpg";
 
 
-        onView(withId(R.id.url_input_et)).perform(replaceText(uri));
-        onView(withId(R.id.input_btn)).perform(click());
+        onView(withId(R.id.url_load_et)).perform(replaceText(uri));
+        onView(withId(R.id.url_load_btn)).perform(click());
         onView(withId(R.id.save_btn)).perform(click());
         Espresso.pressBack();
     }

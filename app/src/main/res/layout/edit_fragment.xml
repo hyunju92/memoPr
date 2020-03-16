@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="hyunju.com.memo2020.viewmodel.ItemFragmentViewmodel" />
+            type="hyunju.com.memo2020.viewmodel.EditFragmentViewmodel" />
     </data>
 
 
@@ -40,7 +40,7 @@
                 android:id="@+id/text_cl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_margin="@dimen/text_layout_margin"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -58,31 +58,30 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="@null"
-                        android:enabled="false"
-                        android:hint="제목"
-                        android:textSize="24sp" />
+                        android:hint="@string/title_hint"
+                        android:textSize="@dimen/tv_size_large" />
 
                     <EditText
-                        android:id="@+id/date_et"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:enabled="false"
-                        android:hint="작성일"
-                        android:paddingLeft="16dp"
-                        android:textSize="12sp" />
+                        android:id="@+id/date_et"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/edit_date_hint"
+                        android:paddingLeft="@dimen/text_layout_margin"
+                        android:textSize="@dimen/tv_size_small" />
                 </LinearLayout>
 
                 <EditText
                     android:id="@+id/contents_et"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginLeft="@dimen/text_layout_margin"
+                    android:layout_marginTop="@dimen/text_layout_margin_large"
                     android:background="@null"
-                    android:enabled="false"
-                    android:hint="내용"
-                    android:paddingBottom="100dp"
-                    android:textSize="16sp" />
+                    android:hint="@string/contents_hint"
+                    android:paddingBottom="@dimen/contents_et_bottom_padding"
+                    android:textSize="@dimen/tv_size" />
 
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

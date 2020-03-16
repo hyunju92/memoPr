@@ -14,7 +14,7 @@ import hyunju.com.memo2020.model.Memo
 import hyunju.com.memo2020.view.adapter.ListItemAdapter
 import hyunju.com.memo2020.viewmodel.ListFragmentViewmodel
 
-class ListFragment : Fragment(), ListItemAdapter.OnItemClickListener {
+class ListFragment : Fragment() {
     protected lateinit var binding: ListFragmentBinding
     protected val listFragViewmodel: ListFragmentViewmodel by lazy {
         ViewModelProvider(this).get(ListFragmentViewmodel::class.java)
@@ -47,21 +47,19 @@ class ListFragment : Fragment(), ListItemAdapter.OnItemClickListener {
         binding.listRv.setLayoutManager(LinearLayoutManager(requireContext()))
         binding.listRv.setHasFixedSize(true)
 
-        ListItemAdapter().let {
-            it.setOnItemClickListener(this)
-            binding.listRv.adapter = it
-        }
+        binding.listRv.adapter = ListItemAdapter(object : (View, Memo) -> Unit {
+            override fun invoke(view: View, memo: Memo) {
+                listFragViewmodel.moveViewFragment(view, memo)
+            }
+        }, object : (View, Memo) -> Unit {
+            override fun invoke(view: View, memo: Memo) {
+                listFragViewmodel.showSelectDialog(requireContext(), requireActivity(), view, memo)
+            }
+        })
 
         binding.addBtn.setOnClickListener {
-            listFragViewmodel.moveItemFragment(view = it, memoItem = null, mode = 2)
-
+            listFragViewmodel.moveEditFragment(it)
         }
-    }
-
-
-    // ListAdapter.OnItemClickListener
-    override fun onItemClick(v: View, memo: Memo) {
-        listFragViewmodel.moveItemFragment(v, memo, 1)
     }
 
 

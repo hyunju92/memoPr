@@ -17,48 +17,48 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/url_input_cl"
+            android:id="@+id/url_load_cl"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/url_input_tv"
+                android:id="@+id/url_load_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="외부 url을 입력해주세요"
-                app:layout_constraintBottom_toTopOf="@+id/url_input_et"
+                android:text="@string/url_load_title"
+                app:layout_constraintBottom_toTopOf="@+id/url_load_et"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/url_input_et"
-                android:layout_width="320dp"
+                android:id="@+id/url_load_et"
+                android:layout_width="@dimen/input_et_width_default"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/input_btn"
+                app:layout_constraintBottom_toTopOf="@id/url_load_btn"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.3" />
 
             <ImageButton
-                android:id="@+id/remove_btn"
+                android:id="@+id/url_load_remove_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/ic_clear_black_24dp"
-                app:layout_constraintBottom_toBottomOf="@+id/url_input_et"
+                app:layout_constraintBottom_toBottomOf="@+id/url_load_et"
                 app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintLeft_toRightOf="@+id/url_input_et"
+                app:layout_constraintLeft_toRightOf="@+id/url_load_et"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1" />
 
             <Button
-                android:id="@+id/input_btn"
+                android:id="@+id/url_load_btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/colorAccent"
-                android:text="이미지 불러오기"
+                android:text="@string/url_load_btn"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -74,7 +74,7 @@
             android:visibility="gone">
 
             <WebView
-                android:id="@+id/screen_wv"
+                android:id="@+id/save_screen_wv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#ffffff"
@@ -85,7 +85,7 @@
                 memo:match_height_to_device_width="@{true}" />
 
             <ImageView
-                android:id="@+id/screen_iv"
+                android:id="@+id/save_screen_iv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#ffffff"
@@ -102,21 +102,21 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="1dp"
                 android:background="@color/colorAccent"
-                android:text="이미지 저장하기"
+                android:text="@string/url_save_btn"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/retry_btn"
+                app:layout_constraintRight_toLeftOf="@+id/save_retry_btn"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1" />
 
 
             <Button
-                android:id="@+id/retry_btn"
+                android:id="@+id/save_retry_btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="1dp"
                 android:background="@color/colorAccent"
-                android:text="다시 시도하기"
+                android:text="@string/url_retry_btn"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@+id/save_btn"
                 app:layout_constraintRight_toRightOf="parent"

@@ -33,6 +33,6 @@ interface MemoDao {
     @Query("DELETE FROM Memo WHERE id = :id")
     fun deleteById(id: Long)
 
-    
+
 
 }
