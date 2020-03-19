@@ -8,7 +8,7 @@
   
 ## 프로젝트 구조
 ![구조](https://github.com/hyunju92/memoPr/blob/master/app/src/main/res/drawable/MEMO%20APP%20Structure.png)   
-  > MVVM 패턴사용  
+  ### MVVM 패턴사용  
   >
   > - Model
   >   - Room과  Paging의 DataSource 함께 사용하여 db 구성
