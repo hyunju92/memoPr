@@ -11,9 +11,19 @@
   > MVVM 패턴사용  
   >
   > - Model
-  >   - Room과  paging DataSource 함께 사용함
+  >   - Room과  Paging의 DataSource 함께 사용하여 db 구성
   >   - kotlin 의 data class를 사용하여, 간편하게 모델 클래스 만듬
-  >   - TypeConverter를 사용하여 Date 타입의 Entity 구성
+  >   - 모델 클래스에서 TypeConverter를 사용하여 Date 타입의 Entity 구성
   >
   > - View
-  
+  >   - MainActivity
+  >     - 단일 액티비티(MainActivity)와 여러개의 프래그먼트로 구성
+  >     - Navigation을 적용하고 MainActivity의 툴바와 싱크를 맞춤
+  >     - Navigation으로 프래그먼트를 전환 (전환 시, argument를 활용하여 type safe하게 data를 전달)
+  >   
+  >   - ListFragment
+  >     - 메모 리스트를 보여줄 때에 Paging의 PagedListAdapter를 사용
+  >    
+  > - ViewModel
+  >   - LiveData를 사용하여 View에서 데이터의 변경을 관찰할 수 있게 함
+  >   - 코루틴의 viewModelScope에서 비동기 작업(db 접근이 필요한 일들)을 진행 
