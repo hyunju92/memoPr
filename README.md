@@ -32,16 +32,16 @@
   >   - 코루틴의 viewModelScope에서 비동기 작업(db 접근이 필요한 일들)을 진행     
   
   
-  ## 배운점
-    > - 새로운 경험
-    >   - MVVM 디자인 패턴의 적용 
-    >   - ViewModel, LiveData, Paging 등 Archictecture Component의 적용
-    >   - Room, Navigation 등 Jetpack 라이브러리의 적용
-    >   - 코루틴 일부분에서 사용해봄
-    >   - 코틀린 문법에 익숙해지기
-    >
-    > - 부족했던 & 앞으로 발전시켜 나갈 부분
-    >   - MVVM 디자인 패턴의 불완전함 - DataBinding 공부해서 적용하기
-    >   - 코틀린 기능 일부만 사용 - extension function, list의 filter 등 기능 공부해서 적용하기
-    >   - 코틀린 문법 작성이 부족함 - 코틀린 더 공부해서 더 간결하게 고치기
+## 배운점
+  > - 새로운 경험
+  >   - MVVM 디자인 패턴의 적용 
+  >   - ViewModel, LiveData, Paging 등 Archictecture Component의 적용
+  >   - Room, Navigation 등 Jetpack 라이브러리의 적용
+  >   - 코루틴 일부분에서 사용해봄
+  >   - 코틀린 문법에 익숙해지기
+  >
+  > - 부족했던 & 앞으로 발전시켜 나갈 부분
+  >   - MVVM 디자인 패턴의 불완전함 - DataBinding 공부해서 적용하기
+  >   - 코틀린 기능 일부만 사용 - extension function, list의 filter 등 기능 공부해서 적용하기
+  >   - 코틀린 문법 작성이 부족함 - 코틀린 더 공부해서 더 간결하게 고치기
     
