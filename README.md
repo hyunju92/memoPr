@@ -38,7 +38,7 @@
   >   - ViewModel, LiveData, Paging 등 Archictecture Component의 적용
   >   - Room, Navigation 등 Jetpack 라이브러리의 적용
   >   - 코루틴 일부분에서 사용해봄
-  >   - 코틀린 문법에 익숙해지기
+  >   - 코틀린 사용에 
   >
   > - 부족했던 & 앞으로 발전시켜 나갈 부분
   >   - MVVM 디자인 패턴의 불완전함 - DataBinding 공부해서 적용하기
