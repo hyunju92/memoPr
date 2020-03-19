@@ -8,8 +8,8 @@
   
 ## 프로젝트 구조
 ![구조](https://github.com/hyunju92/memoPr/blob/master/app/src/main/res/drawable/MEMO%20APP%20Structure.png)   
-  > MVVM 구조로 구성함    
-  > 1. 모델
-  >   * 내용1
-  >   * 내용2
-  > 2. 뷰
+  > MVVM 패턴사용  
+  > - 모델
+  >   - 내용1
+  >   - 내용2
+  > - 뷰
