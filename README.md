@@ -9,7 +9,11 @@
 ## 프로젝트 구조
 ![구조](https://github.com/hyunju92/memoPr/blob/master/app/src/main/res/drawable/MEMO%20APP%20Structure.png)   
   > MVVM 패턴사용  
-  > - 모델
-  >   - 내용1
-  >   - 내용2
-  > - 뷰
+  >
+  > - Model
+  >   - Room과  paging DataSource 함께 사용함
+  >   - kotlin 의 data class를 사용하여, 간편하게 모델 클래스 만듬
+  >   - TypeConverter를 사용하여 Date 타입의 Entity 구성
+  >
+  > - View
+  
