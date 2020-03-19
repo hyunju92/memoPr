@@ -9,9 +9,9 @@
 ## 프로젝트 구조
 ![구조](https://github.com/hyunju92/memoPr/blob/master/app/src/main/res/drawable/MEMO%20APP%20Structure.png)   
   ### MVVM 패턴 사용  
-  > - 전체 구조
-  >   - View와 ViewModel의 역할을 구분함. Activity와 Fragment에 가중됐던 작업을 ViewModel에 이관.
-  >   - 뷰와 로직사이의 의존성이 사라져서, 모듈화된 개발 가능
+  - 전체 구조
+    View와 ViewModel의 역할을 구분함. Activity와 Fragment에 가중됐던 작업을 ViewModel에 이관.
+    뷰와 로직사이의 의존성이 사라져서, 모듈화된 개발 가능
   >
   > - Model
   >   - Room과  Paging의 DataSource 함께 사용하여 db 구성
