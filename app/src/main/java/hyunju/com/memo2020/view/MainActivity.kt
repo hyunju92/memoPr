@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+               super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         // send back it to EditFragment,
         // when result was from startactivityforresult of EditFragment (to get image)
-        val currentFrag = Navigation.findNavController(this, R.id.main_fragment).getCurrentDestination()?.getId()
+        val currentFrag = Navigation.findNavController(this, R.id.main_fragment).currentDestination?.id
         if (currentFrag == R.id.EditFragment) {
             val itemFragViemodel: EditFragmentViewmodel =
                     ViewModelProvider(this).get(EditFragmentViewmodel::class.java)

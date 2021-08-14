@@ -39,7 +39,6 @@ class EditFragment : Fragment() {
             }
             R.id.save -> save()
 
-
         }
         return true
     }
