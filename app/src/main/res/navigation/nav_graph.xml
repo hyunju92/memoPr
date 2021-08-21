@@ -73,20 +73,8 @@
             app:nullable="true" />
 
 
-        <action
-            android:id="@+id/action_EditFragment_to_CaptureImgDialogFragment"
-            app:destination="@+id/captureImgDialogFragment" />
-
     </fragment>
 
-
-    <fragment
-        android:id="@+id/captureImgDialogFragment"
-        android:name="hyunju.com.memo2020.view.CaptureFragment"
-        android:label="@string/lable_capture_frag"
-        tools:layout="@layout/capture_dialog_fragment">
-
-    </fragment>
 
 
 </navigation>

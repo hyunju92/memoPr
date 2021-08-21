@@ -50,15 +50,12 @@ class EditImgAdapter(imgList: ArrayList<String>, val itemClick: (View, Int) -> U
         val lastCl = itemView.findViewById<ConstraintLayout>(R.id.last_cl_edit_img)
         val cameraBtn = itemView.findViewById<ImageButton>(R.id.camera_btn_edit_img)
         val albumBtn = itemView.findViewById<ImageButton>(R.id.album_btn_edit_img)
-        val uriBtn = itemView.findViewById<ImageButton>(R.id.uri_btn_edit_img)
-
 
         fun bind(position: Int, imgStr: String) {
             if (tempList.size == position + 1) {
                 // set last view
                 cameraBtn.setOnClickListener { itemClick(it, position) }
                 albumBtn.setOnClickListener { itemClick(it, position) }
-                uriBtn.setOnClickListener { itemClick(it, position) }
 
                 itemCl.visibility = GONE
                 lastCl.visibility = VISIBLE

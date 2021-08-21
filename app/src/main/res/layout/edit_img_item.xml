@@ -59,29 +59,19 @@
             android:layout_width="@dimen/img_small_width"
             android:layout_height="@dimen/img_small_height"
             android:background="@drawable/ic_photo_primary_24dp"
+            app:layout_constraintEnd_toStartOf="@+id/camera_btn_edit_img"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/camera_btn_edit_img"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/camera_btn_edit_img"
             android:layout_width="@dimen/img_small_width"
             android:layout_height="@dimen/img_small_height"
+            app:layout_constraintStart_toEndOf="@+id/album_btn_edit_img"
+            app:layout_constraintEnd_toEndOf="parent"
             android:background="@drawable/ic_photo_camera_primary_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/album_btn_edit_img"
-            app:layout_constraintRight_toLeftOf="@+id/uri_btn_edit_img"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageButton
-            android:id="@+id/uri_btn_edit_img"
-            android:layout_width="@dimen/img_small_width"
-            android:layout_height="@dimen/img_small_height"
-            android:background="@drawable/ic_web_asset_primary_24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/camera_btn_edit_img"
-            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

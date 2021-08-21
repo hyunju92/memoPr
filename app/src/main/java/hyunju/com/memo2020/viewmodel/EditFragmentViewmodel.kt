@@ -18,7 +18,6 @@ import hyunju.com.memo2020.model.Memo
 import hyunju.com.memo2020.util.ImgUtil
 import hyunju.com.memo2020.util.ImgUtil.Companion.getProviderUri
 import hyunju.com.memo2020.util.Util
-import hyunju.com.memo2020.view.EditFragmentDirections
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
@@ -118,8 +117,6 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
         when (requestBtnId) {
             R.id.delete_btn_edit_img -> deleteImg(context, postion)
 
-            R.id.uri_btn_edit_img -> getImgByUri(v)
-
             R.id.camera_btn_edit_img, R.id.album_btn_edit_img -> getImgByStartActivity(context, activity, requestBtnId)
         }
     }
@@ -133,13 +130,6 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
         tempList.removeAt(position)
 
         imgList.value = tempList
-    }
-
-
-    // get img from uri - move to CaptureImgDialogFragment to get external url
-    private fun getImgByUri(view: View) {
-        val action = EditFragmentDirections.actionEditFragmentToCaptureImgDialogFragment()
-        Navigation.findNavController(view).navigate(action)
     }
 
 
