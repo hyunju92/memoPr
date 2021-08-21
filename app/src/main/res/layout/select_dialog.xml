@@ -24,17 +24,7 @@
         android:src="@drawable/ic_delete_white_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/select_dialog_view"
-        app:layout_constraintTop_toTopOf="@id/select_dialog_tv" />
-
-    <ImageButton
-        android:id="@+id/select_dialog_view"
-        android:layout_width="@dimen/img_small_width"
-        android:layout_height="@dimen/img_small_height"
-        android:src="@drawable/ic_pageview_white_24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/select_dialog_delete"
-        app:layout_constraintRight_toRightOf="@id/select_dialog_edit"
+        app:layout_constraintRight_toLeftOf="@+id/select_dialog_edit"
         app:layout_constraintTop_toTopOf="@id/select_dialog_tv" />
 
     <ImageButton
@@ -43,7 +33,7 @@
         android:layout_height="@dimen/img_small_height"
         android:src="@drawable/ic_mode_edit_white_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/select_dialog_view"
+        app:layout_constraintLeft_toRightOf="@id/select_dialog_delete"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/select_dialog_tv" />
 

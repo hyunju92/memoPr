@@ -86,12 +86,7 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
     }
 
     private fun afterSave(activity: Activity, msg: String?) {
-        val viewFragVm: ViewFragmentViewmodel by lazy {
-            ViewModelProvider(activity as ViewModelStoreOwner).get(ViewFragmentViewmodel::class.java)
-        }
-
         Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show()
-        viewFragVm.setMemoItem(memo = memoItem.value)
         Navigation.findNavController(activity, R.id.main_fragment).navigateUp()
     }
 

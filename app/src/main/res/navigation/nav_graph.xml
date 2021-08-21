@@ -12,16 +12,6 @@
         tools:layout="@layout/list_fragment">
 
         <action
-            android:id="@+id/action_ListFragment_to_ViewFragment"
-            app:destination="@id/ViewFragment">
-            <argument
-                android:name="memo_item"
-                android:defaultValue="@null"
-                app:argType="hyunju.com.memo2020.model.Memo"
-                app:nullable="true" />
-        </action>
-
-        <action
             android:id="@+id/action_ListFragment_to_EditFragment"
             app:destination="@id/EditFragment">
             <argument
@@ -31,31 +21,6 @@
                 app:nullable="true" />
         </action>
 
-
-    </fragment>
-
-
-    <fragment
-        android:id="@+id/ViewFragment"
-        android:name="hyunju.com.memo2020.view.ViewFragment"
-        android:label="@string/lable_view_frag"
-        tools:layout="@layout/view_fragment">
-
-        <argument
-            android:name="memo_item"
-            android:defaultValue="@null"
-            app:argType="hyunju.com.memo2020.model.Memo"
-            app:nullable="true" />
-
-        <action
-            android:id="@+id/action_ViewFragment_to_EditFragment"
-            app:destination="@id/EditFragment">
-            <argument
-                android:name="memo_item"
-                android:defaultValue="@null"
-                app:argType="hyunju.com.memo2020.model.Memo"
-                app:nullable="true" />
-        </action>
 
     </fragment>
 

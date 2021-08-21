@@ -49,7 +49,7 @@ class ListFragment : Fragment() {
 
         binding.listRv.adapter = ListItemAdapter(object : (View, Memo) -> Unit {
             override fun invoke(view: View, memo: Memo) {
-                listFragViewmodel.moveViewFragment(view, memo)
+                listFragViewmodel.moveEditFragment(view, memo)
             }
         }, object : (View, Memo) -> Unit {
             override fun invoke(view: View, memo: Memo) {

@@ -28,14 +28,6 @@ class ListFragmentViewmodel(application: Application) : AndroidViewModel(applica
             8
     ).build()
 
-
-    fun moveViewFragment(view: View, memoItem: Memo?) {
-        val action =
-                ListFragmentDirections.actionListFragmentToViewFragment(memoItem)
-
-        Navigation.findNavController(view).navigate(action)
-    }
-
     fun moveEditFragment(view: View, memoItem: Memo? = null) {
         val action =
                 ListFragmentDirections.actionListFragmentToEditFragment(memoItem)
@@ -51,7 +43,6 @@ class ListFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
         val deleteBtn = dialogView.findViewById<ImageButton>(R.id.select_dialog_delete)
         val editBtn = dialogView.findViewById<ImageButton>(R.id.select_dialog_edit)
-        val viewBtn = dialogView.findViewById<ImageButton>(R.id.select_dialog_view)
 
         deleteBtn.setOnClickListener {
             dialog.dismiss()
@@ -61,11 +52,6 @@ class ListFragmentViewmodel(application: Application) : AndroidViewModel(applica
             dialog.dismiss()
             moveEditFragment(view, memoItem)
         }
-        viewBtn.setOnClickListener {
-            dialog.dismiss()
-            moveViewFragment(view, memoItem)
-        }
-
 
         dialog.show()
     }
