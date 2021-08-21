@@ -3,6 +3,7 @@ package hyunju.com.memo2020.viewmodel
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import androidx.lifecycle.AndroidViewModel
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
@@ -26,12 +27,21 @@ class MainAcitivityViewmodel(application: Application) : AndroidViewModel(applic
         }
 
         TedPermission.with(context)
-                .setPermissionListener(permissionListener)
-                .setRationaleMessage(context.getString(R.string.permission_rationale_msg))
-                .setDeniedMessage(context.getString(R.string.permission_denied_msg))
-                .setPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .check()
+            .setPermissionListener(permissionListener)
+            .setRationaleMessage(context.getString(R.string.permission_rationale_msg))
+            .setDeniedMessage(context.getString(R.string.permission_denied_msg))
+            .let {
+                if (Build.VERSION.SDK_INT < 29) {
+                    it.setPermissions(
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                } else {
+                    it.setPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                }
+            }.check()
+
+
     }
 }
 
