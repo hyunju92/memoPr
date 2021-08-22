@@ -16,7 +16,7 @@ import hyunju.com.memo2020.R
 import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.model.Memo
 import hyunju.com.memo2020.util.ImgUtil
-import hyunju.com.memo2020.util.ImgUtil.Companion.getProviderUri
+import hyunju.com.memo2020.util.ImgUtil.Companion.createNewUri
 import hyunju.com.memo2020.util.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -106,13 +106,13 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
     // * from EditModeImgAdapter's 4-event
     // (delete img / get img from uri / get img from camera / get img from album)
-    fun onEditAdapterItemClickEvent(context: Context, activity: Activity, v: View, postion: Int, requestBtnId: Int) {
+    fun onEditAdapterItemClickEvent(context: Context, activity: Activity, v: View, postion: Int, requestBtnId: Int, imgId: String) {
         imgPosition = postion
 
         when (requestBtnId) {
             R.id.delete_btn_edit_img -> deleteImg(context, postion)
 
-            R.id.camera_btn_edit_img, R.id.album_btn_edit_img -> getImgByStartActivity(context, activity, requestBtnId)
+            R.id.camera_btn_edit_img, R.id.album_btn_edit_img -> getImgByStartActivity(context, activity, requestBtnId, imgId)
         }
     }
 
@@ -133,7 +133,7 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
     private val REQ_PICK_FROM_CAMERA = 1001
     private var reqCode = 0
 
-    private fun getImgByStartActivity(context: Context, activity: Activity, requestBtnId: Int) {
+    private fun getImgByStartActivity(context: Context, activity: Activity, requestBtnId: Int, imgId: String) {
         Intent().apply {
             when (requestBtnId) {
                 R.id.album_btn_edit_img -> {
@@ -145,7 +145,7 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
                 R.id.camera_btn_edit_img -> {
                     reqCode = REQ_PICK_FROM_CAMERA
-                    val providerImgUri = getProviderUri(context = context, filePath = null)
+                    val providerImgUri = createNewUri(context, imgId)
                     Util.setPref(context, context.getString(R.string.pref_key_uri_from_camera), providerImgUri.toString())
 
                     this.action = MediaStore.ACTION_IMAGE_CAPTURE

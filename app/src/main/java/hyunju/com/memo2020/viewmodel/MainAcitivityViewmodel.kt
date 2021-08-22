@@ -30,16 +30,8 @@ class MainAcitivityViewmodel(application: Application) : AndroidViewModel(applic
             .setPermissionListener(permissionListener)
             .setRationaleMessage(context.getString(R.string.permission_rationale_msg))
             .setDeniedMessage(context.getString(R.string.permission_denied_msg))
-            .let {
-                if (Build.VERSION.SDK_INT < 29) {
-                    it.setPermissions(
-                        android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    )
-                } else {
-                    it.setPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                }
-            }.check()
+            .setPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+            .check()
 
 
     }

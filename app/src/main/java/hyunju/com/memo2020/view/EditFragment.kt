@@ -110,7 +110,7 @@ class EditFragment : Fragment() {
     private fun getAdapter(imgList: ArrayList<String>): EditImgAdapter {
         return EditImgAdapter(imgList, object : (View, Int) -> Unit {
             override fun invoke(view: View, position: Int) {
-                vm.onEditAdapterItemClickEvent(requireContext(), requireActivity(), view, position, view.id)
+                vm.onEditAdapterItemClickEvent(requireContext(), requireActivity(), view, position, view.id, vm.memoItem.value?.id?.toString() + "_$position")
             }
         })
     }
