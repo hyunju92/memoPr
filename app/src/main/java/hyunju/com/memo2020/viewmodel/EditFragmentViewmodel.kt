@@ -106,13 +106,13 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
     // * from EditModeImgAdapter's 4-event
     // (delete img / get img from uri / get img from camera / get img from album)
-    fun onEditAdapterItemClickEvent(context: Context, activity: Activity, v: View, postion: Int, requestBtnId: Int, imgId: String) {
+    fun onEditAdapterItemClickEvent(context: Context, activity: Activity, v: View, postion: Int, requestBtnId: Int) {
         imgPosition = postion
 
         when (requestBtnId) {
             R.id.delete_btn_edit_img -> deleteImg(context, postion)
 
-            R.id.camera_btn_edit_img, R.id.album_btn_edit_img -> getImgByStartActivity(context, activity, requestBtnId, imgId)
+            R.id.camera_btn_edit_img, R.id.album_btn_edit_img -> getImgByStartActivity(context, activity, requestBtnId)
         }
     }
 
@@ -133,7 +133,7 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
     private val REQ_PICK_FROM_CAMERA = 1001
     private var reqCode = 0
 
-    private fun getImgByStartActivity(context: Context, activity: Activity, requestBtnId: Int, imgId: String) {
+    private fun getImgByStartActivity(context: Context, activity: Activity, requestBtnId: Int) {
         Intent().apply {
             when (requestBtnId) {
                 R.id.album_btn_edit_img -> {
@@ -145,7 +145,7 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
                 R.id.camera_btn_edit_img -> {
                     reqCode = REQ_PICK_FROM_CAMERA
-                    val providerImgUri = createNewUri(context, imgId)
+                    val providerImgUri = createNewUri(context)
                     Util.setPref(context, context.getString(R.string.pref_key_uri_from_camera), providerImgUri.toString())
 
                     this.action = MediaStore.ACTION_IMAGE_CAPTURE

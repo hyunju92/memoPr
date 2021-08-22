@@ -13,22 +13,21 @@ import java.io.*
 
 class ImgUtil {
     companion object {
-        fun createNewUri(context: Context, imgId: String): Uri? {
+        fun createNewUri(context: Context): Uri? {
             return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-                getUriFromMediaStore(context, imgId)
+                getUriFromMediaStore(context)
             } else {
                 getUriFromFile(context, createNewFile(context))
             }
         }
 
         fun copyUri(context: Context, originalUri: Uri): Uri? {
-            return copyUriToFile(context, originalUri)?.let { file -> getUriFromFile(context, file) }
+            return copyUriToFile(context, originalUri)
         }
 
         @RequiresApi(Build.VERSION_CODES.Q)
-        private fun getUriFromMediaStore(context: Context, fileName: String): Uri? {
+        private fun getUriFromMediaStore(context: Context): Uri? {
             val values = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
                 put(MediaStore.MediaColumns.MIME_TYPE, "image/*")
             }
 
@@ -50,17 +49,31 @@ class ImgUtil {
         // 갤러리 이미지 복사
         // 10 이상 : 외부 저장소 -> 외부 저장소 샌드박스로 복사
         // 10 미만 : 외부 저장소 -> 내부 저장소로 복사
-        private fun copyUriToFile(context: Context, uri: Uri) : File? {
+        private fun copyUriToFile(context: Context, uri: Uri) : Uri? {
             return try {
-                val file = createNewFile(context)
-                val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
-                val outputStream: OutputStream = FileOutputStream(file)
 
-                IOUtils.copy(inputStream, outputStream)
-                inputStream?.close()
-                outputStream.close()
+                return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                    val newUri = getUriFromMediaStore(context)
+                    val outputStream = context.contentResolver.openOutputStream(newUri!!) ?: return null
+                    val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
 
-                return file
+                    IOUtils.copy(inputStream, outputStream)
+                    inputStream?.close()
+                    outputStream.close()
+
+                    newUri
+
+                } else {
+                    val file = createNewFile(context)
+                    val outputStream: OutputStream = FileOutputStream(file)
+                    val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+
+                    IOUtils.copy(inputStream, outputStream)
+                    inputStream?.close()
+                    outputStream.close()
+
+                    getUriFromFile(context, file)
+                }
 
             } catch (e: IOException) {
                 e.printStackTrace()
