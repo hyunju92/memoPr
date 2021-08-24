@@ -14,47 +14,19 @@ import java.io.*
 class ImgUtil {
     companion object {
         fun createNewUri(context: Context): Uri? {
-            return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-                getUriFromMediaStore(context)
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                createUriFromMediaStore(context)    // 예시) content://media/external_primary/file/43502
             } else {
-                getUriFromFile(context, createNewFile(context))
+                getUriFromFile(context, createNewFile(context)) // 예시) content://hyunju.com.memo2020.provider/images/IMG6399012916669163261.jpg
             }
         }
 
-        fun copyUri(context: Context, originalUri: Uri): Uri? {
-            return copyUriToFile(context, originalUri)
-        }
-
-        @RequiresApi(Build.VERSION_CODES.Q)
-        private fun getUriFromMediaStore(context: Context): Uri? {
-            val values = ContentValues().apply {
-                put(MediaStore.MediaColumns.MIME_TYPE, "image/*")
-            }
-
-            return context.contentResolver.insert(
-                MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
-                values
-            )
-        }
-
-        private fun getUriFromFile(context: Context, file: File): Uri {
-            return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                Uri.fromFile(file)
-            } else {
-                FileProvider.getUriForFile(context, context.getString(R.string.provider_authority), file)
-            }
-        }
-
-        // TODO 수정 필요
-        // 갤러리 이미지 복사
-        // 10 이상 : 외부 저장소 -> 외부 저장소 샌드박스로 복사
-        // 10 미만 : 외부 저장소 -> 내부 저장소로 복사
-        private fun copyUriToFile(context: Context, uri: Uri) : Uri? {
+        fun copyUri(context: Context, uri: Uri): Uri? {
             return try {
-
-                return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-                    val newUri = getUriFromMediaStore(context)
-                    val outputStream = context.contentResolver.openOutputStream(newUri!!) ?: return null
+                return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    val newUri = createUriFromMediaStore(context)   // 예시) content://media/external_primary/file/43504
+                    val outputStream =
+                        context.contentResolver.openOutputStream(newUri!!) ?: return null
                     val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
 
                     IOUtils.copy(inputStream, outputStream)
@@ -64,7 +36,7 @@ class ImgUtil {
                     newUri
 
                 } else {
-                    val file = createNewFile(context)
+                    val file = createNewFile(context)    // 예시) /data/user/0/hyunju.com.memo2020/files/IMG5709912983664673507.jpg
                     val outputStream: OutputStream = FileOutputStream(file)
                     val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
 
@@ -72,7 +44,7 @@ class ImgUtil {
                     inputStream?.close()
                     outputStream.close()
 
-                    getUriFromFile(context, file)
+                    return getUriFromFile(context, file)    // 예시) content://hyunju.com.memo2020.provider/images/IMG5709912983664673507.jpg
                 }
 
             } catch (e: IOException) {
@@ -81,18 +53,49 @@ class ImgUtil {
             }
         }
 
+        /**
+         * 29이상일 때,
+         * MedidaStore에서 uri 생성
+         * 예) content://media/external_primary/file/43502
+         */
+        @RequiresApi(Build.VERSION_CODES.Q)
+        private fun createUriFromMediaStore(context: Context): Uri? {
+            val values = ContentValues().apply {
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/*")
+            }
+            return context.contentResolver.insert(
+                MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
+                values
+            )
+        }
 
-        // create new empty file path
+        /**
+         * 29미만일 때,
+         * 내부저장소(일반파일)에 파일 생성
+         * 예) /data/user/0/hyunju.com.memo2020/files/IMG5709912983664673507.jpg
+         */
         private fun createNewFile(context: Context): File {
-            val dir = File(context.filesDir.absolutePath)
+            // 내부저장소(일반파일) 경로
+            val dir = File(context.filesDir.absolutePath)   // 예시) /data/user/0/hyunju.com.memo2020/files
             if (!dir.exists()) dir.mkdirs()
 
             return File.createTempFile("IMG", ".jpg", dir).apply {
                 if (!exists()) createNewFile()
-            }
+            }   // 예시) /data/user/0/hyunju.com.memo2020/files/IMG5709912983664673507.jpg
         }
 
-
+        /**
+         *  File의 Uri가져오기
+         *  예) file값 = /data/user/0/hyunju.com.memo2020/files/IMG5709912983664673507.jpg
+         *  예) return uri값 = content://hyunju.com.memo2020.provider/images/IMG5709912983664673507.jpg
+         */
+        private fun getUriFromFile(context: Context, file: File): Uri {
+            return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                Uri.fromFile(file)
+            } else {
+                FileProvider.getUriForFile(context, context.getString(R.string.provider_authority), file)
+            }
+        }
 
     }
 }
