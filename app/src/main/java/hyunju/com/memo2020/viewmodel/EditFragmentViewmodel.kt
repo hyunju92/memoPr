@@ -93,7 +93,7 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
     // * access db
     private fun update(memo: Memo?) {
         viewModelScope.launch(Dispatchers.IO) {
-            dao.update(memo)
+            memo?.let { dao.update(it)}
         }
     }
 
