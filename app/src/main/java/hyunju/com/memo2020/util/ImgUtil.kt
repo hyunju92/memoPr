@@ -25,9 +25,8 @@ class ImgUtil {
             return try {
                 return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val newUri = createUriFromMediaStore(context)   // 예시) content://media/external_primary/file/43504
-                    val outputStream =
-                        context.contentResolver.openOutputStream(newUri!!) ?: return null
-                    val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+                    val outputStream = newUri?.let { context.contentResolver.openOutputStream(it) } ?: return null
+                    val inputStream = context.contentResolver.openInputStream(uri)
 
                     IOUtils.copy(inputStream, outputStream)
                     inputStream?.close()
@@ -37,8 +36,8 @@ class ImgUtil {
 
                 } else {
                     val file = createNewFile(context)    // 예시) /data/user/0/hyunju.com.memo2020/files/IMG5709912983664673507.jpg
-                    val outputStream: OutputStream = FileOutputStream(file)
-                    val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+                    val outputStream = FileOutputStream(file)
+                    val inputStream = context.contentResolver.openInputStream(uri)
 
                     IOUtils.copy(inputStream, outputStream)
                     inputStream?.close()
