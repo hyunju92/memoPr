@@ -1,14 +1,10 @@
 package hyunju.com.memo2020.db
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.*
 import hyunju.com.memo2020.R
-import hyunju.com.memo2020.model.Converters
 import hyunju.com.memo2020.model.Memo
-
+import java.util.*
 
 @Database(entities = [Memo::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
@@ -27,6 +23,29 @@ abstract class MemoDatabase : RoomDatabase() {
             return INSTANCE!!
         }
 
-
     }
 }
+
+class Converters {
+    @TypeConverter
+    fun fromTimestamp(value: Long): Date {
+        return Date(value)
+    }
+
+    @TypeConverter
+    fun dateToTimestamp(date: Date): Long {
+        return date.time
+    }
+
+    @TypeConverter
+    fun fromString(stringListString: String): List<String> {
+        return stringListString.split(",").map { it }
+    }
+
+    @TypeConverter
+    fun toString(stringList: List<String>): String {
+        return stringList.joinToString(separator = ",")
+    }
+}
+
+

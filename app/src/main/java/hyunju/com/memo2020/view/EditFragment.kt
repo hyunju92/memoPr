@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.EditFragmentBinding
+import hyunju.com.memo2020.model.getDateText
 import hyunju.com.memo2020.view.adapter.EditImgAdapter
 import hyunju.com.memo2020.viewmodel.EditFragmentViewmodel
 
@@ -88,7 +89,7 @@ class EditFragment : Fragment() {
         binding.contentsEt.setText(vm.memoItem.value?.contents ?: "")
 
 
-        binding.imgRv.adapter = getAdapter(vm.imgList.value!!)
+        binding.imgRv.adapter = getAdapter(vm.imgList.value?:ArrayList())
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

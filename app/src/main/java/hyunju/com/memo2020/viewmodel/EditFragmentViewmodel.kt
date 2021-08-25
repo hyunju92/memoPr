@@ -20,6 +20,7 @@ import hyunju.com.memo2020.util.ImgUtil.Companion.createNewUri
 import hyunju.com.memo2020.util.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -31,11 +32,10 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
     val imgList: MutableLiveData<ArrayList<String>> = MutableLiveData()
     var imgPosition: Int? = 0
 
-
     // * set memo item (received as argument)
     fun setMemoItem(memo: Memo?) {
         memoItem.value = memo
-        imgList.value = memo?.getImageList() ?: ArrayList()
+        imgList.value = memo?.let { ArrayList(it.imageUrlList)}?:ArrayList()
         imgPosition = imgList.value?.size
     }
 
@@ -44,7 +44,7 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
     fun addImg(uriStr: String?) {
         if (TextUtils.isEmpty(uriStr)) return
 
-        val tempList: ArrayList<String> = imgList.value!!
+        val tempList: ArrayList<String> = imgList.value?:ArrayList()
         tempList.add(uriStr!!)
         imgList.value = tempList
     }
@@ -55,8 +55,7 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
         if (memoItem.value == null) {
             // insert
-            val newMemo = Memo(title = title, contents = contents, images = "", date = Date())
-            newMemo.setImgStr(imgList.value!!)
+            val newMemo = Memo(title = title, contents = contents, imageUrlList = imgList.value?:ArrayList(), date = Date())
 
             if (memoIsEmpty(activity, newMemo)) return
             insert(newMemo).let { afterSave(activity, activity.getString(R.string.memo_insert)) }
@@ -67,8 +66,7 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
                 it.title = title
                 it.contents = contents
                 it.date = Date()
-                it.setImgStr(imgList.value!!)
-
+                it.imageUrlList = imgList.value?:ArrayList()
                 update(it).let { afterSave(activity, activity.getString(R.string.memo_update)) }
             }
         }
@@ -76,7 +74,7 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
     }
 
     private fun memoIsEmpty(activity: Activity, memo: Memo): Boolean {
-        if (memo.getImageList().isNullOrEmpty() && memo.title.isEmpty() && memo.contents.isEmpty()) {
+        if (memo.imageUrlList.isNullOrEmpty() && memo.title.isEmpty() && memo.contents.isEmpty()) {
             Toast.makeText(activity, activity.getString(R.string.memo_empty), Toast.LENGTH_SHORT).show()
             Navigation.findNavController(activity, R.id.main_fragment).navigateUp()
             return true
@@ -119,12 +117,16 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
     // delete img
     private fun deleteImg(context: Context, position: Int) {
-        val tempList: ArrayList<String> = imgList.value!!
-        Log.d("testUrl", "" + tempList[position])
-        context.contentResolver.delete(Uri.parse(tempList[position]), null, null);
-        tempList.removeAt(position)
+        try {
+            val tempList: ArrayList<String> = imgList.value?:ArrayList()
+            Log.d("testUrl", "" + tempList[position])
+            context.contentResolver.delete(Uri.parse(tempList[position]), null, null);
+            tempList.removeAt(position)
 
-        imgList.value = tempList
+            imgList.value = tempList
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
 

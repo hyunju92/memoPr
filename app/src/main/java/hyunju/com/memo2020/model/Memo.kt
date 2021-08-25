@@ -4,68 +4,21 @@ import android.content.Context
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverter
 import hyunju.com.memo2020.R
 import kotlinx.android.parcel.Parcelize
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 @Parcelize
 @Entity
 data class Memo(
-        @PrimaryKey(autoGenerate = true) val id: Long = 0,
-        var title: String,
-        var contents: String,
-        var images: String,       // image uri
-        var date: Date
-) : Parcelable {
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    var title: String,
+    var contents: String,
+    var imageUrlList: List<String>,       // image uri
+    var date: Date
+) : Parcelable
 
-    fun getImageList(): ArrayList<String> {
-        val tempList = images.split(" ").let {
-            if (it.size == 1 && it[0].isEmpty()) ArrayList() else it    // delte default value ""
-        }
-        val arrayList = ArrayList<String>()
-        arrayList.addAll(tempList)
-
-        return arrayList
-    }
-
-    fun setImgStr(imgList: ArrayList<String>) {
-        var imgStr = ""
-
-        for (i in 1..imgList.size) {
-            val item = imgList[i - 1]
-
-            if (item.isNotEmpty()) {
-                imgStr += item
-                if (i != imgList.size)
-                    imgStr += " "
-            }
-        }
-
-        this.images = imgStr
-    }
-
-    fun getDateText(context: Context): String {
-        return SimpleDateFormat(context.getString(R.string.date_format)).format(date)
-    }
-
+fun Memo.getDateText(context: Context): String {
+    return SimpleDateFormat(context.getString(R.string.date_format)).format(date)
 }
-
-class Converters {
-    @TypeConverter
-    fun fromTimestamp(value: Long): Date {
-        return Date(value)
-    }
-
-    @TypeConverter
-    fun dateToTimestamp(date: Date): Long {
-        return date.time
-    }
-}
-
-
-
-
-
