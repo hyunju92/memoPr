@@ -1,4 +1,4 @@
-package hyunju.com.memo2020.view
+package hyunju.com.memo2020
 
 import android.view.View
 import android.view.ViewGroup
@@ -7,7 +7,7 @@ import androidx.databinding.BindingAdapter
 
 object BindingAdapter {
 
-    @BindingAdapter("memo:match_height_to_device_width")
+    @BindingAdapter("memo:match_height_to_width")
     @JvmStatic
     fun matchHeightToDeviceWidth(view: View, boolean: Boolean) {
 

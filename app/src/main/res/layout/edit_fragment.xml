@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="hyunju.com.memo2020.viewmodel.EditFragmentViewmodel" />
+            type="hyunju.com.memo2020.edit.vm.EditFragmentViewmodel" />
     </data>
 
 
@@ -32,7 +32,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0"
-                memo:match_height_to_device_width="@{true}" />
+                memo:match_height_to_width="@{true}" />
 
 
             <!-- text contents view -->

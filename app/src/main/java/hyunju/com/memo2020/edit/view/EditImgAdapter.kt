@@ -1,4 +1,4 @@
-package hyunju.com.memo2020.view.adapter
+package hyunju.com.memo2020.edit.view
 
 import android.view.LayoutInflater
 import android.view.View

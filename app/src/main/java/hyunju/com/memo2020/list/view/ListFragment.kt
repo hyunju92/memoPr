@@ -1,4 +1,4 @@
-package hyunju.com.memo2020.view
+package hyunju.com.memo2020.list.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,9 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ListFragmentBinding
+import hyunju.com.memo2020.list.vm.ListFragmentViewmodel
 import hyunju.com.memo2020.model.Memo
-import hyunju.com.memo2020.view.adapter.ListItemAdapter
-import hyunju.com.memo2020.viewmodel.ListFragmentViewmodel
 
 class ListFragment : Fragment() {
     protected lateinit var binding: ListFragmentBinding

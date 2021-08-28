@@ -1,4 +1,4 @@
-package hyunju.com.memo2020.viewmodel
+package hyunju.com.memo2020.list.vm
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -15,8 +15,8 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.db.MemoDatabase
+import hyunju.com.memo2020.list.view.ListFragmentDirections
 import hyunju.com.memo2020.model.Memo
-import hyunju.com.memo2020.view.ListFragmentDirections
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

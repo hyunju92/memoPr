@@ -1,4 +1,4 @@
-package hyunju.com.memo2020.view
+package hyunju.com.memo2020.edit.view
 
 import android.os.Bundle
 import android.view.*
@@ -10,9 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.EditFragmentBinding
+import hyunju.com.memo2020.edit.vm.EditFragmentViewmodel
 import hyunju.com.memo2020.model.getDateText
-import hyunju.com.memo2020.view.adapter.EditImgAdapter
-import hyunju.com.memo2020.viewmodel.EditFragmentViewmodel
 
 
 class EditFragment : Fragment() {

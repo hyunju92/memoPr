@@ -7,7 +7,7 @@
 
         <variable
             name="mainViewModel"
-            type="hyunju.com.memo2020.viewmodel.MainAcitivityViewmodel" />
+            type="hyunju.com.memo2020.main.vm.MainAcitivityViewmodel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

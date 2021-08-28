@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Memo2020_2/app/src/main/res/layout/activity_main.xml" value="0.1125" />
+        <entry key="..\:/Memo2020_2/app/src/main/res/layout/edit_fragment.xml" value="0.11197916666666667" />
+        <entry key="..\:/Memo2020_2/app/src/main/res/layout/edit_img_item.xml" value="0.1125" />
+        <entry key="..\:/Memo2020_2/app/src/main/res/layout/list_fragment.xml" value="0.1125" />
+        <entry key="..\:/Memo2020_2/app/src/main/res/layout/memo_item.xml" value="0.1125" />
+        <entry key="..\:/Memo2020_2/app/src/main/res/layout/view_img_item.xml" value="0.1125" />
+      </map>
+    </option>
+  </component>
   <component name="MarkdownProjectSettings">
     <PreviewSettings splitEditorLayout="SPLIT" splitEditorPreview="PREVIEW" useGrayscaleRendering="false" zoomFactor="1.5" maxImageWidth="0" showGitHubPageIfSynced="false" allowBrowsingInPreview="false" synchronizePreviewPosition="true" highlightPreviewType="NONE" highlightFadeOut="5" highlightOnTyping="true" synchronizeSourcePosition="true" verticallyAlignSourceAndPreviewSyncPosition="true" showSearchHighlightsInPreview="false" showSelectionInPreview="true">
       <PanelProvider>

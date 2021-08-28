@@ -1,4 +1,4 @@
-package hyunju.com.memo2020.view
+package hyunju.com.memo2020.main.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,8 +11,8 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ActivityMainBinding
-import hyunju.com.memo2020.viewmodel.EditFragmentViewmodel
-import hyunju.com.memo2020.viewmodel.MainAcitivityViewmodel
+import hyunju.com.memo2020.edit.vm.EditFragmentViewmodel
+import hyunju.com.memo2020.main.vm.MainAcitivityViewmodel
 
 
 class MainActivity : AppCompatActivity() {

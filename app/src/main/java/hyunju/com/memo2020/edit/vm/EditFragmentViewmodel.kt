@@ -1,4 +1,4 @@
-package hyunju.com.memo2020.viewmodel
+package hyunju.com.memo2020.edit.vm
 
 import android.app.Activity
 import android.app.Application
