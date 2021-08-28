@@ -21,12 +21,13 @@ interface MemoDao {
     @Update
     fun update(memo: Memo)
 
+    @Delete
+    fun delete(memo: Memo) : Int
+
     @Query("DELETE from Memo")
     fun deleteAll()
 
     @Query("DELETE FROM Memo WHERE id = :id")
     fun deleteById(id: Long)
-
-
 
 }

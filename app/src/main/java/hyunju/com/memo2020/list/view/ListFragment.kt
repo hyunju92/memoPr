@@ -32,6 +32,12 @@ class ListFragment : Fragment() {
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        listFragViewmodel.onDestroyViewModel()
+    }
+
+
     private fun observerLiveData() {
         listFragViewmodel.allMemos.observe(this,
                 androidx.lifecycle.Observer {

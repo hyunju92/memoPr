@@ -9,7 +9,6 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.Navigation
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -17,10 +16,14 @@ import hyunju.com.memo2020.R
 import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.list.view.ListFragmentDirections
 import hyunju.com.memo2020.model.Memo
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class ListFragmentViewmodel(application: Application) : AndroidViewModel(application) {
+
+    private var disposable : Disposable? = null
 
     val dao = MemoDatabase.get(application).memoDao()
     var allMemos: LiveData<PagedList<Memo>> = LivePagedListBuilder(
@@ -46,7 +49,7 @@ class ListFragmentViewmodel(application: Application) : AndroidViewModel(applica
 
         deleteBtn.setOnClickListener {
             dialog.dismiss()
-            delete(activity, memoItem!!.id)
+            delete(activity, memoItem!!)
         }
         editBtn.setOnClickListener {
             dialog.dismiss()
@@ -56,14 +59,23 @@ class ListFragmentViewmodel(application: Application) : AndroidViewModel(applica
         dialog.show()
     }
 
+    private fun delete(activity: Activity, memo: Memo) {
+        disposable = Single.just(memo)
+            .subscribeOn(Schedulers.io())
+            .map { dao.delete(it) > 0}
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe ({ isSuccess ->
+                if (isSuccess) {
+                    Toast.makeText(activity, activity.getString(R.string.memo_delete), Toast.LENGTH_SHORT).show()
+                    Navigation.findNavController(activity, R.id.main_fragment).navigateUp()
+                }
+            }, {
+                it.printStackTrace()
+            })
+    }
 
-    private fun delete(activity: Activity, id: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            dao.deleteById(id)
-        }.let {
-            Toast.makeText(activity, activity.getString(R.string.memo_delete), Toast.LENGTH_SHORT).show()
-            Navigation.findNavController(activity, R.id.main_fragment).navigateUp()
-        }
+    fun onDestroyViewModel() {
+        disposable?.dispose()
     }
 
 

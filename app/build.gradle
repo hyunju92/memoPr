@@ -28,6 +28,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
     dataBinding {
         enabled = true
     }
@@ -91,6 +94,8 @@ dependencies {
     // https://github.com/ParkSangGwon/TedPermission
     implementation 'gun0912.ted:tedpermission:2.2.0'
 
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.0'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
 
     // Mockito framework
     testImplementation 'org.mockito:mockito-core:2.22.0'
