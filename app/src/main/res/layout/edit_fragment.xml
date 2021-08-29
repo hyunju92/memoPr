@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:memo="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <import
             alias="ExtensionUtil"
             type="hyunju.com.memo2020.util.ExtentionUtilKt" />
@@ -38,7 +36,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0"
-                memo:match_height_to_device_width="@{true}" />
+                match_height_to_device_width="@{true}" />
 
             <!-- text contents view -->
             <LinearLayout

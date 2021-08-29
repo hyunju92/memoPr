@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.EditFragmentBinding
 import hyunju.com.memo2020.edit.vm.EditFragmentViewmodel
-import hyunju.com.memo2020.util.getDateText
+import hyunju.com.memo2020.replaceAll
 
 
 class EditFragment : Fragment() {
@@ -43,7 +43,7 @@ class EditFragment : Fragment() {
     // fragment lifecycle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        context?.let { vm = EditFragmentViewmodel(it.applicationContext) }
+        context?.let { vm = EditFragmentViewmodel(it.applicationContext, this@EditFragment) }
 
         // receive arg (a memo item) from previous frag
         EditFragmentArgs.fromBundle(requireArguments()).memoItem.let { vm.setMemoItem(it) }
@@ -74,16 +74,22 @@ class EditFragment : Fragment() {
     private fun observeLiveData() {
         // observe imgList (changed when editing)
         vm.imgList.observe(viewLifecycleOwner, Observer {
-            binding.imgRv.adapter = getAdapter(it)
+            binding.imgRv.replaceAll(it)
             binding.imgRv.scrollToPosition(vm.imgPosition ?: 0)
         })
     }
 
     private fun setLayout() {
         // set img recycler view
-        val horizonLayoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
-        binding.imgRv.setLayoutManager(horizonLayoutManager)
-        binding.imgRv.adapter = getAdapter(vm.imgList.value?:ArrayList())
+        binding.imgRv.run {
+            layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = EditImgAdapter(vm, object : (View, Int) -> Unit {
+                override fun invoke(view: View, position: Int) {
+                    vm.onEditAdapterItemClickEvent(view, position, view.id)
+                }
+            })
+        }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -101,13 +107,6 @@ class EditFragment : Fragment() {
                 binding.titleEt.text.toString(), binding.contentsEt.text.toString())
     }
 
-    private fun getAdapter(imgList: ArrayList<String>): EditImgAdapter {
-        return EditImgAdapter(imgList, object : (View, Int) -> Unit {
-            override fun invoke(view: View, position: Int) {
-                vm.onEditAdapterItemClickEvent(requireContext(), this@EditFragment, view, position, view.id)
-            }
-        })
-    }
 
 }
 

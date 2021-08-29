@@ -2,85 +2,78 @@ package hyunju.com.memo2020.edit.view
 
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.RecyclerAdapter
+import hyunju.com.memo2020.databinding.EditImgItemBinding
+import hyunju.com.memo2020.edit.vm.EditFragmentViewmodel
 
-class EditImgAdapter(imgList: ArrayList<String>, val itemClick: (View, Int) -> Unit)
-    : RecyclerView.Adapter<EditImgAdapter.EditImgViewholder>(), RecyclerAdapter<String> {
+class EditImgAdapter(private val vm: EditFragmentViewmodel, val itemClick: (View, Int) -> Unit)
+    : RecyclerView.Adapter<EditImgAdapter.EditImgViewHolder>(), RecyclerAdapter<String> {
 
-    // make temp list (to show last view showing 3 btn to get image btn)
-    var tempList: ArrayList<String> = ArrayList()
-
-    init {
-        tempList.clear()
-        tempList.addAll(imgList)
-        tempList.add("")
-    }
-
+    private var imgItemList = mutableListOf<String>()
 
     override fun replaceAll(recyclerView: RecyclerView, listItem: List<String>?) {
-
+        listItem?.let { newList ->
+            imgItemList.clear()
+            imgItemList.addAll(newList)
+            notifyDataSetChanged()
+        }
     }
 
     // override
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EditImgViewHolder {
+        return DataBindingUtil.inflate<EditImgItemBinding>(LayoutInflater.from(parent.context), R.layout.edit_img_item, parent, false).let {
+            it.viewModel = vm
+            EditImgViewHolder(vm, it)
+        }
+    }
+
+    override fun onBindViewHolder(holder: EditImgViewHolder, position: Int) {
+        holder.bind(position, imgItemList[position])
+    }
+
     override fun getItemCount(): Int {
-        return tempList.size
+        return imgItemList.size
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EditImgViewholder {
-        val inflater = LayoutInflater.from(parent!!.getContext())
-        val view = inflater.inflate(R.layout.edit_img_item, parent, false)
-        return EditImgViewholder(view)
-
-    }
-
-    override fun onBindViewHolder(holder: EditImgViewholder, position: Int) {
-        holder.bind(position, tempList[position])
-    }
-
-
-    inner class EditImgViewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // item view
-        val itemCl = itemView.findViewById<ConstraintLayout>(R.id.item_cl_edit_img)
-        val deltetBtn = itemView.findViewById<ImageButton>(R.id.delete_btn_edit_img)
-
+    class EditImgViewHolder(private val viewModel: EditFragmentViewmodel, private val binding: EditImgItemBinding) : RecyclerView.ViewHolder(binding.root) {
         // last item view
         val lastCl = itemView.findViewById<ConstraintLayout>(R.id.last_cl_edit_img)
         val cameraBtn = itemView.findViewById<ImageButton>(R.id.camera_btn_edit_img)
         val albumBtn = itemView.findViewById<ImageButton>(R.id.album_btn_edit_img)
 
         fun bind(position: Int, imgStr: String) {
-            if (tempList.size == position + 1) {
-                // set last view
-                cameraBtn.setOnClickListener { itemClick(it, position) }
-                albumBtn.setOnClickListener { itemClick(it, position) }
 
-                itemCl.visibility = GONE
-                lastCl.visibility = VISIBLE
-                return
-            }
 
-            deltetBtn.setOnClickListener { itemClick(it, position) }
+//            if (imgItemList.size == position + 1) {
+//                // set last view
+//                cameraBtn.setOnClickListener { itemClick(it, position) }
+//                albumBtn.setOnClickListener { itemClick(it, position) }
+//
+//                itemCl.visibility = GONE
+//                lastCl.visibility = VISIBLE
+//                return
+//            }
 
-            val memoIv = itemView.findViewById<ImageView>(R.id.memo_iv_edit_img)
+
             val loadImg = if (imgStr.isNotEmpty()) imgStr else R.drawable.ic_image_black_24dp
             val errorImg = R.drawable.ic_sms_failed_black_24dp
 
-            Glide.with(itemView.context)
+            binding.memoIvEditImg.let {
+                Glide.with(itemView.context)
                     .load(loadImg)
                     .error(errorImg)
-                    .into(memoIv)
+                    .into(it)
+            }
+            binding.deleteBtnEditImg.setOnClickListener { viewModel.deleteImg(position) }
 
         }
-
     }
 
 
