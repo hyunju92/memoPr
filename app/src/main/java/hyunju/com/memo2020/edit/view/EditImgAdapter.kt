@@ -11,9 +11,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import hyunju.com.memo2020.R
+import hyunju.com.memo2020.RecyclerAdapter
 
 class EditImgAdapter(imgList: ArrayList<String>, val itemClick: (View, Int) -> Unit)
-    : RecyclerView.Adapter<EditImgAdapter.EditImgViewholder>() {
+    : RecyclerView.Adapter<EditImgAdapter.EditImgViewholder>(), RecyclerAdapter<String> {
 
     // make temp list (to show last view showing 3 btn to get image btn)
     var tempList: ArrayList<String> = ArrayList()
@@ -22,6 +23,11 @@ class EditImgAdapter(imgList: ArrayList<String>, val itemClick: (View, Int) -> U
         tempList.clear()
         tempList.addAll(imgList)
         tempList.add("")
+    }
+
+
+    override fun replaceAll(recyclerView: RecyclerView, listItem: List<String>?) {
+
     }
 
     // override
@@ -76,4 +82,6 @@ class EditImgAdapter(imgList: ArrayList<String>, val itemClick: (View, Int) -> U
         }
 
     }
+
+
 }

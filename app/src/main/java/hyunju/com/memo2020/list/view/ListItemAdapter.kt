@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.model.Memo
-import hyunju.com.memo2020.model.getDateText
+import hyunju.com.memo2020.util.getDateText
 import kotlinx.android.synthetic.main.memo_item.view.*
 
 class ListItemAdapter(val itemClick: (View, Memo) -> Unit, val itemLongClick: (View, Memo) -> Unit) :
@@ -56,7 +56,7 @@ class ListItemAdapter(val itemClick: (View, Memo) -> Unit, val itemLongClick: (V
                     .into(itemView.thumb_iv)
 
             itemView.title_tv.text = memo.title
-            itemView.date_tv.text = memo.getDateText(itemView.context)
+            itemView.date_tv.text = memo.getDateText()
             itemView.contents_tv.text = memo.contents
 
         }

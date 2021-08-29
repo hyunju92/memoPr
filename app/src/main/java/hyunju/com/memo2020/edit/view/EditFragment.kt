@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.EditFragmentBinding
 import hyunju.com.memo2020.edit.vm.EditFragmentViewmodel
-import hyunju.com.memo2020.model.getDateText
+import hyunju.com.memo2020.util.getDateText
 
 
 class EditFragment : Fragment() {
@@ -40,24 +40,24 @@ class EditFragment : Fragment() {
         return true
     }
 
-
     // fragment lifecycle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         context?.let { vm = EditFragmentViewmodel(it.applicationContext) }
 
         // receive arg (a memo item) from previous frag
-        EditFragmentArgs.fromBundle(requireArguments()).memoItem.let {
-            vm.setMemoItem(it)
-        }
+        EditFragmentArgs.fromBundle(requireArguments()).memoItem.let { vm.setMemoItem(it) }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.edit_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = DataBindingUtil.inflate<EditFragmentBinding>(inflater, R.layout.edit_fragment, container, false).apply {
+            viewModel = vm
+            memo = vm.memoItem.value
+        }
+
         setHasOptionsMenu(true)
         return binding.root
     }
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -83,14 +83,6 @@ class EditFragment : Fragment() {
         // set img recycler view
         val horizonLayoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
         binding.imgRv.setLayoutManager(horizonLayoutManager)
-
-        // set text contents
-        binding.titleEt.setText(vm.memoItem.value?.title ?: "")
-        binding.titleEt.requestFocus()
-        binding.dateEt.setText(vm.memoItem.value?.getDateText(requireContext()))
-        binding.contentsEt.setText(vm.memoItem.value?.contents ?: "")
-
-
         binding.imgRv.adapter = getAdapter(vm.imgList.value?:ArrayList())
     }
 

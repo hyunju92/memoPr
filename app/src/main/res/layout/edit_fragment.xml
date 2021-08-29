@@ -3,6 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:memo="http://schemas.android.com/tools">
 
+    <data>
+
+        <import
+            alias="ExtensionUtil"
+            type="hyunju.com.memo2020.util.ExtentionUtilKt" />
+
+        <variable
+            name="viewModel"
+            type="hyunju.com.memo2020.edit.vm.EditFragmentViewmodel" />
+
+        <variable
+            name="memo"
+            type="hyunju.com.memo2020.model.Memo" />
+
+    </data>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -23,8 +38,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0"
-                memo:match_height_to_width="@{true}" />
-
+                memo:match_height_to_device_width="@{true}" />
 
             <!-- text contents view -->
             <LinearLayout
@@ -50,16 +64,18 @@
                         android:layout_weight="1"
                         android:background="@null"
                         android:hint="@string/title_hint"
+                        android:text="@{memo.title}"
                         android:textSize="@dimen/tv_size_large" />
 
                     <EditText
-                        android:enabled="false"
                         android:id="@+id/date_et"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:enabled="false"
                         android:hint="@string/edit_date_hint"
                         android:paddingLeft="@dimen/text_layout_margin"
+                        android:text="@{ExtensionUtil.getDateText(memo)}"
                         android:textSize="@dimen/tv_size_small" />
                 </LinearLayout>
 
@@ -70,6 +86,7 @@
                     android:layout_marginLeft="@dimen/text_layout_margin"
                     android:layout_marginTop="@dimen/text_layout_margin_large"
                     android:background="@null"
+                    android:text="@{memo.contents}"
                     android:hint="@string/contents_hint"
                     android:paddingBottom="@dimen/contents_et_bottom_padding"
                     android:textSize="@dimen/tv_size" />

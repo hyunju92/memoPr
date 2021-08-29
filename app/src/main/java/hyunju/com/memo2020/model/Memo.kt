@@ -1,10 +1,8 @@
 package hyunju.com.memo2020.model
 
-import android.content.Context
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import hyunju.com.memo2020.R
 import kotlinx.android.parcel.Parcelize
 import java.text.SimpleDateFormat
 import java.util.*
@@ -19,6 +17,3 @@ data class Memo(
     var date: Date
 ) : Parcelable
 
-fun Memo.getDateText(context: Context): String {
-    return SimpleDateFormat(context.getString(R.string.date_format)).format(date)
-}
