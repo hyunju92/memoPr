@@ -4,10 +4,11 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
 import android.text.TextUtils
-import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.navigation.Navigation
@@ -32,25 +33,31 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
 
     // LiveData
     private val _memoItem = MutableLiveData<Memo?>()
-    val memoItem: LiveData<Memo?> = _memoItem
-    private val _imgList = MutableLiveData<ArrayList<String>>()
-    val imgList: LiveData<ArrayList<String>> = _imgList
+    val memoItem: LiveData<Memo?>
+        get() = _memoItem
+
+    val _imgList = MutableLiveData<ArrayList<String>>()
+    val imgList: LiveData<ArrayList<String>>
+        get() = _imgList
 
     var imgPosition: Int? = 0
 
     // * set memo item (received as argument)
+    @RequiresApi(Build.VERSION_CODES.N)
     fun setMemoItem(memo: Memo?) {
         _memoItem.value = memo
-        _imgList.value = memo?.let { ArrayList(it.imageUrlList)}?:ArrayList()
+        // 버그 수정 필요 (임시 방어 코드)
+        val tempImgList = memo?.let { ArrayList(it.imageUrlList)}?:ArrayList()
+        tempImgList.removeIf { it.isNullOrEmpty() }
+        _imgList.value = tempImgList
+
         imgPosition = _imgList.value?.size
     }
-
 
     // * edit imgList of item view
     fun addImg(uriStr: String?) {
         if (TextUtils.isEmpty(uriStr)) return
-
-        val tempList: ArrayList<String> = _imgList.value?:ArrayList()
+        val tempList: ArrayList<String> = _imgList.value ?: ArrayList()
         tempList.add(uriStr!!)
         _imgList.value = tempList
     }
@@ -61,26 +68,34 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
 
         if (_memoItem.value == null) {
             // insert
-            val newMemo = Memo(title = title, contents = contents, imageUrlList = _imgList.value?:ArrayList(), date = Date())
+            val newMemo = Memo(
+                title = title,
+                contents = contents,
+                imageUrlList = _imgList.value ?: ArrayList(),
+                date = Date()
+            )
 
             if (memoIsEmpty(activity, newMemo)) return
-            insert(newMemo).let { afterSave(activity) }
+            insert(activity, newMemo)
 
         } else {
             // update
-            _memoItem.value!!.let {
-                it.title = title
-                it.contents = contents
-                it.date = Date()
-                it.imageUrlList = _imgList.value?:ArrayList()
-                update(it).let { afterSave(activity) }
-            }
+            val updateItem = _memoItem.value?.copy(
+                title = title,
+                contents = contents,
+                date = Date(),
+                imageUrlList = _imgList.value ?: ArrayList()
+            )
+            _memoItem.value = updateItem
+            update(activity, _memoItem.value)
+
         }
     }
 
     private fun memoIsEmpty(activity: Activity, memo: Memo): Boolean {
         if (memo.imageUrlList.isNullOrEmpty() && memo.title.isEmpty() && memo.contents.isEmpty()) {
-            Toast.makeText(activity, activity.getString(R.string.memo_empty), Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, activity.getString(R.string.memo_empty), Toast.LENGTH_SHORT)
+                .show()
             Navigation.findNavController(activity, R.id.main_fragment).navigateUp()
             return true
         } else {
@@ -93,7 +108,7 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
     }
 
     // * access db
-    private fun update(memo: Memo?) {
+    private fun update(activity:Activity, memo: Memo?) {
         disposable.add(Single.just(memo)
             .subscribeOn(Schedulers.io())
             .map { it?.let { dao.update(it) > 0L } ?: false }
@@ -101,6 +116,7 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
             .subscribe({ isSuccess ->
                 if (isSuccess) {
                     Toast.makeText(context, context.getString(R.string.memo_update), Toast.LENGTH_SHORT).show()
+                    afterSave(activity)
                 }
             }, {
                 it.printStackTrace()
@@ -108,7 +124,7 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
         )
     }
 
-    private fun insert(memo: Memo) {
+    private fun insert(activity:Activity, memo: Memo) {
         disposable.add(Single.just(memo)
             .subscribeOn(Schedulers.io())
             .map { it?.let { dao.insert(memo) > 0 } ?: false }
@@ -116,6 +132,7 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
             .subscribe({ isSuccess ->
                 if (isSuccess) {
                     Toast.makeText(context, context.getString(R.string.memo_insert), Toast.LENGTH_SHORT).show()
+                    afterSave(activity)
                 }
             }, {
                 it.printStackTrace()
@@ -126,12 +143,11 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
     // delete img
     fun deleteImg(position: Int) {
         try {
-            val tempList: ArrayList<String> = _imgList.value?:ArrayList()
-            Log.d("testUrl", "" + tempList[position])
+            val tempList: ArrayList<String> = _imgList.value ?: ArrayList()
             context.contentResolver.delete(Uri.parse(tempList[position]), null, null);
             tempList.removeAt(position)
-
             _imgList.value = tempList
+
         } catch (e: Exception) {
             e.printStackTrace()
         }
