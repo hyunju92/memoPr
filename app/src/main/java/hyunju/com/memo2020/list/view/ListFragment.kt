@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ListFragmentBinding
@@ -14,9 +13,12 @@ import hyunju.com.memo2020.list.vm.ListFragmentViewmodel
 import hyunju.com.memo2020.model.Memo
 
 class ListFragment : Fragment() {
-    protected lateinit var binding: ListFragmentBinding
-    protected val listFragViewmodel: ListFragmentViewmodel by lazy {
-        ViewModelProvider(this).get(ListFragmentViewmodel::class.java)
+    private lateinit var binding: ListFragmentBinding
+    private lateinit var listFragViewmodel: ListFragmentViewmodel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        context?.let { listFragViewmodel = ListFragmentViewmodel(it.applicationContext) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

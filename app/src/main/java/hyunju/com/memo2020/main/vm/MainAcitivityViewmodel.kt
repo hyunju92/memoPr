@@ -1,17 +1,14 @@
 package hyunju.com.memo2020.main.vm
 
 import android.app.Activity
-import android.app.Application
 import android.content.Context
-import android.os.Build
-import androidx.lifecycle.AndroidViewModel
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import hyunju.com.memo2020.R
 import java.util.*
 
 
-class MainAcitivityViewmodel(application: Application) : AndroidViewModel(application) {
+class MainAcitivityViewmodel {
 
     // permission check and granted
     // * libarary - TedPermission
@@ -32,7 +29,6 @@ class MainAcitivityViewmodel(application: Application) : AndroidViewModel(applic
             .setDeniedMessage(context.getString(R.string.permission_denied_msg))
             .setPermissions(android.Manifest.permission.READ_EXTERNAL_STORAGE)
             .check()
-
 
     }
 }

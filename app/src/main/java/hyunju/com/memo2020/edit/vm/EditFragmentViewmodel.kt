@@ -1,7 +1,6 @@
 package hyunju.com.memo2020.edit.vm
 
 import android.app.Activity
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -10,6 +9,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.navigation.Navigation
 import hyunju.com.memo2020.R
@@ -18,15 +18,18 @@ import hyunju.com.memo2020.model.Memo
 import hyunju.com.memo2020.util.ImgUtil
 import hyunju.com.memo2020.util.ImgUtil.Companion.createNewUri
 import hyunju.com.memo2020.util.Util
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
-class EditFragmentViewmodel(application: Application) : AndroidViewModel(application) {
+class EditFragmentViewmodel(private val context: Context) {
 
-    val dao = MemoDatabase.get(application).memoDao()
+    val dao = MemoDatabase.get(context).memoDao()
+    private val disposable = CompositeDisposable()
 
     val memoItem: MutableLiveData<Memo?> = MutableLiveData()
     val imgList: MutableLiveData<ArrayList<String>> = MutableLiveData()
@@ -58,7 +61,7 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
             val newMemo = Memo(title = title, contents = contents, imageUrlList = imgList.value?:ArrayList(), date = Date())
 
             if (memoIsEmpty(activity, newMemo)) return
-            insert(newMemo).let { afterSave(activity, activity.getString(R.string.memo_insert)) }
+            insert(newMemo).let { afterSave(activity) }
 
         } else {
             // update
@@ -67,10 +70,9 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
                 it.contents = contents
                 it.date = Date()
                 it.imageUrlList = imgList.value?:ArrayList()
-                update(it).let { afterSave(activity, activity.getString(R.string.memo_update)) }
+                update(it).let { afterSave(activity) }
             }
         }
-
     }
 
     private fun memoIsEmpty(activity: Activity, memo: Memo): Boolean {
@@ -83,34 +85,49 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    private fun afterSave(activity: Activity, msg: String?) {
-        Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show()
+    private fun afterSave(activity: Activity) {
         Navigation.findNavController(activity, R.id.main_fragment).navigateUp()
     }
 
     // * access db
     private fun update(memo: Memo?) {
-        viewModelScope.launch(Dispatchers.IO) {
-            memo?.let { dao.update(it)}
-        }
+        disposable.add(Single.just(memo)
+            .subscribeOn(Schedulers.io())
+            .map { it?.let { dao.update(it) > 0L } ?: false }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ isSuccess ->
+                if (isSuccess) {
+                    Toast.makeText(context, context.getString(R.string.memo_update), Toast.LENGTH_SHORT).show()
+                }
+            }, {
+                it.printStackTrace()
+            })
+        )
     }
 
     private fun insert(memo: Memo) {
-        viewModelScope.launch(Dispatchers.IO) {
-            dao.insert(memo)
-        }
+        disposable.add(Single.just(memo)
+            .subscribeOn(Schedulers.io())
+            .map { it?.let { dao.insert(memo) > 0 } ?: false }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ isSuccess ->
+                if (isSuccess) {
+                    Toast.makeText(context, context.getString(R.string.memo_insert), Toast.LENGTH_SHORT).show()
+                }
+            }, {
+                it.printStackTrace()
+            })
+        )
     }
-
 
     // * from EditModeImgAdapter's 4-event
     // (delete img / get img from uri / get img from camera / get img from album)
-    fun onEditAdapterItemClickEvent(context: Context, activity: Activity, v: View, postion: Int, requestBtnId: Int) {
+    fun onEditAdapterItemClickEvent(context: Context, fragment: Fragment, v: View, postion: Int, requestBtnId: Int) {
         imgPosition = postion
 
         when (requestBtnId) {
             R.id.delete_btn_edit_img -> deleteImg(context, postion)
-
-            R.id.camera_btn_edit_img, R.id.album_btn_edit_img -> getImgByStartActivity(context, activity, requestBtnId)
+            R.id.camera_btn_edit_img, R.id.album_btn_edit_img -> getImgByStartActivity(context, fragment, requestBtnId)
         }
     }
 
@@ -135,7 +152,7 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
     private val REQ_PICK_FROM_CAMERA = 1001
     private var reqCode = 0
 
-    private fun getImgByStartActivity(context: Context, activity: Activity, requestBtnId: Int) {
+    private fun getImgByStartActivity(context: Context, fragment: Fragment, requestBtnId: Int) {
         Intent().apply {
             when (requestBtnId) {
                 R.id.album_btn_edit_img -> {
@@ -157,11 +174,9 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
             }
 
         }.let {
-            activity.startActivityForResult(it, reqCode)
+            fragment.startActivityForResult(it, reqCode)
         }
-
     }
-
 
     // result of startactivityforresult to get image
     fun onActivityResult(context: Context, requestCode: Int, resultCode: Int, data: Intent?) {
@@ -181,6 +196,9 @@ class EditFragmentViewmodel(application: Application) : AndroidViewModel(applica
         }
     }
 
+    fun onDestroyViewModel() {
+        disposable.clear()
+    }
 
 }
 

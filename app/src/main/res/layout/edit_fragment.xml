@@ -3,15 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:memo="http://schemas.android.com/tools">
 
-    <data>
-
-        <import type="android.view.View" />
-
-        <variable
-            name="viewModel"
-            type="hyunju.com.memo2020.edit.vm.EditFragmentViewmodel" />
-    </data>
-
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

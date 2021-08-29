@@ -6,27 +6,22 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ActivityMainBinding
-import hyunju.com.memo2020.edit.vm.EditFragmentViewmodel
 import hyunju.com.memo2020.main.vm.MainAcitivityViewmodel
 
 
 class MainActivity : AppCompatActivity() {
 
-    protected lateinit var binding: ActivityMainBinding
-    protected val mainViewModel: MainAcitivityViewmodel by lazy {
-        ViewModelProvider(this).get(MainAcitivityViewmodel::class.java)
-    }
-
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var mainViewModel: MainAcitivityViewmodel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-               super.onCreate(savedInstanceState)
-
+        super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        mainViewModel = MainAcitivityViewmodel()
 
         // sync toolbar and navigation
         setSupportActionBar(findViewById<View>(R.id.main_toolbar) as Toolbar)
@@ -39,22 +34,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         return Navigation.findNavController(this, R.id.main_fragment).navigateUp()
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        // send back it to EditFragment,
-        // when result was from startactivityforresult of EditFragment (to get image)
-        val currentFrag = Navigation.findNavController(this, R.id.main_fragment).currentDestination?.id
-        if (currentFrag == R.id.EditFragment) {
-            val itemFragViemodel: EditFragmentViewmodel =
-                    ViewModelProvider(this).get(EditFragmentViewmodel::class.java)
-
-            itemFragViemodel.onActivityResult(this, requestCode, resultCode, data)
-
-        }
     }
 
 

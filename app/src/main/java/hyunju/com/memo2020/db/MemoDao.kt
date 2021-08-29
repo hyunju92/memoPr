@@ -16,10 +16,10 @@ interface MemoDao {
     fun getMemoById(id: Long) : Memo
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(memo: Memo)
+    fun insert(memo: Memo) : Long
 
     @Update
-    fun update(memo: Memo)
+    fun update(memo: Memo) : Int
 
     @Delete
     fun delete(memo: Memo) : Int

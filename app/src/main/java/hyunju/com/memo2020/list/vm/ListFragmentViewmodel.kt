@@ -2,12 +2,10 @@ package hyunju.com.memo2020.list.vm
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Application
 import android.content.Context
 import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.navigation.Navigation
 import androidx.paging.LivePagedListBuilder
@@ -21,11 +19,11 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-class ListFragmentViewmodel(application: Application) : AndroidViewModel(application) {
+class ListFragmentViewmodel(context: Context) {
 
     private var disposable : Disposable? = null
 
-    val dao = MemoDatabase.get(application).memoDao()
+    val dao = MemoDatabase.get(context).memoDao()
     var allMemos: LiveData<PagedList<Memo>> = LivePagedListBuilder(
             dao.getAllMemoByDate(),
             8
