@@ -28,18 +28,22 @@ import kotlin.collections.ArrayList
 
 class EditFragmentViewmodel(private val context: Context) {
 
-    val dao = MemoDatabase.get(context).memoDao()
     private val disposable = CompositeDisposable()
+    val dao = MemoDatabase.get(context).memoDao()
 
-    val memoItem: MutableLiveData<Memo?> = MutableLiveData()
-    val imgList: MutableLiveData<ArrayList<String>> = MutableLiveData()
+    // LiveData
+    private val _memoItem = MutableLiveData<Memo?>()
+    val memoItem: LiveData<Memo?> = _memoItem
+    private val _imgList = MutableLiveData<ArrayList<String>>()
+    val imgList: LiveData<ArrayList<String>> = _imgList
+
     var imgPosition: Int? = 0
 
     // * set memo item (received as argument)
     fun setMemoItem(memo: Memo?) {
-        memoItem.value = memo
-        imgList.value = memo?.let { ArrayList(it.imageUrlList)}?:ArrayList()
-        imgPosition = imgList.value?.size
+        _memoItem.value = memo
+        _imgList.value = memo?.let { ArrayList(it.imageUrlList)}?:ArrayList()
+        imgPosition = _imgList.value?.size
     }
 
 
@@ -47,29 +51,29 @@ class EditFragmentViewmodel(private val context: Context) {
     fun addImg(uriStr: String?) {
         if (TextUtils.isEmpty(uriStr)) return
 
-        val tempList: ArrayList<String> = imgList.value?:ArrayList()
+        val tempList: ArrayList<String> = _imgList.value?:ArrayList()
         tempList.add(uriStr!!)
-        imgList.value = tempList
+        _imgList.value = tempList
     }
 
 
     // * save memo (need to access db)
     fun save(activity: Activity, title: String, contents: String) {
 
-        if (memoItem.value == null) {
+        if (_memoItem.value == null) {
             // insert
-            val newMemo = Memo(title = title, contents = contents, imageUrlList = imgList.value?:ArrayList(), date = Date())
+            val newMemo = Memo(title = title, contents = contents, imageUrlList = _imgList.value?:ArrayList(), date = Date())
 
             if (memoIsEmpty(activity, newMemo)) return
             insert(newMemo).let { afterSave(activity) }
 
         } else {
             // update
-            memoItem.value!!.let {
+            _memoItem.value!!.let {
                 it.title = title
                 it.contents = contents
                 it.date = Date()
-                it.imageUrlList = imgList.value?:ArrayList()
+                it.imageUrlList = _imgList.value?:ArrayList()
                 update(it).let { afterSave(activity) }
             }
         }
@@ -135,12 +139,12 @@ class EditFragmentViewmodel(private val context: Context) {
     // delete img
     private fun deleteImg(context: Context, position: Int) {
         try {
-            val tempList: ArrayList<String> = imgList.value?:ArrayList()
+            val tempList: ArrayList<String> = _imgList.value?:ArrayList()
             Log.d("testUrl", "" + tempList[position])
             context.contentResolver.delete(Uri.parse(tempList[position]), null, null);
             tempList.removeAt(position)
 
-            imgList.value = tempList
+            _imgList.value = tempList
         } catch (e: Exception) {
             e.printStackTrace()
         }

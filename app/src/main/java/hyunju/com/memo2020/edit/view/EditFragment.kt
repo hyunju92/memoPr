@@ -47,7 +47,7 @@ class EditFragment : Fragment() {
         context?.let { vm = EditFragmentViewmodel(it.applicationContext) }
 
         // receive arg (a memo item) from previous frag
-        EditFragmentArgs.fromBundle(arguments!!).memoItem.let {
+        EditFragmentArgs.fromBundle(requireArguments()).memoItem.let {
             vm.setMemoItem(it)
         }
     }
@@ -58,16 +58,22 @@ class EditFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
-        observerLiveData()
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                save()
+            }
+        })
+
+        observeLiveData()
         setLayout()
     }
 
-    private fun observerLiveData() {
+    private fun observeLiveData() {
         // observe imgList (changed when editing)
-        vm.imgList.observe(this, Observer {
+        vm.imgList.observe(viewLifecycleOwner, Observer {
             binding.imgRv.adapter = getAdapter(it)
             binding.imgRv.scrollToPosition(vm.imgPosition ?: 0)
         })
@@ -88,21 +94,9 @@ class EditFragment : Fragment() {
         binding.imgRv.adapter = getAdapter(vm.imgList.value?:ArrayList())
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                save()
-            }
-        })
-    }
-
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         context?.let { vm.onActivityResult(it.applicationContext, requestCode, resultCode, data) }
-
     }
 
     override fun onDestroyView() {

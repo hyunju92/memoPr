@@ -26,27 +26,17 @@ class ListFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        observerLiveData()
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        observeLiveData()
         setLayout()
-
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        listFragViewmodel.onDestroyViewModel()
-    }
-
-
-    private fun observerLiveData() {
-        listFragViewmodel.allMemos.observe(this,
-                androidx.lifecycle.Observer {
-                    val adapter = binding.listRv.adapter as ListItemAdapter
-                    adapter.submitList(it)
-                    adapter.notifyDataSetChanged()
-                }
+    private fun observeLiveData() {
+        listFragViewmodel.allMemos.observe(viewLifecycleOwner, {
+            val adapter = binding.listRv.adapter as ListItemAdapter
+            adapter.submitList(it)
+            adapter.notifyDataSetChanged() }
         )
     }
 
@@ -67,6 +57,11 @@ class ListFragment : Fragment() {
         binding.addBtn.setOnClickListener {
             listFragViewmodel.moveEditFragment(it)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        listFragViewmodel.onDestroyViewModel()
     }
 
 

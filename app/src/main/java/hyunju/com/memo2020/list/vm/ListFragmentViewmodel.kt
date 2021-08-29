@@ -22,8 +22,9 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class ListFragmentViewmodel(context: Context) {
 
     private var disposable : Disposable? = null
-
     val dao = MemoDatabase.get(context).memoDao()
+
+    // LiveData
     var allMemos: LiveData<PagedList<Memo>> = LivePagedListBuilder(
             dao.getAllMemoByDate(),
             8
