@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
+        <import type="android.view.View" />
 
         <variable
             name="viewModel"
             type="hyunju.com.memo2020.edit.vm.EditFragmentViewmodel" />
+
+        <variable
+            name="position"
+            type="Integer" />
+
+        <variable
+            name="isLastItem"
+            type="Boolean" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="@dimen/padding_large">
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/item_cl_edit_img"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="@{isLastItem ? View.GONE : View.VISIBLE}">
 
             <ImageView
                 android:id="@+id/memo_iv_edit_img"
@@ -33,8 +43,9 @@
                 android:id="@+id/delete_btn_edit_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="1dp"
+                android:layout_marginEnd="1dp"
                 android:background="@color/colorPrimary"
+                android:onClick="@{() -> viewModel.deleteImg(position)}"
                 android:padding="@dimen/padding_small"
                 android:src="@drawable/ic_delete_white_24dp"
                 app:layout_constraintRight_toLeftOf="@id/edit_btn_edit_img"
@@ -61,7 +72,7 @@
             android:id="@+id/last_cl_edit_img"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone">
+            android:visibility="@{isLastItem ? View.VISIBLE : View.GONE}">
 
             <ImageButton
                 android:id="@+id/album_btn_edit_img"
@@ -86,7 +97,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

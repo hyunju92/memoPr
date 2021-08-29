@@ -6,7 +6,6 @@ import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.EditFragmentBinding
@@ -73,7 +72,7 @@ class EditFragment : Fragment() {
 
     private fun observeLiveData() {
         // observe imgList (changed when editing)
-        vm.imgList.observe(viewLifecycleOwner, Observer {
+        vm.imgList.observe(viewLifecycleOwner, {
             binding.imgRv.replaceAll(it)
             binding.imgRv.scrollToPosition(vm.imgPosition ?: 0)
         })
@@ -85,7 +84,6 @@ class EditFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
             adapter = EditImgAdapter(vm)
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
