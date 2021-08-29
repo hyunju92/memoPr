@@ -111,7 +111,7 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
     private fun update(activity:Activity, memo: Memo?) {
         disposable.add(Single.just(memo)
             .subscribeOn(Schedulers.io())
-            .map { it?.let { dao.update(it) > 0L } ?: false }
+            .map { it?.let { dao.update(it) > 0 } ?: false }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ isSuccess ->
                 if (isSuccess) {
@@ -127,7 +127,7 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
     private fun insert(activity:Activity, memo: Memo) {
         disposable.add(Single.just(memo)
             .subscribeOn(Schedulers.io())
-            .map { it?.let { dao.insert(memo) > 0 } ?: false }
+            .map { it?.let { dao.insert(memo) > 0L } ?: false }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ isSuccess ->
                 if (isSuccess) {

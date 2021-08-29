@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ListFragmentBinding
 import hyunju.com.memo2020.list.vm.ListFragmentViewmodel
-import hyunju.com.memo2020.model.Memo
 
 class ListFragment : Fragment() {
     private lateinit var binding: ListFragmentBinding
@@ -18,7 +17,7 @@ class ListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        context?.let { listFragViewmodel = ListFragmentViewmodel(it.applicationContext) }
+        context?.let { listFragViewmodel = ListFragmentViewmodel(this@ListFragment, it.applicationContext) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -44,18 +43,10 @@ class ListFragment : Fragment() {
         binding.listRv.setLayoutManager(LinearLayoutManager(requireContext()))
         binding.listRv.setHasFixedSize(true)
 
-        binding.listRv.adapter = ListItemAdapter(object : (View, Memo) -> Unit {
-            override fun invoke(view: View, memo: Memo) {
-                listFragViewmodel.moveEditFragment(view, memo)
-            }
-        }, object : (View, Memo) -> Unit {
-            override fun invoke(view: View, memo: Memo) {
-                listFragViewmodel.showSelectDialog(requireContext(), requireActivity(), view, memo)
-            }
-        })
+        binding.listRv.adapter = ListItemAdapter(listFragViewmodel)
 
         binding.addBtn.setOnClickListener {
-            listFragViewmodel.moveEditFragment(it)
+            listFragViewmodel.moveEditFragment()
         }
     }
 

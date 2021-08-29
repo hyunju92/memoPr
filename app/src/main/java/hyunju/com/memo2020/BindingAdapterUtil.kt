@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-@BindingAdapter("match_height_to_device_width")
+@BindingAdapter("matchHeightToDeviceWidth")
 fun matchHeightToDeviceWidth(view: View, boolean: Boolean) {
 
     val pxWidth = view.resources.displayMetrics.widthPixels
@@ -14,6 +14,14 @@ fun matchHeightToDeviceWidth(view: View, boolean: Boolean) {
     view.layoutParams = layoutParams
 }
 
+
+@BindingAdapter("setOnLongClick")
+fun setOnLongClick(view: View, func: () -> Unit) {
+    view.setOnLongClickListener {
+        func()
+        return@setOnLongClickListener true
+    }
+}
 
 interface RecyclerAdapter<T> {
     fun replaceAll(recyclerView: RecyclerView, listItem: List<T>?)

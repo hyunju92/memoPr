@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import
+            alias="ExtensionUtil"
+            type="hyunju.com.memo2020.util.ExtentionUtilKt" />
+
+        <variable
+            name="viewModel"
+            type="hyunju.com.memo2020.list.vm.ListFragmentViewmodel" />
+
+        <variable
+            name="data"
+            type="hyunju.com.memo2020.model.Memo" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        setOnLongClick="@{() -> viewModel.showSelectDialog(data)}"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{ () -> viewModel.moveEditFragment(data)}">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_layout_margin_middle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/thumb_iv"
+                android:layout_width="@dimen/img_width"
+                android:layout_height="@dimen/img_heigth"
+                app:layout_constraintHorizontal_bias="0.05"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/title_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/text_layout_margin"
+                android:layout_marginRight="@dimen/text_layout_margin"
+                android:hint="@string/memo_item_title_hint"
+                android:maxLines="1"
+                android:text="@{data.title}"
+                android:textSize="@dimen/tv_size"
+                app:layout_constraintBottom_toTopOf="@+id/date_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.1"
+                app:layout_constraintStart_toEndOf="@+id/thumb_iv"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/date_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/text_layout_margin_large"
+                android:layout_marginRight="@dimen/text_layout_margin_large"
+                android:hint="@string/memo_item_date_hint"
+                android:text="@{ExtensionUtil.getDateText(data)}"
+                android:textSize="@dimen/tv_size_small"
+                app:layout_constraintBottom_toTopOf="@id/contents_tv"
+                app:layout_constraintLeft_toRightOf="@id/thumb_iv"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_tv"
+                app:layout_constraintVertical_bias="0" />
+
+            <TextView
+                android:id="@+id/contents_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/text_layout_margin_large"
+                android:layout_marginRight="@dimen/text_layout_margin_large"
+                android:hint="@string/memo_item_contents_hint"
+                android:maxLines="2"
+                android:text="@{data.contents}"
+                android:textSize="@dimen/tv_size_middle"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/thumb_iv"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/date_tv" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="0.4dp"
+            android:layout_marginLeft="@dimen/guide_layout_padding"
+            android:layout_marginRight="@dimen/guide_layout_padding"
+            android:background="@color/colorLightGray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintVertical_bias="1" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -3,9 +3,9 @@ package hyunju.com.memo2020.list.vm
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
-import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.navigation.Navigation
 import androidx.paging.LivePagedListBuilder
@@ -19,7 +19,7 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-class ListFragmentViewmodel(context: Context) {
+class ListFragmentViewmodel(private val fragment: Fragment, private val context: Context) {
 
     private var disposable : Disposable? = null
     val dao = MemoDatabase.get(context).memoDao()
@@ -30,17 +30,17 @@ class ListFragmentViewmodel(context: Context) {
             8
     ).build()
 
-    fun moveEditFragment(view: View, memoItem: Memo? = null) {
+    fun moveEditFragment(memoItem: Memo? = null) {
         val action =
                 ListFragmentDirections.actionListFragmentToEditFragment(memoItem)
 
-        Navigation.findNavController(view).navigate(action)
+        Navigation.findNavController(fragment.requireView()).navigate(action)
     }
 
-    fun showSelectDialog(context: Context, activity: Activity, view: View, memoItem: Memo?) {
-        val dialogView = activity.layoutInflater.inflate(R.layout.select_dialog, null)
+    fun showSelectDialog(memoItem: Memo?) {
+        val dialogView = fragment.requireActivity().layoutInflater.inflate(R.layout.select_dialog, null)
 
-        val builder = AlertDialog.Builder(context)
+        val builder = AlertDialog.Builder(fragment.requireActivity())
         val dialog = builder.setView(dialogView).create()
 
         val deleteBtn = dialogView.findViewById<ImageButton>(R.id.select_dialog_delete)
@@ -48,11 +48,11 @@ class ListFragmentViewmodel(context: Context) {
 
         deleteBtn.setOnClickListener {
             dialog.dismiss()
-            delete(activity, memoItem!!)
+            delete(fragment.requireActivity(), memoItem!!)
         }
         editBtn.setOnClickListener {
             dialog.dismiss()
-            moveEditFragment(view, memoItem)
+            moveEditFragment(memoItem)
         }
 
         dialog.show()

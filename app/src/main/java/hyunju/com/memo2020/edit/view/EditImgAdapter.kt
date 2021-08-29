@@ -51,7 +51,7 @@ class EditImgAdapter(private val vm: EditFragmentViewmodel)
             val errorImg = R.drawable.ic_sms_failed_black_24dp
 
             binding.memoIvEditImg.let {
-                Glide.with(itemView.context)
+                Glide.with(binding.root.context)
                     .load(loadImg)
                     .error(errorImg)
                     .into(it)
