@@ -7,7 +7,6 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
@@ -124,18 +123,6 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
         )
     }
 
-    // * from EditModeImgAdapter's 4-event
-    // (delete img / get img from uri / get img from camera / get img from album)
-    fun onEditAdapterItemClickEvent(v: View, postion: Int, requestBtnId: Int) {
-        imgPosition = postion
-
-        when (requestBtnId) {
-            R.id.delete_btn_edit_img -> deleteImg(postion)
-            R.id.camera_btn_edit_img, R.id.album_btn_edit_img -> getImgByStartActivity(requestBtnId)
-        }
-    }
-
-
     // delete img
     fun deleteImg(position: Int) {
         try {
@@ -181,32 +168,6 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
             this.action = MediaStore.ACTION_IMAGE_CAPTURE
             this.putExtra(MediaStore.EXTRA_OUTPUT, providerImgUri)
 
-
-        }.let {
-            fragment.startActivityForResult(it, reqCode)
-        }
-    }
-
-    fun getImgByStartActivity(requestBtnId: Int) {
-        Intent().apply {
-            when (requestBtnId) {
-                R.id.album_btn_edit_img -> {
-                    reqCode = REQ_PICK_FROM_ALBUM
-                    this.action = Intent.ACTION_PICK
-                    this.type = MediaStore.Images.Media.CONTENT_TYPE
-
-                }
-
-                R.id.camera_btn_edit_img -> {
-                    reqCode = REQ_PICK_FROM_CAMERA
-                    val providerImgUri = createNewUri(context)
-                    Util.setPref(context, context.getString(R.string.pref_key_uri_from_camera), providerImgUri.toString())
-
-                    this.action = MediaStore.ACTION_IMAGE_CAPTURE
-                    this.putExtra(MediaStore.EXTRA_OUTPUT, providerImgUri)
-
-                }
-            }
 
         }.let {
             fragment.startActivityForResult(it, reqCode)

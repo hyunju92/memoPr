@@ -13,7 +13,7 @@ import hyunju.com.memo2020.RecyclerAdapter
 import hyunju.com.memo2020.databinding.EditImgItemBinding
 import hyunju.com.memo2020.edit.vm.EditFragmentViewmodel
 
-class EditImgAdapter(private val vm: EditFragmentViewmodel, val itemClick: (View, Int) -> Unit)
+class EditImgAdapter(private val vm: EditFragmentViewmodel)
     : RecyclerView.Adapter<EditImgAdapter.EditImgViewHolder>(), RecyclerAdapter<String> {
 
     private var imgItemList = mutableListOf<String>()

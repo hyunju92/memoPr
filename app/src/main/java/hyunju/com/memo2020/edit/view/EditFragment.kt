@@ -83,11 +83,7 @@ class EditFragment : Fragment() {
         // set img recycler view
         binding.imgRv.run {
             layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
-            adapter = EditImgAdapter(vm, object : (View, Int) -> Unit {
-                override fun invoke(view: View, position: Int) {
-                    vm.onEditAdapterItemClickEvent(view, position, view.id)
-                }
-            })
+            adapter = EditImgAdapter(vm)
         }
 
     }
