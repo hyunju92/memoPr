@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:memo="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
-        <import type="android.view.View" />
+        <import type="hyunju.com.memo2020.model.Memo" />
 
         <variable
             name="viewModel"
@@ -30,6 +28,7 @@
             android:id="@+id/add_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="@{() -> viewModel.moveEditFragment((Memo)null)}"
             android:src="@drawable/ic_create_white_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.9"

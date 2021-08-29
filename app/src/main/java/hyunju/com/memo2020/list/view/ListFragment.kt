@@ -20,8 +20,10 @@ class ListFragment : Fragment() {
         context?.let { listFragViewmodel = ListFragmentViewmodel(this@ListFragment, it.applicationContext) }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.list_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = DataBindingUtil.inflate<ListFragmentBinding>(inflater, R.layout.list_fragment, container, false).apply {
+            viewModel = listFragViewmodel
+        }
         return binding.root
     }
 
@@ -33,20 +35,19 @@ class ListFragment : Fragment() {
 
     private fun observeLiveData() {
         listFragViewmodel.allMemos.observe(viewLifecycleOwner, {
-            val adapter = binding.listRv.adapter as ListItemAdapter
-            adapter.submitList(it)
-            adapter.notifyDataSetChanged() }
+                val adapter = binding.listRv.adapter as ListItemAdapter
+                adapter.submitList(it)
+                adapter.notifyDataSetChanged()
+            }
         )
     }
 
     private fun setLayout() {
-        binding.listRv.setLayoutManager(LinearLayoutManager(requireContext()))
-        binding.listRv.setHasFixedSize(true)
+        binding.listRv.run {
+            layoutManager = LinearLayoutManager(requireContext())
+            setHasFixedSize(true)
 
-        binding.listRv.adapter = ListItemAdapter(listFragViewmodel)
-
-        binding.addBtn.setOnClickListener {
-            listFragViewmodel.moveEditFragment()
+            adapter = ListItemAdapter(listFragViewmodel)
         }
     }
 
