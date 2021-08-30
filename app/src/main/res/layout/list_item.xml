@@ -10,7 +10,7 @@
 
         <variable
             name="viewModel"
-            type="hyunju.com.memo2020.list.vm.ListFragmentViewmodel" />
+            type="hyunju.com.memo2020.list.vm.ListViewModel" />
 
         <variable
             name="data"

@@ -10,35 +10,36 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ListFragmentBinding
 import hyunju.com.memo2020.db.MemoDatabase
-import hyunju.com.memo2020.list.vm.ListFragmentViewmodel
+import hyunju.com.memo2020.list.vm.ListViewModel
 import hyunju.com.memo2020.model.MemoRepository
 
 class ListFragment : Fragment() {
     private lateinit var binding: ListFragmentBinding
-    private lateinit var listFragViewmodel: ListFragmentViewmodel
+    private lateinit var listViewModel: ListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         context?.let {
             val repository = MemoRepository(MemoDatabase.get(it.applicationContext))
-            listFragViewmodel = ListFragmentViewmodel(repository,this@ListFragment, it.applicationContext) }
+            listViewModel = ListViewModel(repository,this@ListFragment)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate<ListFragmentBinding>(inflater, R.layout.list_fragment, container, false).apply {
-            viewModel = listFragViewmodel
+            viewModel = listViewModel
         }
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         observeLiveData()
         setLayout()
     }
 
     private fun observeLiveData() {
-        listFragViewmodel.allMemos.observe(viewLifecycleOwner, {
+        listViewModel.allMemos.observe(viewLifecycleOwner, {
                 val adapter = binding.listRv.adapter as ListItemAdapter
                 adapter.submitList(it)
                 adapter.notifyDataSetChanged()
@@ -51,13 +52,13 @@ class ListFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
 
-            adapter = ListItemAdapter(listFragViewmodel)
+            adapter = ListItemAdapter(listViewModel)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        listFragViewmodel.onDestroyViewModel()
+        listViewModel.onDestroyViewModel()
     }
 
 

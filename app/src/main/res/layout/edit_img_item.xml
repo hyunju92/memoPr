@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="hyunju.com.memo2020.edit.vm.EditFragmentViewmodel" />
+            type="hyunju.com.memo2020.edit.vm.EditViewModel" />
 
         <variable
             name="position"

@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="hyunju.com.memo2020.list.vm.ListFragmentViewmodel" />
+            type="hyunju.com.memo2020.list.vm.ListViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

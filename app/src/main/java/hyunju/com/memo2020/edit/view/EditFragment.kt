@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.EditFragmentBinding
 import hyunju.com.memo2020.db.MemoDatabase
-import hyunju.com.memo2020.edit.vm.EditFragmentViewmodel
+import hyunju.com.memo2020.edit.vm.EditViewModel
 import hyunju.com.memo2020.model.MemoRepository
 import hyunju.com.memo2020.replaceAll
 
@@ -18,7 +18,7 @@ import hyunju.com.memo2020.replaceAll
 class EditFragment : Fragment() {
 
     private lateinit var binding: EditFragmentBinding
-    private lateinit var vm: EditFragmentViewmodel
+    private lateinit var editViewModel: EditViewModel
 
     private var menu: Menu? = null
 
@@ -47,24 +47,24 @@ class EditFragment : Fragment() {
 
         context?.let {
             val repository = MemoRepository(MemoDatabase.get(it.applicationContext))
-            vm = EditFragmentViewmodel(repository, it.applicationContext, this@EditFragment) }
+            editViewModel = EditViewModel(repository, it.applicationContext, this@EditFragment)
+        }
 
         // receive arg (a memo item) from previous frag
-        EditFragmentArgs.fromBundle(requireArguments()).memoItem.let { vm.setMemoItem(it) }
+        EditFragmentArgs.fromBundle(requireArguments()).memoItem.let { editViewModel.setMemoItem(it) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate<EditFragmentBinding>(inflater, R.layout.edit_fragment, container, false).apply {
-            viewModel = vm
-            memo = vm.memoItem.value
+            memo = editViewModel.memoItem.value
         }
 
         setHasOptionsMenu(true)
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 save()
@@ -77,9 +77,9 @@ class EditFragment : Fragment() {
 
     private fun observeLiveData() {
         // observe imgList (changed when editing)
-        vm.imgList.observe(viewLifecycleOwner, {
+        editViewModel.imgList.observe(viewLifecycleOwner, {
             binding.imgRv.replaceAll(it)
-            binding.imgRv.scrollToPosition(vm.imgPosition ?: 0)
+            binding.imgRv.scrollToPosition(editViewModel.imgPosition ?: 0)
         })
     }
 
@@ -87,22 +87,22 @@ class EditFragment : Fragment() {
         // set img recycler view
         binding.imgRv.run {
             layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
-            adapter = EditImgAdapter(vm)
+            adapter = EditImgAdapter(editViewModel)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        context?.let { vm.onActivityResult(it.applicationContext, requestCode, resultCode, data) }
+        context?.let { editViewModel.onActivityResult(it.applicationContext, requestCode, resultCode, data) }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        vm.onDestroyViewModel()
+        editViewModel.onDestroyViewModel()
     }
 
     private fun save() {
-        vm.save(requireActivity(),
+        editViewModel.save(requireActivity(),
                 binding.titleEt.text.toString(), binding.contentsEt.text.toString())
     }
 

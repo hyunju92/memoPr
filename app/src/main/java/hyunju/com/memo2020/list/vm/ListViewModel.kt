@@ -17,7 +17,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-class ListFragmentViewmodel(private val repository: MemoRepository, private val fragment: Fragment, private val context: Context) {
+class ListViewModel(private val repository: MemoRepository, private val fragment: Fragment) {
 
     private var disposable : Disposable? = null
 
@@ -25,9 +25,7 @@ class ListFragmentViewmodel(private val repository: MemoRepository, private val 
     var allMemos: LiveData<PagedList<Memo>> = repository.allMemos
 
     fun moveEditFragment(memoItem: Memo? = null) {
-        val action =
-                ListFragmentDirections.actionListFragmentToEditFragment(memoItem)
-
+        val action = ListFragmentDirections.actionListFragmentToEditFragment(memoItem)
         Navigation.findNavController(fragment.requireView()).navigate(action)
     }
 

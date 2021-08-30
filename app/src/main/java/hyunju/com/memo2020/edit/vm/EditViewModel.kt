@@ -27,7 +27,7 @@ import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
-class EditFragmentViewmodel(private val repository: MemoRepository, private val context: Context, private val fragment: Fragment) {
+class EditViewModel(private val repository: MemoRepository, private val context: Context, private val fragment: Fragment) {
 
     private val disposable = CompositeDisposable()
 
@@ -36,7 +36,7 @@ class EditFragmentViewmodel(private val repository: MemoRepository, private val 
     val memoItem: LiveData<Memo?>
         get() = _memoItem
 
-    val _imgList = MutableLiveData<ArrayList<String>>()
+    private val _imgList = MutableLiveData<ArrayList<String>>()
     val imgList: LiveData<ArrayList<String>>
         get() = _imgList
 

@@ -8,10 +8,6 @@
             type="hyunju.com.memo2020.util.ExtentionUtilKt" />
 
         <variable
-            name="viewModel"
-            type="hyunju.com.memo2020.edit.vm.EditFragmentViewmodel" />
-
-        <variable
             name="memo"
             type="hyunju.com.memo2020.model.Memo" />
 

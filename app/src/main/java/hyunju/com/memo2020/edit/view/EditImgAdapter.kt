@@ -8,9 +8,9 @@ import com.bumptech.glide.Glide
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.RecyclerAdapter
 import hyunju.com.memo2020.databinding.EditImgItemBinding
-import hyunju.com.memo2020.edit.vm.EditFragmentViewmodel
+import hyunju.com.memo2020.edit.vm.EditViewModel
 
-class EditImgAdapter(private val vm: EditFragmentViewmodel)
+class EditImgAdapter(private val vm: EditViewModel)
     : RecyclerView.Adapter<EditImgAdapter.EditImgViewHolder>(), RecyclerAdapter<String> {
 
     private var imgItemList = mutableListOf<String>()
