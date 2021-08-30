@@ -15,9 +15,9 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 
 class ListViewModel(private val repository: MemoRepository) {
 
-    private var disposable: Disposable? = null
     val uiEvent = PublishSubject.create<ListUiEvent>()
     val allMemos: LiveData<PagedList<Memo>> = repository.allMemos
+    private var disposable: Disposable? = null
 
     fun moveEditFragment(memoItem: Memo? = null) {
         uiEvent.onNext(ListUiEvent.MoveEditFragment(memoItem))

@@ -1,24 +1,30 @@
 package hyunju.com.memo2020.edit.view
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.EditFragmentBinding
 import hyunju.com.memo2020.db.MemoDatabase
+import hyunju.com.memo2020.edit.vm.EditUiEvent
 import hyunju.com.memo2020.edit.vm.EditViewModel
 import hyunju.com.memo2020.model.MemoRepository
 import hyunju.com.memo2020.replaceAll
+import io.reactivex.rxjava3.disposables.Disposable
 
 
 class EditFragment : Fragment() {
 
     private lateinit var binding: EditFragmentBinding
     private lateinit var editViewModel: EditViewModel
+    private var eventDisposable: Disposable? = null
 
     private var menu: Menu? = null
 
@@ -80,6 +86,15 @@ class EditFragment : Fragment() {
         editViewModel.imgList.observe(viewLifecycleOwner, {
             binding.imgRv.replaceAll(it)
         })
+        eventDisposable = editViewModel.uiEvent.subscribe {
+            handleUiEvent(it)
+        }
+    }
+
+    private fun handleUiEvent(uiEvent: EditUiEvent) = when(uiEvent) {
+        EditUiEvent.MoveListFragment -> moveListFragment()
+        is EditUiEvent.DeleteImgUri -> deleteImgUri(uiEvent.imgUri)
+        is EditUiEvent.ShowToast -> showToast(uiEvent.msgResId)
     }
 
     private fun setLayout() {
@@ -98,13 +113,25 @@ class EditFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         editViewModel.onDestroyViewModel()
+        eventDisposable?.dispose()
     }
 
     private fun save() {
-        editViewModel.save(requireActivity(), this,
-                binding.titleEt.text.toString(), binding.contentsEt.text.toString())
+        editViewModel.save(binding.titleEt.text.toString(), binding.contentsEt.text.toString())
     }
 
+
+    private fun showToast(resId : Int) {
+        context?.let { Toast.makeText(it, it.getString(resId), Toast.LENGTH_SHORT).show() }
+    }
+
+    private fun deleteImgUri(imgUri: String) {
+        context?.contentResolver?.delete(Uri.parse(imgUri), null, null);
+    }
+
+    private fun moveListFragment() {
+        Navigation.findNavController(requireActivity(), R.id.main_fragment).navigateUp()
+    }
 
 }
 
