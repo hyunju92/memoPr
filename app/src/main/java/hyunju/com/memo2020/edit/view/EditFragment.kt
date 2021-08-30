@@ -79,7 +79,6 @@ class EditFragment : Fragment() {
         // observe imgList (changed when editing)
         editViewModel.imgList.observe(viewLifecycleOwner, {
             binding.imgRv.replaceAll(it)
-            binding.imgRv.scrollToPosition(editViewModel.imgPosition ?: 0)
         })
     }
 
@@ -102,7 +101,7 @@ class EditFragment : Fragment() {
     }
 
     private fun save() {
-        editViewModel.save(requireActivity(),
+        editViewModel.save(requireActivity(), this,
                 binding.titleEt.text.toString(), binding.contentsEt.text.toString())
     }
 

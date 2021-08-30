@@ -5,6 +5,7 @@
     // img layout
     <dimen name="padding_small_2">8dp</dimen>
     <dimen name="padding_small">12dp</dimen>
+    <dimen name="padding_medium">24dp</dimen>
     <dimen name="padding_large">32dp</dimen>
     <dimen name="contents_et_bottom_padding">100dp</dimen>
     <dimen name="guide_layout_padding">40dp</dimen>

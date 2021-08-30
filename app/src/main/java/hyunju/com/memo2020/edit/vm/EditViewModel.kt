@@ -12,6 +12,8 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.model.Memo
@@ -40,8 +42,6 @@ class EditViewModel(private val repository: MemoRepository, private val context:
     val imgList: LiveData<ArrayList<String>>
         get() = _imgList
 
-    var imgPosition: Int? = 0
-
     // * set memo item (received as argument)
     @RequiresApi(Build.VERSION_CODES.N)
     fun setMemoItem(memo: Memo?) {
@@ -51,7 +51,6 @@ class EditViewModel(private val repository: MemoRepository, private val context:
         tempImgList.removeIf { it.isNullOrEmpty() }
         _imgList.value = tempImgList
 
-        imgPosition = _imgList.value?.size
     }
 
     // * edit imgList of item view
@@ -64,7 +63,7 @@ class EditViewModel(private val repository: MemoRepository, private val context:
 
 
     // * save memo (need to access db)
-    fun save(activity: Activity, title: String, contents: String) {
+    fun save(activity: Activity, fragment: Fragment, title: String, contents: String) {
 
         if (_memoItem.value == null) {
             // insert
@@ -76,7 +75,7 @@ class EditViewModel(private val repository: MemoRepository, private val context:
             )
 
             if (memoIsEmpty(activity, newMemo)) return
-            insert(activity, newMemo)
+            insert(activity, fragment, newMemo)
 
         } else {
             // update
@@ -87,7 +86,7 @@ class EditViewModel(private val repository: MemoRepository, private val context:
                 imageUriList = _imgList.value ?: ArrayList()
             )
             _memoItem.value = updateItem
-            update(activity, _memoItem.value)
+            update(activity, fragment, _memoItem.value)
 
         }
     }
@@ -108,7 +107,7 @@ class EditViewModel(private val repository: MemoRepository, private val context:
     }
 
     // * access db
-    private fun update(activity:Activity, memo: Memo?) {
+    private fun update(activity: Activity, fragment: Fragment, memo: Memo?) {
         disposable.add(repository.update(memo!!)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -121,7 +120,7 @@ class EditViewModel(private val repository: MemoRepository, private val context:
         )
     }
 
-    private fun insert(activity:Activity, memo: Memo) {
+    private fun insert(activity: Activity, fragment: Fragment, memo: Memo) {
         disposable.add(repository.insert(memo)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
