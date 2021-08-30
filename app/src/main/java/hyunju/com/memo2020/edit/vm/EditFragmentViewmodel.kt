@@ -15,6 +15,7 @@ import androidx.navigation.Navigation
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.model.Memo
+import hyunju.com.memo2020.model.MemoRepository
 import hyunju.com.memo2020.util.ImgUtil
 import hyunju.com.memo2020.util.ImgUtil.Companion.createNewUri
 import hyunju.com.memo2020.util.Util
@@ -26,10 +27,9 @@ import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
-class EditFragmentViewmodel(private val context: Context, private val fragment: Fragment) {
+class EditFragmentViewmodel(private val repository: MemoRepository, private val context: Context, private val fragment: Fragment) {
 
     private val disposable = CompositeDisposable()
-    val dao = MemoDatabase.get(context).memoDao()
 
     // LiveData
     private val _memoItem = MutableLiveData<Memo?>()
@@ -47,7 +47,7 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
     fun setMemoItem(memo: Memo?) {
         _memoItem.value = memo
         // 버그 수정 필요 (임시 방어 코드)
-        val tempImgList = memo?.let { ArrayList(it.imageUrlList)}?:ArrayList()
+        val tempImgList = memo?.let { ArrayList(it.imageUriList)}?:ArrayList()
         tempImgList.removeIf { it.isNullOrEmpty() }
         _imgList.value = tempImgList
 
@@ -71,7 +71,7 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
             val newMemo = Memo(
                 title = title,
                 contents = contents,
-                imageUrlList = _imgList.value ?: ArrayList(),
+                imageUriList = _imgList.value ?: ArrayList(),
                 date = Date()
             )
 
@@ -84,7 +84,7 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
                 title = title,
                 contents = contents,
                 date = Date(),
-                imageUrlList = _imgList.value ?: ArrayList()
+                imageUriList = _imgList.value ?: ArrayList()
             )
             _memoItem.value = updateItem
             update(activity, _memoItem.value)
@@ -93,7 +93,7 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
     }
 
     private fun memoIsEmpty(activity: Activity, memo: Memo): Boolean {
-        if (memo.imageUrlList.isNullOrEmpty() && memo.title.isEmpty() && memo.contents.isEmpty()) {
+        if (memo.imageUriList.isNullOrEmpty() && memo.title.isEmpty() && memo.contents.isEmpty()) {
             Toast.makeText(activity, activity.getString(R.string.memo_empty), Toast.LENGTH_SHORT)
                 .show()
             Navigation.findNavController(activity, R.id.main_fragment).navigateUp()
@@ -109,15 +109,12 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
 
     // * access db
     private fun update(activity:Activity, memo: Memo?) {
-        disposable.add(Single.just(memo)
+        disposable.add(repository.update(memo!!)
             .subscribeOn(Schedulers.io())
-            .map { it?.let { dao.update(it) > 0 } ?: false }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ isSuccess ->
-                if (isSuccess) {
-                    Toast.makeText(context, context.getString(R.string.memo_update), Toast.LENGTH_SHORT).show()
-                    afterSave(activity)
-                }
+            .subscribe({
+                Toast.makeText(context, context.getString(R.string.memo_update), Toast.LENGTH_SHORT).show()
+                afterSave(activity)
             }, {
                 it.printStackTrace()
             })
@@ -125,18 +122,15 @@ class EditFragmentViewmodel(private val context: Context, private val fragment: 
     }
 
     private fun insert(activity:Activity, memo: Memo) {
-        disposable.add(Single.just(memo)
-            .subscribeOn(Schedulers.io())
-            .map { it?.let { dao.insert(memo) > 0L } ?: false }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ isSuccess ->
-                if (isSuccess) {
+        disposable.add(repository.insert(memo)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
                     Toast.makeText(context, context.getString(R.string.memo_insert), Toast.LENGTH_SHORT).show()
                     afterSave(activity)
-                }
-            }, {
-                it.printStackTrace()
-            })
+                }, {
+                    it.printStackTrace()
+                })
         )
     }
 

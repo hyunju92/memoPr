@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.EditFragmentBinding
+import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.edit.vm.EditFragmentViewmodel
+import hyunju.com.memo2020.model.MemoRepository
 import hyunju.com.memo2020.replaceAll
 
 
@@ -42,7 +44,10 @@ class EditFragment : Fragment() {
     // fragment lifecycle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        context?.let { vm = EditFragmentViewmodel(it.applicationContext, this@EditFragment) }
+
+        context?.let {
+            val repository = MemoRepository(MemoDatabase.get(it.applicationContext))
+            vm = EditFragmentViewmodel(repository, it.applicationContext, this@EditFragment) }
 
         // receive arg (a memo item) from previous frag
         EditFragmentArgs.fromBundle(requireArguments()).memoItem.let { vm.setMemoItem(it) }

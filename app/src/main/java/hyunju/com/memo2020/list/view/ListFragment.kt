@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ListFragmentBinding
+import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.list.vm.ListFragmentViewmodel
+import hyunju.com.memo2020.model.MemoRepository
 
 class ListFragment : Fragment() {
     private lateinit var binding: ListFragmentBinding
@@ -17,7 +19,9 @@ class ListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        context?.let { listFragViewmodel = ListFragmentViewmodel(this@ListFragment, it.applicationContext) }
+        context?.let {
+            val repository = MemoRepository(MemoDatabase.get(it.applicationContext))
+            listFragViewmodel = ListFragmentViewmodel(repository,this@ListFragment, it.applicationContext) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

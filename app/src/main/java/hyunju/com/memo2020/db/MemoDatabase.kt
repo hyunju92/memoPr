@@ -12,16 +12,22 @@ abstract class MemoDatabase : RoomDatabase() {
     abstract fun memoDao() : MemoDao
 
     companion object {
+        private val DB_NAME = "memoDb"
         private var INSTANCE : MemoDatabase? = null
 
         @Synchronized
         fun get(context: Context): MemoDatabase {
             if (INSTANCE == null) {
-                INSTANCE = Room.databaseBuilder(context.applicationContext,
-                        MemoDatabase::class.java, context.getString(R.string.db_file_name)).build()
+                INSTANCE = buildDatabase(context)
             }
             return INSTANCE!!
         }
+
+        private fun buildDatabase(context: Context): MemoDatabase {
+            return Room.databaseBuilder(context.applicationContext,
+                MemoDatabase::class.java, DB_NAME).build()
+        }
+
 
     }
 }

@@ -8,27 +8,21 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.navigation.Navigation
-import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import hyunju.com.memo2020.R
-import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.list.view.ListFragmentDirections
 import hyunju.com.memo2020.model.Memo
+import hyunju.com.memo2020.model.MemoRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-class ListFragmentViewmodel(private val fragment: Fragment, private val context: Context) {
+class ListFragmentViewmodel(private val repository: MemoRepository, private val fragment: Fragment, private val context: Context) {
 
     private var disposable : Disposable? = null
-    val dao = MemoDatabase.get(context).memoDao()
 
     // LiveData
-    var allMemos: LiveData<PagedList<Memo>> = LivePagedListBuilder(
-            dao.getAllMemoByDate(),
-            8
-    ).build()
+    var allMemos: LiveData<PagedList<Memo>> = repository.allMemos
 
     fun moveEditFragment(memoItem: Memo? = null) {
         val action =
@@ -59,15 +53,12 @@ class ListFragmentViewmodel(private val fragment: Fragment, private val context:
     }
 
     private fun delete(activity: Activity, memo: Memo) {
-        disposable = Single.just(memo)
+        disposable = repository.delete(memo)
             .subscribeOn(Schedulers.io())
-            .map { dao.delete(it) > 0}
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe ({ isSuccess ->
-                if (isSuccess) {
-                    Toast.makeText(activity, activity.getString(R.string.memo_delete), Toast.LENGTH_SHORT).show()
-                    Navigation.findNavController(activity, R.id.main_fragment).navigateUp()
-                }
+            .subscribe({
+                Toast.makeText(activity, activity.getString(R.string.memo_delete), Toast.LENGTH_SHORT).show()
+                Navigation.findNavController(activity, R.id.main_fragment).navigateUp()
             }, {
                 it.printStackTrace()
             })

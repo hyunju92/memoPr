@@ -12,7 +12,7 @@ data class Memo(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     var title: String,
     var contents: String,
-    var imageUrlList: List<String>,       // image uri
+    var imageUriList: List<String>,       // image uri
     var date: Date
 ) : Parcelable
 

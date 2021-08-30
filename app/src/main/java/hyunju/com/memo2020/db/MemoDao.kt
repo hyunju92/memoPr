@@ -3,6 +3,7 @@ package hyunju.com.memo2020.db
 import androidx.paging.DataSource
 import androidx.room.*
 import hyunju.com.memo2020.model.Memo
+import io.reactivex.rxjava3.core.Completable
 
 @Dao
 interface MemoDao {
@@ -12,22 +13,13 @@ interface MemoDao {
     @Query("SELECT * FROM Memo ORDER BY date DESC")
     fun getAllMemoByDate(): DataSource.Factory<Int, Memo>
 
-    @Query("SELECT * FROM Memo WHERE id = :id")
-    fun getMemoById(id: Long) : Memo
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(memo: Memo) : Long
+    fun insert(memo: Memo) : Completable
 
     @Update
-    fun update(memo: Memo) : Int
+    fun update(memo: Memo) : Completable
 
     @Delete
-    fun delete(memo: Memo) : Int
-
-    @Query("DELETE from Memo")
-    fun deleteAll()
-
-    @Query("DELETE FROM Memo WHERE id = :id")
-    fun deleteById(id: Long)
+    fun delete(memo: Memo) : Completable
 
 }
