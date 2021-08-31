@@ -1,20 +1,15 @@
 package hyunju.com.memo2020.edit.vm
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.MediaStore
 import android.text.TextUtils
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.model.Memo
-import hyunju.com.memo2020.model.MemoRepository
-import hyunju.com.memo2020.util.ImgUtil
-import hyunju.com.memo2020.util.ImgUtil.Companion.createNewUri
-import hyunju.com.memo2020.util.Util
+import hyunju.com.memo2020.model.Repository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -23,9 +18,9 @@ import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
-class EditViewModel(private val repository: MemoRepository, private val context: Context, private val fragment: Fragment) {
+class EditViewModel(private val repository: Repository) {
 
-    val uiEvent= PublishSubject.create<EditUiEvent>()
+    val uiEvent = PublishSubject.create<EditUiEvent>()
     private val disposable = CompositeDisposable()
 
     // LiveData
@@ -37,29 +32,25 @@ class EditViewModel(private val repository: MemoRepository, private val context:
     val imgList: LiveData<ArrayList<String>>
         get() = _imgList
 
+    companion object {
+        private const val REQ_PICK_FROM_ALBUM = 1000
+        private const val REQ_PICK_FROM_CAMERA = 1001
+
+        private const val URI_FROM_CAMERA = "URI_FROM_CAMERA"
+    }
+
     // * set memo item (received as argument)
     @RequiresApi(Build.VERSION_CODES.N)
     fun setMemoItem(memo: Memo?) {
         _memoItem.value = memo
-        // 버그 수정 필요 (임시 방어 코드)
-        val tempImgList = memo?.let { ArrayList(it.imageUriList)}?:ArrayList()
+        val tempImgList = memo?.let { ArrayList(it.imageUriList) } ?: ArrayList()   // 버그수정중-방어코드
         tempImgList.removeIf { it.isNullOrEmpty() }
         _imgList.value = tempImgList
 
     }
 
-    // * edit imgList of item view
-    fun addImg(uriStr: String?) {
-        if (TextUtils.isEmpty(uriStr)) return
-        val tempList: ArrayList<String> = _imgList.value ?: ArrayList()
-        tempList.add(uriStr!!)
-        _imgList.value = tempList
-    }
-
-
     // * save memo (need to access db)
     fun save(title: String, contents: String) {
-
         if (_memoItem.value == null) {
             // insert
             val newMemo = Memo(
@@ -88,7 +79,8 @@ class EditViewModel(private val repository: MemoRepository, private val context:
 
     private fun memoIsEmpty(memo: Memo): Boolean {
         return if (memo.imageUriList.isNullOrEmpty() && memo.title.isEmpty() && memo.contents.isEmpty()) {
-            uiEvent.onNext(EditUiEvent.ShowToast(R.string.memo_empty))
+            val msg = repository.getStringFromResId(R.string.memo_empty)
+            uiEvent.onNext(EditUiEvent.ShowToast(msg))
             uiEvent.onNext(EditUiEvent.MoveListFragment)
             true
         } else {
@@ -102,24 +94,28 @@ class EditViewModel(private val repository: MemoRepository, private val context:
 
     // * access db
     private fun update(memo: Memo?) {
-        disposable.add(repository.update(memo!!)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                uiEvent.onNext(EditUiEvent.ShowToast(R.string.memo_update))
-                afterSave()
-            }, {
-                it.printStackTrace()
-            })
+        disposable.add(
+            repository.update(memo!!)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    val msg = repository.getStringFromResId(R.string.memo_update)
+                    uiEvent.onNext(EditUiEvent.ShowToast(msg))
+                    afterSave()
+                }, {
+                    it.printStackTrace()
+                })
         )
     }
 
     private fun insert(memo: Memo) {
-        disposable.add(repository.insert(memo)
+        disposable.add(
+            repository.insert(memo)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    uiEvent.onNext(EditUiEvent.ShowToast(R.string.memo_insert))
+                    val msg = repository.getStringFromResId(R.string.memo_insert)
+                    uiEvent.onNext(EditUiEvent.ShowToast(msg))
                     afterSave()
                 }, {
                     it.printStackTrace()
@@ -141,58 +137,50 @@ class EditViewModel(private val repository: MemoRepository, private val context:
     }
 
 
-    // get img from camera / get img from album
-    private val REQ_PICK_FROM_ALBUM = 1000
-    private val REQ_PICK_FROM_CAMERA = 1001
-    private var reqCode = 0
-
     fun pickImgFromAlbum() {
         Intent().apply {
-            reqCode = REQ_PICK_FROM_ALBUM
             this.action = Intent.ACTION_PICK
             this.type = MediaStore.Images.Media.CONTENT_TYPE
 
         }.let {
-            fragment.startActivityForResult(it, reqCode)
+            uiEvent.onNext(EditUiEvent.StartActivityForImgUri(REQ_PICK_FROM_ALBUM, it))
         }
     }
 
     fun pickImgFromCamera() {
         Intent().apply {
-
-            reqCode = REQ_PICK_FROM_CAMERA
-            val providerImgUri = createNewUri(context)
-            Util.setPref(
-                context,
-                context.getString(R.string.pref_key_uri_from_camera),
-                providerImgUri.toString()
-            )
+            val newUri = repository.createNewUri()
+            repository.setPref(URI_FROM_CAMERA, newUri.toString())
 
             this.action = MediaStore.ACTION_IMAGE_CAPTURE
-            this.putExtra(MediaStore.EXTRA_OUTPUT, providerImgUri)
-
+            this.putExtra(MediaStore.EXTRA_OUTPUT, newUri)
 
         }.let {
-            fragment.startActivityForResult(it, reqCode)
+            uiEvent.onNext(EditUiEvent.StartActivityForImgUri(REQ_PICK_FROM_CAMERA, it))
         }
     }
 
-    // result of startactivityforresult to get image
-    fun onActivityResult(context: Context, requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != Activity.RESULT_OK) return
-        when (requestCode) {
-            REQ_PICK_FROM_ALBUM -> {
-                if (data?.data == null) return
-                val providerUri = ImgUtil.copyUri(context, data.data!!)
-                addImg(providerUri?.toString())
-            }
-            REQ_PICK_FROM_CAMERA -> {
-                Util.getPref(context, context.getString(R.string.pref_key_uri_from_camera)).let {
-                    if (it.isNotEmpty()) addImg(it)
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQ_PICK_FROM_ALBUM -> {
+                    if (data?.data != null){
+                        repository.createCopiedUri(data.data!!)?.let { newUri -> addImg(newUri.toString()) }
+                    }
                 }
-            }
+                REQ_PICK_FROM_CAMERA -> {
+                    repository.getPref(URI_FROM_CAMERA).let { newUri -> if (newUri.isNotEmpty()) addImg(newUri) }
+                }
 
+            }
         }
+    }
+
+    private fun addImg(uriStr: String?) {
+        if (TextUtils.isEmpty(uriStr)) return
+        val tempList: ArrayList<String> = _imgList.value ?: ArrayList()
+        tempList.add(uriStr!!)
+        _imgList.value = tempList
     }
 
     fun onDestroyViewModel() {
@@ -203,7 +191,8 @@ class EditViewModel(private val repository: MemoRepository, private val context:
 
 
 sealed class EditUiEvent {
-    data class ShowToast(val msgResId: Int) : EditUiEvent()
+    data class ShowToast(val msg: String) : EditUiEvent()
     data class DeleteImgUri(val imgUri: String) : EditUiEvent()
+    data class StartActivityForImgUri(val requestCode: Int, val intent: Intent) : EditUiEvent()
     object MoveListFragment : EditUiEvent()
 }

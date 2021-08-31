@@ -16,7 +16,7 @@ import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.list.vm.ListUiEvent
 import hyunju.com.memo2020.list.vm.ListViewModel
 import hyunju.com.memo2020.model.Memo
-import hyunju.com.memo2020.model.MemoRepository
+import hyunju.com.memo2020.model.Repository
 import io.reactivex.rxjava3.disposables.Disposable
 
 class ListFragment : Fragment() {
@@ -27,7 +27,7 @@ class ListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         context?.let {
-            val repository = MemoRepository(MemoDatabase.get(it.applicationContext))
+            val repository = Repository(MemoDatabase.get(it.applicationContext), it.applicationContext)
             listViewModel = ListViewModel(repository)
         }
     }

@@ -21,7 +21,7 @@ class ImgUtil {
             }
         }
 
-        fun copyUri(context: Context, uri: Uri): Uri? {
+        fun createCopiedUri(context: Context, uri: Uri): Uri? {
             return try {
                 return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val newUri = createUriFromMediaStore(context)   // 예시) content://media/external_primary/file/43504

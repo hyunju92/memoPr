@@ -7,13 +7,13 @@ import androidx.navigation.Navigation
 import androidx.paging.PagedList
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.model.Memo
-import hyunju.com.memo2020.model.MemoRepository
+import hyunju.com.memo2020.model.Repository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 
-class ListViewModel(private val repository: MemoRepository) {
+class ListViewModel(private val repository: Repository) {
 
     val uiEvent = PublishSubject.create<ListUiEvent>()
     val allMemos: LiveData<PagedList<Memo>> = repository.allMemos

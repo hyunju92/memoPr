@@ -15,7 +15,7 @@ import hyunju.com.memo2020.databinding.EditFragmentBinding
 import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.edit.vm.EditUiEvent
 import hyunju.com.memo2020.edit.vm.EditViewModel
-import hyunju.com.memo2020.model.MemoRepository
+import hyunju.com.memo2020.model.Repository
 import hyunju.com.memo2020.replaceAll
 import io.reactivex.rxjava3.disposables.Disposable
 
@@ -52,8 +52,8 @@ class EditFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         context?.let {
-            val repository = MemoRepository(MemoDatabase.get(it.applicationContext))
-            editViewModel = EditViewModel(repository, it.applicationContext, this@EditFragment)
+            val repository = Repository(MemoDatabase.get(it.applicationContext), it.applicationContext)
+            editViewModel = EditViewModel(repository)
         }
 
         // receive arg (a memo item) from previous frag
@@ -89,12 +89,14 @@ class EditFragment : Fragment() {
         eventDisposable = editViewModel.uiEvent.subscribe {
             handleUiEvent(it)
         }
+
     }
 
     private fun handleUiEvent(uiEvent: EditUiEvent) = when(uiEvent) {
         EditUiEvent.MoveListFragment -> moveListFragment()
         is EditUiEvent.DeleteImgUri -> deleteImgUri(uiEvent.imgUri)
-        is EditUiEvent.ShowToast -> showToast(uiEvent.msgResId)
+        is EditUiEvent.ShowToast -> showToast(uiEvent.msg)
+        is EditUiEvent.StartActivityForImgUri -> startActivityForImgUri(uiEvent.requestCode, uiEvent.intent)
     }
 
     private fun setLayout() {
@@ -107,7 +109,7 @@ class EditFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        context?.let { editViewModel.onActivityResult(it.applicationContext, requestCode, resultCode, data) }
+        editViewModel.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onDestroyView() {
@@ -116,13 +118,16 @@ class EditFragment : Fragment() {
         eventDisposable?.dispose()
     }
 
+    private fun startActivityForImgUri(requestCode: Int, intent: Intent) {
+        startActivityForResult(intent, requestCode)
+    }
+
     private fun save() {
         editViewModel.save(binding.titleEt.text.toString(), binding.contentsEt.text.toString())
     }
 
-
-    private fun showToast(resId : Int) {
-        context?.let { Toast.makeText(it, it.getString(resId), Toast.LENGTH_SHORT).show() }
+    private fun showToast(msg : String) {
+        context?.let { Toast.makeText(it, msg, Toast.LENGTH_SHORT).show() }
     }
 
     private fun deleteImgUri(imgUri: String) {
