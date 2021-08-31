@@ -1,9 +1,6 @@
 package hyunju.com.memo2020.list.vm
 
-import android.app.Activity
-import android.widget.Toast
 import androidx.lifecycle.LiveData
-import androidx.navigation.Navigation
 import androidx.paging.PagedList
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.model.Memo
@@ -27,17 +24,14 @@ class ListViewModel(private val repository: Repository) {
         uiEvent.onNext(ListUiEvent.ShowSelectDialog(memoItem))
     }
 
-    fun delete(activity: Activity, memo: Memo) {
+    fun delete(memo: Memo) {
         disposable = repository.delete(memo)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Toast.makeText(
-                    activity,
-                    activity.getString(R.string.memo_delete),
-                    Toast.LENGTH_SHORT
-                ).show()
-                Navigation.findNavController(activity, R.id.main_fragment).navigateUp()
+                val msg = repository.getStringFromResId(R.string.memo_delete)
+                uiEvent.onNext(ListUiEvent.ShowToast(msg))
+
             }, {
                 it.printStackTrace()
             })
@@ -52,6 +46,7 @@ class ListViewModel(private val repository: Repository) {
 sealed class ListUiEvent {
     data class MoveEditFragment(val memoItem: Memo? = null) : ListUiEvent()
     data class ShowSelectDialog(val memoItem: Memo?) : ListUiEvent()
+    data class ShowToast(val msg: String) : ListUiEvent()
 }
 
 

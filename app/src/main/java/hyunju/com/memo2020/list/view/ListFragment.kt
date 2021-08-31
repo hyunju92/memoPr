@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
@@ -54,13 +55,14 @@ class ListFragment : Fragment() {
         )
 
         eventDisposable = listViewModel.uiEvent.subscribe {
-            handelUiEvent(it)
+            handleUiEvent(it)
         }
     }
 
-    private fun handelUiEvent(uiEvent: ListUiEvent) = when(uiEvent) {
+    private fun handleUiEvent(uiEvent: ListUiEvent) = when(uiEvent) {
         is ListUiEvent.MoveEditFragment -> moveEditFragment(uiEvent.memoItem)
         is ListUiEvent.ShowSelectDialog -> showSelectDialog(uiEvent.memoItem)
+        is ListUiEvent.ShowToast -> showToast(uiEvent.msg)
     }
 
     private fun setLayout() {
@@ -94,7 +96,7 @@ class ListFragment : Fragment() {
 
         deleteBtn.setOnClickListener {
             dialog.dismiss()
-            listViewModel.delete(requireActivity(), memoItem!!)
+            listViewModel.delete(memoItem!!)
         }
         editBtn.setOnClickListener {
             dialog.dismiss()
@@ -102,5 +104,9 @@ class ListFragment : Fragment() {
         }
 
         dialog.show()
+    }
+
+    private fun showToast(msg : String) {
+        context?.let { Toast.makeText(it, msg, Toast.LENGTH_SHORT).show() }
     }
 }
