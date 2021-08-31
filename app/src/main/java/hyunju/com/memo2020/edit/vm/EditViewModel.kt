@@ -20,10 +20,10 @@ import kotlin.collections.ArrayList
 
 class EditViewModel(private val repository: Repository) {
 
-    val uiEvent = PublishSubject.create<EditUiEvent>()
     private val disposable = CompositeDisposable()
+    val uiEvent = PublishSubject.create<EditUiEvent>()
 
-    // LiveData
+    // memo - LiveData
     private val _memoItem = MutableLiveData<Memo?>()
     val memoItem: LiveData<Memo?>
         get() = _memoItem
@@ -42,84 +42,78 @@ class EditViewModel(private val repository: Repository) {
     @RequiresApi(Build.VERSION_CODES.N)
     fun setMemoItem(memo: Memo?) {
         _memoItem.value = memo
-        val tempImgList = memo?.let { ArrayList(it.imageUriList) } ?: ArrayList()   // 버그수정중-방어코드
-        tempImgList.removeIf { it.isNullOrEmpty() }
-        _imgList.value = tempImgList
+
+        val imgList = memo?.let { ArrayList(it.imageUriList) } ?: ArrayList()
+        _imgList.value = imgList.apply { removeIf { it.isNullOrEmpty() } }  // 버그수정중-방어코드
 
     }
 
-    // * save memo (need to access db)
     fun save(title: String, contents: String) {
-        if (_memoItem.value == null) {
-            // insert
-            val newMemo = Memo(
-                title = title,
-                contents = contents,
-                imageUriList = _imgList.value ?: ArrayList(),
-                date = Date()
-            )
+        if (_memoItem.value == null) {  // create
+            Memo(title = title, contents = contents, imageUriList = _imgList.value ?: ArrayList(), date = Date()).let { newMemo ->
+                if (isEmptyMemo(newMemo)) {
+                    val msg = repository.getStringFromResId(R.string.memo_empty)
+                    uiEvent.onNext(EditUiEvent.ShowToast(msg))
+                    uiEvent.onNext(EditUiEvent.MoveListFragment)
 
-            if (memoIsEmpty(newMemo)) return
-            insert(newMemo)
+                } else {
+                    createMemo(newMemo)
+                }
+            }
 
-        } else {
-            // update
-            val updateItem = _memoItem.value?.copy(
-                title = title,
-                contents = contents,
-                date = Date(),
-                imageUriList = _imgList.value ?: ArrayList()
-            )
-            _memoItem.value = updateItem
-            update(_memoItem.value)
+        } else {    // update
+            _memoItem.value?.copy(title = title, contents = contents, imageUriList = _imgList.value ?: ArrayList(), date = Date())?.let { newMemo ->
+                updateMemo(newMemo)
+            }
 
         }
     }
 
-    private fun memoIsEmpty(memo: Memo): Boolean {
-        return if (memo.imageUriList.isNullOrEmpty() && memo.title.isEmpty() && memo.contents.isEmpty()) {
-            val msg = repository.getStringFromResId(R.string.memo_empty)
-            uiEvent.onNext(EditUiEvent.ShowToast(msg))
-            uiEvent.onNext(EditUiEvent.MoveListFragment)
-            true
-        } else {
-            false
-        }
+    private fun isEmptyMemo(memo: Memo): Boolean {
+        return memo.imageUriList.isNullOrEmpty() && memo.title.isEmpty() && memo.contents.isEmpty()
     }
 
-    private fun afterSave() {
-        uiEvent.onNext(EditUiEvent.MoveListFragment)
+    private fun createMemo(newMemo: Memo) {
+        insertDb(newMemo)
+        _memoItem.value = newMemo
+    }
+
+    private fun updateMemo(newMemo: Memo) {
+        updateDb(newMemo)
+        _memoItem.value = newMemo
     }
 
     // * access db
-    private fun update(memo: Memo?) {
+    private fun updateDb(memo: Memo?) {
         disposable.add(
             repository.update(memo!!)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    val msg = repository.getStringFromResId(R.string.memo_update)
-                    uiEvent.onNext(EditUiEvent.ShowToast(msg))
-                    afterSave()
+                    setAfterSaveEvent(toastMsgResId = R.string.memo_update)
                 }, {
                     it.printStackTrace()
                 })
         )
     }
 
-    private fun insert(memo: Memo) {
+    private fun insertDb(memo: Memo) {
         disposable.add(
             repository.insert(memo)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    val msg = repository.getStringFromResId(R.string.memo_insert)
-                    uiEvent.onNext(EditUiEvent.ShowToast(msg))
-                    afterSave()
+                    setAfterSaveEvent(toastMsgResId = R.string.memo_insert)
                 }, {
                     it.printStackTrace()
                 })
         )
+    }
+
+    private fun setAfterSaveEvent(toastMsgResId: Int) {
+        val msg = repository.getStringFromResId(toastMsgResId)
+        uiEvent.onNext(EditUiEvent.ShowToast(msg))
+        uiEvent.onNext(EditUiEvent.MoveListFragment)
     }
 
     // delete img
@@ -134,7 +128,6 @@ class EditViewModel(private val repository: Repository) {
             e.printStackTrace()
         }
     }
-
 
     fun pickImgFromAlbum() {
         Intent().apply {
@@ -163,12 +156,14 @@ class EditViewModel(private val repository: Repository) {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 REQ_PICK_FROM_ALBUM -> {
-                    if (data?.data != null){
-                        repository.createCopiedUri(data.data!!)?.let { newUri -> addImg(newUri.toString()) }
+                    if (data?.data != null) {
+                        repository.createCopiedUri(data.data!!)
+                            ?.let { newUri -> addImg(newUri.toString()) }
                     }
                 }
                 REQ_PICK_FROM_CAMERA -> {
-                    repository.getPref(URI_FROM_CAMERA).let { newUri -> if (newUri.isNotEmpty()) addImg(newUri) }
+                    repository.getPref(URI_FROM_CAMERA)
+                        .let { newUri -> if (newUri.isNotEmpty()) addImg(newUri) }
                 }
 
             }

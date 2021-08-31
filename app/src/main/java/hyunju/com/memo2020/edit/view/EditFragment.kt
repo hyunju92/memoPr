@@ -45,6 +45,7 @@ class EditFragment : Fragment() {
             val repository = Repository(MemoDatabase.get(it.applicationContext), it.applicationContext)
             editViewModel = EditViewModel(repository)
         }
+        initData()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -59,7 +60,6 @@ class EditFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         observeLiveData()
-        initData()
         initView()
     }
 
