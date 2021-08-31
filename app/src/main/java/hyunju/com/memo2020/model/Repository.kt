@@ -13,6 +13,9 @@ import hyunju.com.memo2020.util.Util
 import io.reactivex.rxjava3.core.Completable
 
 class Repository(memoDatabase: MemoDatabase, private val context: Context) {
+    /**
+     * db
+     */
     private val memoDao: MemoDao = memoDatabase.memoDao()
 
     val allMemos: LiveData<PagedList<Memo>> = LivePagedListBuilder(
@@ -32,6 +35,9 @@ class Repository(memoDatabase: MemoDatabase, private val context: Context) {
         return memoDao.delete(memo)
     }
 
+    /**
+     * Uri
+     */
     fun createNewUri(): Uri? {
         return ImgUtil.createNewUri(context)
     }
@@ -40,6 +46,14 @@ class Repository(memoDatabase: MemoDatabase, private val context: Context) {
         return ImgUtil.createCopiedUri(context, uri)
     }
 
+    fun deleteUri(uri: String) {
+        context.contentResolver?.delete(Uri.parse(uri), null, null);
+    }
+
+
+    /**
+     * pref
+     */
     fun setPref(key: String, value: String) {
         Util.setPref(context, key, value)
     }

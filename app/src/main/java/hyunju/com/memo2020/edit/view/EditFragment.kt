@@ -82,7 +82,6 @@ class EditFragment : Fragment() {
 
     private fun handleUiEvent(uiEvent: EditUiEvent) = when(uiEvent) {
         EditUiEvent.MoveListFragment -> moveListFragment()
-        is EditUiEvent.DeleteImgUri -> deleteImgUri(uiEvent.imgUri)
         is EditUiEvent.ShowToast -> showToast(uiEvent.msg)
         is EditUiEvent.StartActivityForImgUri -> startActivityForImgUri(uiEvent.requestCode, uiEvent.intent)
     }
@@ -117,10 +116,6 @@ class EditFragment : Fragment() {
 
     private fun showToast(msg : String) {
         context?.let { Toast.makeText(it, msg, Toast.LENGTH_SHORT).show() }
-    }
-
-    private fun deleteImgUri(imgUri: String) {
-        context?.contentResolver?.delete(Uri.parse(imgUri), null, null);
     }
 
     private fun startActivityForImgUri(requestCode: Int, intent: Intent) {

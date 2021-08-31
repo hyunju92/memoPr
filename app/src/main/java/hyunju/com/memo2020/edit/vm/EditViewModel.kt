@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.provider.MediaStore
-import android.text.TextUtils
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.*
 import hyunju.com.memo2020.R
@@ -75,42 +74,42 @@ class EditViewModel(private val repository: Repository) {
 
     private fun createMemo(newMemo: Memo) {
         insertDb(newMemo)
-        _memoItem.value = newMemo
     }
 
     private fun updateMemo(newMemo: Memo) {
         updateDb(newMemo)
-        _memoItem.value = newMemo
     }
 
     // * access db
-    private fun updateDb(memo: Memo?) {
-        disposable.add(
-            repository.update(memo!!)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    setAfterSaveEvent(toastMsgResId = R.string.memo_update)
-                }, {
-                    it.printStackTrace()
-                })
-        )
-    }
-
     private fun insertDb(memo: Memo) {
         disposable.add(
             repository.insert(memo)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    setAfterSaveEvent(toastMsgResId = R.string.memo_insert)
+                    _memoItem.value = memo
+                    setViewEventAfterDbProcess(toastMsgResId = R.string.memo_insert)
                 }, {
                     it.printStackTrace()
                 })
         )
     }
 
-    private fun setAfterSaveEvent(toastMsgResId: Int) {
+    private fun updateDb(memo: Memo) {
+        disposable.add(
+            repository.update(memo)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    _memoItem.value = memo
+                    setViewEventAfterDbProcess(toastMsgResId = R.string.memo_update)
+                }, {
+                    it.printStackTrace()
+                })
+        )
+    }
+
+    private fun setViewEventAfterDbProcess(toastMsgResId: Int) {
         val msg = repository.getStringFromResId(toastMsgResId)
         uiEvent.onNext(EditUiEvent.ShowToast(msg))
         uiEvent.onNext(EditUiEvent.MoveListFragment)
@@ -119,10 +118,12 @@ class EditViewModel(private val repository: Repository) {
     // delete img
     fun deleteImg(position: Int) {
         try {
-            val tempList: ArrayList<String> = _imgList.value ?: ArrayList()
-            uiEvent.onNext(EditUiEvent.DeleteImgUri(tempList[position]))
-            tempList.removeAt(position)
-            _imgList.value = tempList
+            // DB 삭제
+            _imgList.value?.get(position)?.let { targetDeleteUri ->
+                repository.deleteUri(targetDeleteUri) } ?: return
+            // livedata value 갱신
+            _imgList.value?.toMutableList()?.apply { removeAt(position) }?.let { newList ->
+                _imgList.value = ArrayList(newList) } ?: return
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -157,24 +158,25 @@ class EditViewModel(private val repository: Repository) {
             when (requestCode) {
                 REQ_PICK_FROM_ALBUM -> {
                     if (data?.data != null) {
-                        repository.createCopiedUri(data.data!!)
-                            ?.let { newUri -> addImg(newUri.toString()) }
+                        repository.createCopiedUri(data.data!!)?.let { newUri ->
+                            addImg(newUri.toString()) }
                     }
                 }
                 REQ_PICK_FROM_CAMERA -> {
-                    repository.getPref(URI_FROM_CAMERA)
-                        .let { newUri -> if (newUri.isNotEmpty()) addImg(newUri) }
+                    repository.getPref(URI_FROM_CAMERA).let { newUri ->
+                        addImg(newUri) }
                 }
 
             }
         }
     }
 
-    private fun addImg(uriStr: String?) {
-        if (TextUtils.isEmpty(uriStr)) return
-        val tempList: ArrayList<String> = _imgList.value ?: ArrayList()
-        tempList.add(uriStr!!)
-        _imgList.value = tempList
+    private fun addImg(uriStr: String) {
+        if (uriStr.isNotEmpty()) {
+            val newList: ArrayList<String> = _imgList.value ?: ArrayList()
+            newList.add(uriStr)
+            _imgList.value = newList
+        }
     }
 
     fun onDestroyViewModel() {
@@ -186,7 +188,6 @@ class EditViewModel(private val repository: Repository) {
 
 sealed class EditUiEvent {
     data class ShowToast(val msg: String) : EditUiEvent()
-    data class DeleteImgUri(val imgUri: String) : EditUiEvent()
     data class StartActivityForImgUri(val requestCode: Int, val intent: Intent) : EditUiEvent()
     object MoveListFragment : EditUiEvent()
 }
