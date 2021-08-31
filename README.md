@@ -6,7 +6,7 @@
 
 
 ## 프로젝트 구조
-![구조](https://github.com/hyunju92/memoPr/blob/master/app/src/main/res/drawable/MEMO%20APP%20Structure.png)   
+![구조](https://github.com/hyunju92/memoPr/blob/master/app/src/main/res/drawable/memo_app_structure.png)
   ### MVVM 패턴 사용  
   View와 ViewModel의 역할을 구분함. Activity와 Fragment에 가중됐던 작업을 ViewModel에 이관.      
   뷰와 로직사이의 의존성이 사라져서, 모듈화된 개발 가능
@@ -27,18 +27,19 @@
   
 
 ## Android 11 범위저장소 정책 대응
-  > - 현재 targetSdkVersion 30으로, 설치 단말이 [ Android 10 이상 : Scoped Storage ] / [ Android 9 이하 : Legacy External Storage ]이 적용됨
+  > - 현재 targetSdkVersion 30으로, 설치 단말 Android 10 이상에선 Scoped Storage가, Android 9 이하에선 Legacy External Storage가 적용됨
   > - 앨범/카메라로부터 이미지를 가져오는 기능은 저장소에 대한 접근이 발생하므로 대응이 필요
-  >     1. 앨범에서 이미지 가져오기 (외부저장소에 저장된 이미지 uri 복사)
+  >     - 앨범에서 이미지 가져오기 (외부저장소에 저장된 이미지 uri 복사)
   >         - 10 이상 : [ 외부저장소 - Media부분(공용공간) ]로부터 -> [ 외부저장소 - Media부분(해당 앱 개별공간) ]으로 복사함
   >         - 9 미만 : [ 외부저장소 - 공용 저장공간 ]으로부터-> [ 내부저장소(일반파일 공간) ]로 복사함
-  >     2. 카메라 촬영 (저장소에 이미지 uri 생성)
+  >     - 카메라 촬영 (저장소에 이미지 uri 생성)
   >         - 10 이상 : [ 외부저장소 - Media부분(해당 앱 개별공간) ]에 저장
   >         - 9 미만 :  [ 내부저장소(일반파일 공간) ]에 저장
 
 
 ## 학습
   >  - MVVM 디자인 패턴의 적용
-  >  - ViewModel, LiveData, Paging 등 Archictecture Component의 적용
-  >  - Room, Navigation 등 Jetpack 라이브러리의 적용
+  >  - RxJava 활용하여 비동기 작업 처리
+  >  - ViewModel, LiveData, Paging 등 AAC 라이브러리 적용
+  >  - Room, Navigation 등 Jetpack 라이브러리 적용
   >  - 코틀린 사용에 익숙해지기
