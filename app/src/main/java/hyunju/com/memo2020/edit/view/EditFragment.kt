@@ -26,59 +26,41 @@ class EditFragment : Fragment() {
     private lateinit var editViewModel: EditViewModel
     private var eventDisposable: Disposable? = null
 
-    private var menu: Menu? = null
 
-    // set toolbar menu
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.edit_frag_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
-        this.menu = menu
+        inflater.inflate(R.menu.edit_frag_menu, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> {
-                save()
-                return true
-            }
-            R.id.save -> save()
-
+            android.R.id.home, R.id.save -> save()
         }
         return true
     }
 
-    // fragment lifecycle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         context?.let {
             val repository = Repository(MemoDatabase.get(it.applicationContext), it.applicationContext)
             editViewModel = EditViewModel(repository)
         }
-
-        // receive arg (a memo item) from previous frag
-        EditFragmentArgs.fromBundle(requireArguments()).memoItem.let { editViewModel.setMemoItem(it) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate<EditFragmentBinding>(inflater, R.layout.edit_fragment, container, false).apply {
+        setHasOptionsMenu(true)
+         binding = DataBindingUtil.inflate<EditFragmentBinding>(inflater, R.layout.edit_fragment, container, false).apply {
             memo = editViewModel.memoItem.value
         }
-
-        setHasOptionsMenu(true)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                save()
-            }
-        })
 
         observeLiveData()
-        setLayout()
+        initData()
+        initView()
     }
 
     private fun observeLiveData() {
@@ -92,6 +74,12 @@ class EditFragment : Fragment() {
 
     }
 
+    private fun initData() {
+        EditFragmentArgs.fromBundle(requireArguments()).memoItem.let {
+            editViewModel.setMemoItem(it)
+        }
+    }
+
     private fun handleUiEvent(uiEvent: EditUiEvent) = when(uiEvent) {
         EditUiEvent.MoveListFragment -> moveListFragment()
         is EditUiEvent.DeleteImgUri -> deleteImgUri(uiEvent.imgUri)
@@ -99,8 +87,13 @@ class EditFragment : Fragment() {
         is EditUiEvent.StartActivityForImgUri -> startActivityForImgUri(uiEvent.requestCode, uiEvent.intent)
     }
 
-    private fun setLayout() {
-        // set img recycler view
+    private fun initView() {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                save()
+            }
+        })
+
         binding.imgRv.run {
             layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
             adapter = EditImgAdapter(editViewModel)
@@ -118,10 +111,6 @@ class EditFragment : Fragment() {
         eventDisposable?.dispose()
     }
 
-    private fun startActivityForImgUri(requestCode: Int, intent: Intent) {
-        startActivityForResult(intent, requestCode)
-    }
-
     private fun save() {
         editViewModel.save(binding.titleEt.text.toString(), binding.contentsEt.text.toString())
     }
@@ -132,6 +121,10 @@ class EditFragment : Fragment() {
 
     private fun deleteImgUri(imgUri: String) {
         context?.contentResolver?.delete(Uri.parse(imgUri), null, null);
+    }
+
+    private fun startActivityForImgUri(requestCode: Int, intent: Intent) {
+        startActivityForResult(intent, requestCode)
     }
 
     private fun moveListFragment() {

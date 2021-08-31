@@ -39,7 +39,6 @@ class EditViewModel(private val repository: Repository) {
         private const val URI_FROM_CAMERA = "URI_FROM_CAMERA"
     }
 
-    // * set memo item (received as argument)
     @RequiresApi(Build.VERSION_CODES.N)
     fun setMemoItem(memo: Memo?) {
         _memoItem.value = memo
