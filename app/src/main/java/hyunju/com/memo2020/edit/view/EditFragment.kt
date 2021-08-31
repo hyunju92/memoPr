@@ -22,8 +22,8 @@ import io.reactivex.rxjava3.disposables.Disposable
 
 class EditFragment : Fragment() {
 
-    private lateinit var binding: EditFragmentBinding
     private lateinit var editViewModel: EditViewModel
+    private lateinit var binding: EditFragmentBinding
     private var eventDisposable: Disposable? = null
 
 

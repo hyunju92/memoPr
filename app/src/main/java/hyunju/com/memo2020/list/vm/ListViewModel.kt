@@ -12,16 +12,18 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 
 class ListViewModel(private val repository: Repository) {
 
-    val uiEvent = PublishSubject.create<ListUiEvent>()
-    val allMemos: LiveData<PagedList<Memo>> = repository.allMemos
     private var disposable: Disposable? = null
+    val uiEvent = PublishSubject.create<ListUiEvent>()
 
-    fun moveEditFragment(memoItem: Memo? = null) {
-        uiEvent.onNext(ListUiEvent.MoveEditFragment(memoItem))
+    // memo - LiveData
+    val allMemos: LiveData<PagedList<Memo>> = repository.allMemos
+
+    fun moveEditFragment(memo: Memo? = null) {
+        uiEvent.onNext(ListUiEvent.MoveEditFragment(memo))
     }
 
-    fun showSelectDialog(memoItem: Memo?) {
-        uiEvent.onNext(ListUiEvent.ShowSelectDialog(memoItem))
+    fun showSelectDialog(memo: Memo) {
+        uiEvent.onNext(ListUiEvent.ShowSelectDialog(memo))
     }
 
     fun delete(memo: Memo) {
@@ -45,7 +47,7 @@ class ListViewModel(private val repository: Repository) {
 
 sealed class ListUiEvent {
     data class MoveEditFragment(val memoItem: Memo? = null) : ListUiEvent()
-    data class ShowSelectDialog(val memoItem: Memo?) : ListUiEvent()
+    data class ShowSelectDialog(val memoItem: Memo) : ListUiEvent()
     data class ShowToast(val msg: String) : ListUiEvent()
 }
 

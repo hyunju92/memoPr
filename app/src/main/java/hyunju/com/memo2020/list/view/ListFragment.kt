@@ -9,6 +9,7 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
@@ -21,8 +22,9 @@ import hyunju.com.memo2020.model.Repository
 import io.reactivex.rxjava3.disposables.Disposable
 
 class ListFragment : Fragment() {
-    private lateinit var binding: ListFragmentBinding
+
     private lateinit var listViewModel: ListViewModel
+    private lateinit var binding: ListFragmentBinding
     private var eventDisposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,8 +44,9 @@ class ListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         observeLiveData()
-        setLayout()
+        initView()
     }
 
     private fun observeLiveData() {
@@ -65,7 +68,7 @@ class ListFragment : Fragment() {
         is ListUiEvent.ShowToast -> showToast(uiEvent.msg)
     }
 
-    private fun setLayout() {
+    private fun initView() {
         binding.listRv.run {
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
@@ -85,7 +88,7 @@ class ListFragment : Fragment() {
         requireActivity().findNavController(R.id.main_fragment).navigate(action)
     }
 
-    private fun showSelectDialog(memoItem: Memo?) {
+    private fun showSelectDialog(memoItem: Memo) {
         val dialogView = requireActivity().layoutInflater.inflate(R.layout.select_dialog, null)
 
         val builder = AlertDialog.Builder(requireActivity())
@@ -96,7 +99,7 @@ class ListFragment : Fragment() {
 
         deleteBtn.setOnClickListener {
             dialog.dismiss()
-            listViewModel.delete(memoItem!!)
+            listViewModel.delete(memoItem)
         }
         editBtn.setOnClickListener {
             dialog.dismiss()
