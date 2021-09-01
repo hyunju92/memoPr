@@ -1,6 +1,6 @@
 package hyunju.com.memo2020.util
 
-import hyunju.com.memo2020.model.Memo
+import hyunju.com.memo2020.db.Memo
 import java.text.SimpleDateFormat
 
 fun Memo?.getDateText(): String {

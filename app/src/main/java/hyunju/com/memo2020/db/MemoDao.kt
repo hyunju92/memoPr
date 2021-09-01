@@ -2,7 +2,6 @@ package hyunju.com.memo2020.db
 
 import androidx.paging.DataSource
 import androidx.room.*
-import hyunju.com.memo2020.model.Memo
 import io.reactivex.rxjava3.core.Completable
 
 @Dao

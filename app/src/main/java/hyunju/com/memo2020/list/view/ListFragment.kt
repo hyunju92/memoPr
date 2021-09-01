@@ -9,7 +9,6 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import hyunju.com.memo2020.R
@@ -17,7 +16,7 @@ import hyunju.com.memo2020.databinding.ListFragmentBinding
 import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.list.vm.ListUiEvent
 import hyunju.com.memo2020.list.vm.ListViewModel
-import hyunju.com.memo2020.model.Memo
+import hyunju.com.memo2020.db.Memo
 import hyunju.com.memo2020.model.Repository
 import io.reactivex.rxjava3.disposables.Disposable
 

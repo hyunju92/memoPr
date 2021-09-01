@@ -2,8 +2,6 @@ package hyunju.com.memo2020.db
 
 import android.content.Context
 import androidx.room.*
-import hyunju.com.memo2020.R
-import hyunju.com.memo2020.model.Memo
 import java.util.*
 
 @Database(entities = [Memo::class], version = 1, exportSchema = false)

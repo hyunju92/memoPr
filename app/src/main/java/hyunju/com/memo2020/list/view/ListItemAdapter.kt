@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ListItemBinding
 import hyunju.com.memo2020.list.vm.ListViewModel
-import hyunju.com.memo2020.model.Memo
+import hyunju.com.memo2020.db.Memo
 
 class ListItemAdapter(private val vm: ListViewModel) :
         PagedListAdapter<Memo, ListItemAdapter.ListItemViewHolder>(DIFF_CALLBACK) {
@@ -32,10 +32,12 @@ class ListItemAdapter(private val vm: ListViewModel) :
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Memo>() {
             override fun areItemsTheSame(oldMemo: Memo,
-                                         newMemo: Memo): Boolean = oldMemo.id == newMemo.id
+                                         newMemo: Memo
+            ): Boolean = oldMemo.id == newMemo.id
 
             override fun areContentsTheSame(oldMemo: Memo,
-                                            newMemo: Memo): Boolean = oldMemo == newMemo
+                                            newMemo: Memo
+            ): Boolean = oldMemo == newMemo
         }
     }
 

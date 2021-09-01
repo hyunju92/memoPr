@@ -7,7 +7,7 @@ import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.*
 import hyunju.com.memo2020.R
-import hyunju.com.memo2020.model.Memo
+import hyunju.com.memo2020.db.Memo
 import hyunju.com.memo2020.model.Repository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable

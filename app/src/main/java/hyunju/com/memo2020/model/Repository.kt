@@ -2,10 +2,10 @@ package hyunju.com.memo2020.model
 
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import hyunju.com.memo2020.db.Memo
 import hyunju.com.memo2020.db.MemoDao
 import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.util.ImgUtil

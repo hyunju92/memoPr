@@ -17,7 +17,7 @@
             <argument
                 android:name="memo_item"
                 android:defaultValue="@null"
-                app:argType="hyunju.com.memo2020.model.Memo"
+                app:argType="hyunju.com.memo2020.db.Memo"
                 app:nullable="true" />
         </action>
 
@@ -34,7 +34,7 @@
         <argument
             android:name="memo_item"
             android:defaultValue="@null"
-            app:argType="hyunju.com.memo2020.model.Memo"
+            app:argType="hyunju.com.memo2020.db.Memo"
             app:nullable="true" />
 
 

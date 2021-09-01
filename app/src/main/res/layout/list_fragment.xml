@@ -4,7 +4,7 @@
 
     <data>
 
-        <import type="hyunju.com.memo2020.model.Memo" />
+        <import type="hyunju.com.memo2020.db.Memo" />
 
         <variable
             name="viewModel"

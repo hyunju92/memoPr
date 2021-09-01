@@ -14,7 +14,7 @@
 
         <variable
             name="data"
-            type="hyunju.com.memo2020.model.Memo" />
+            type="hyunju.com.memo2020.db.Memo" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

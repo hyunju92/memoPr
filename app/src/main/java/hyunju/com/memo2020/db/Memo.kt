@@ -1,4 +1,4 @@
-package hyunju.com.memo2020.model
+package hyunju.com.memo2020.db
 
 import android.os.Parcelable
 import androidx.room.Entity
