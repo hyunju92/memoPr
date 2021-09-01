@@ -9,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
 import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.edit.vm.EditViewModel
+import hyunju.com.memo2020.list.vm.ListViewModel
 import hyunju.com.memo2020.model.ImgUriRepository
 import hyunju.com.memo2020.model.MemoRepository
 import hyunju.com.memo2020.model.PrefRepository
@@ -56,6 +57,15 @@ object Module {
         prefRepository: PrefRepository
     ): EditViewModel {
         return EditViewModel(memoRepository, imgUriRepository, prefRepository)
+    }
+
+    @Provides
+    @ActivityScoped
+    fun provideListViewModel(
+        memoRepository: MemoRepository,
+        prefRepository: PrefRepository
+    ): ListViewModel {
+        return ListViewModel(memoRepository, prefRepository)
     }
 
 }

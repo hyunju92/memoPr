@@ -14,29 +14,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ListFragmentBinding
-import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.list.vm.ListUiEvent
 import hyunju.com.memo2020.list.vm.ListViewModel
 import hyunju.com.memo2020.db.Memo
-import hyunju.com.memo2020.model.MemoRepository
-import hyunju.com.memo2020.model.PrefRepository
 import io.reactivex.rxjava3.disposables.Disposable
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class ListFragment : Fragment() {
+class ListFragment @Inject constructor() : Fragment() {
 
-    private lateinit var listViewModel: ListViewModel
+    @Inject lateinit var listViewModel: ListViewModel
     private lateinit var binding: ListFragmentBinding
     private var eventDisposable: Disposable? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        context?.let {
-            val memoRepository = MemoRepository(MemoDatabase.get(it.applicationContext))
-            val preferenceRepository = PrefRepository(it.applicationContext)
-            listViewModel = ListViewModel(memoRepository, preferenceRepository)
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate<ListFragmentBinding>(inflater, R.layout.list_fragment, container, false).apply {
