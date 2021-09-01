@@ -6,7 +6,7 @@
 
         <import
             alias="ExtensionUtil"
-            type="hyunju.com.memo2020.util.ExtentionUtilKt" />
+            type="hyunju.com.memo2020.util.ExtensionUtilKt" />
 
         <variable
             name="viewModel"

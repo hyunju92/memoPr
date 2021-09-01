@@ -6,9 +6,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import hyunju.com.memo2020.R
-import hyunju.com.memo2020.RecyclerAdapter
 import hyunju.com.memo2020.databinding.EditImgItemBinding
 import hyunju.com.memo2020.edit.vm.EditViewModel
+import hyunju.com.memo2020.util.RecyclerAdapter
 
 class EditImgAdapter(private val vm: EditViewModel)
     : RecyclerView.Adapter<EditImgAdapter.EditImgViewHolder>(), RecyclerAdapter<String> {

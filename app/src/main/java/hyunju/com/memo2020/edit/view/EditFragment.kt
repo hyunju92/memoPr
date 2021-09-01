@@ -14,8 +14,10 @@ import hyunju.com.memo2020.databinding.EditFragmentBinding
 import hyunju.com.memo2020.db.MemoDatabase
 import hyunju.com.memo2020.edit.vm.EditUiEvent
 import hyunju.com.memo2020.edit.vm.EditViewModel
-import hyunju.com.memo2020.model.Repository
-import hyunju.com.memo2020.replaceAll
+import hyunju.com.memo2020.model.ImageUriRepository
+import hyunju.com.memo2020.model.MemoRepository
+import hyunju.com.memo2020.model.PreferenceRepository
+import hyunju.com.memo2020.util.replaceAll
 import io.reactivex.rxjava3.disposables.Disposable
 
 
@@ -41,8 +43,11 @@ class EditFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         context?.let {
-            val repository = Repository(MemoDatabase.get(it.applicationContext), it.applicationContext)
-            editViewModel = EditViewModel(repository)
+            val memoRepository = MemoRepository(MemoDatabase.get(it.applicationContext))
+            val imageUriRepository = ImageUriRepository(it.applicationContext)
+            val preferenceRepository = PreferenceRepository(it.applicationContext)
+
+            editViewModel = EditViewModel(memoRepository, imageUriRepository, preferenceRepository)
         }
         initData()
     }

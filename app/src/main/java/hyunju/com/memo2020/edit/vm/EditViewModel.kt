@@ -2,13 +2,13 @@ package hyunju.com.memo2020.edit.vm
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.provider.MediaStore
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.*
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.db.Memo
-import hyunju.com.memo2020.model.Repository
+import hyunju.com.memo2020.model.ImageUriRepository
+import hyunju.com.memo2020.model.MemoRepository
+import hyunju.com.memo2020.model.PreferenceRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -17,7 +17,9 @@ import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
-class EditViewModel(private val repository: Repository) {
+class EditViewModel(private val memoRepository: MemoRepository,
+                    private val imageUriRepository: ImageUriRepository,
+                    private val preferenceRepository: PreferenceRepository) {
 
     private val disposable = CompositeDisposable()
     val uiEvent = PublishSubject.create<EditUiEvent>()
@@ -38,7 +40,6 @@ class EditViewModel(private val repository: Repository) {
         private const val URI_FROM_CAMERA = "URI_FROM_CAMERA"
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     fun setMemoItem(memo: Memo?) {
         _memoItem.value = memo
 
@@ -51,7 +52,7 @@ class EditViewModel(private val repository: Repository) {
         if (_memoItem.value == null) {  // create
             Memo(title = title, contents = contents, imageUriList = _imgList.value ?: ArrayList(), date = Date()).let { newMemo ->
                 if (isEmptyMemo(newMemo)) {
-                    val msg = repository.getStringFromResId(R.string.memo_empty)
+                    val msg = preferenceRepository.getStringFromResId(R.string.memo_empty)
                     uiEvent.onNext(EditUiEvent.ShowToast(msg))
                     uiEvent.onNext(EditUiEvent.MoveListFragment)
 
@@ -83,7 +84,7 @@ class EditViewModel(private val repository: Repository) {
     // * access db
     private fun insertDb(memo: Memo) {
         disposable.add(
-            repository.insert(memo)
+            memoRepository.insert(memo)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -97,7 +98,7 @@ class EditViewModel(private val repository: Repository) {
 
     private fun updateDb(memo: Memo) {
         disposable.add(
-            repository.update(memo)
+            memoRepository.update(memo)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -110,7 +111,7 @@ class EditViewModel(private val repository: Repository) {
     }
 
     private fun setViewEventAfterDbProcess(toastMsgResId: Int) {
-        val msg = repository.getStringFromResId(toastMsgResId)
+        val msg = preferenceRepository.getStringFromResId(toastMsgResId)
         uiEvent.onNext(EditUiEvent.ShowToast(msg))
         uiEvent.onNext(EditUiEvent.MoveListFragment)
     }
@@ -120,7 +121,7 @@ class EditViewModel(private val repository: Repository) {
         try {
             // DB 삭제
             _imgList.value?.get(position)?.let { targetDeleteUri ->
-                repository.deleteUri(targetDeleteUri) } ?: return
+                imageUriRepository.deleteUri(targetDeleteUri) } ?: return
             // livedata value 갱신
             _imgList.value?.toMutableList()?.apply { removeAt(position) }?.let { newList ->
                 _imgList.value = ArrayList(newList) } ?: return
@@ -142,8 +143,8 @@ class EditViewModel(private val repository: Repository) {
 
     fun pickImgFromCamera() {
         Intent().apply {
-            val newUri = repository.createNewUri()
-            repository.setPref(URI_FROM_CAMERA, newUri.toString())
+            val newUri = imageUriRepository.createNewUri()
+            preferenceRepository.setPref(URI_FROM_CAMERA, newUri.toString())
 
             this.action = MediaStore.ACTION_IMAGE_CAPTURE
             this.putExtra(MediaStore.EXTRA_OUTPUT, newUri)
@@ -158,13 +159,12 @@ class EditViewModel(private val repository: Repository) {
             when (requestCode) {
                 REQ_PICK_FROM_ALBUM -> {
                     if (data?.data != null) {
-                        repository.createCopiedUri(data.data!!)?.let { newUri ->
+                        imageUriRepository.createCopiedUri(data.data!!)?.let { newUri ->
                             addImg(newUri.toString()) }
                     }
                 }
                 REQ_PICK_FROM_CAMERA -> {
-                    repository.getPref(URI_FROM_CAMERA).let { newUri ->
-                        addImg(newUri) }
+                    addImg(preferenceRepository.getPref(URI_FROM_CAMERA))
                 }
 
             }
