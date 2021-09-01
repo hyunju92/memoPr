@@ -6,9 +6,9 @@ import android.provider.MediaStore
 import androidx.lifecycle.*
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.db.Memo
-import hyunju.com.memo2020.model.ImageUriRepository
+import hyunju.com.memo2020.model.ImgUriRepository
 import hyunju.com.memo2020.model.MemoRepository
-import hyunju.com.memo2020.model.PreferenceRepository
+import hyunju.com.memo2020.model.PrefRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -18,8 +18,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class EditViewModel(private val memoRepository: MemoRepository,
-                    private val imageUriRepository: ImageUriRepository,
-                    private val preferenceRepository: PreferenceRepository) {
+                    private val imgUriRepository: ImgUriRepository,
+                    private val prefRepository: PrefRepository) {
 
     private val disposable = CompositeDisposable()
     val uiEvent = PublishSubject.create<EditUiEvent>()
@@ -52,7 +52,7 @@ class EditViewModel(private val memoRepository: MemoRepository,
         if (_memoItem.value == null) {  // create
             Memo(title = title, contents = contents, imageUriList = _imgList.value ?: ArrayList(), date = Date()).let { newMemo ->
                 if (isEmptyMemo(newMemo)) {
-                    val msg = preferenceRepository.getStringFromResId(R.string.memo_empty)
+                    val msg = prefRepository.getStringFromResId(R.string.memo_empty)
                     uiEvent.onNext(EditUiEvent.ShowToast(msg))
                     uiEvent.onNext(EditUiEvent.MoveListFragment)
 
@@ -111,7 +111,7 @@ class EditViewModel(private val memoRepository: MemoRepository,
     }
 
     private fun setViewEventAfterDbProcess(toastMsgResId: Int) {
-        val msg = preferenceRepository.getStringFromResId(toastMsgResId)
+        val msg = prefRepository.getStringFromResId(toastMsgResId)
         uiEvent.onNext(EditUiEvent.ShowToast(msg))
         uiEvent.onNext(EditUiEvent.MoveListFragment)
     }
@@ -121,7 +121,7 @@ class EditViewModel(private val memoRepository: MemoRepository,
         try {
             // DB 삭제
             _imgList.value?.get(position)?.let { targetDeleteUri ->
-                imageUriRepository.deleteUri(targetDeleteUri) } ?: return
+                imgUriRepository.deleteUri(targetDeleteUri) } ?: return
             // livedata value 갱신
             _imgList.value?.toMutableList()?.apply { removeAt(position) }?.let { newList ->
                 _imgList.value = ArrayList(newList) } ?: return
@@ -143,8 +143,8 @@ class EditViewModel(private val memoRepository: MemoRepository,
 
     fun pickImgFromCamera() {
         Intent().apply {
-            val newUri = imageUriRepository.createNewUri()
-            preferenceRepository.setPref(URI_FROM_CAMERA, newUri.toString())
+            val newUri = imgUriRepository.createNewUri()
+            prefRepository.setPref(URI_FROM_CAMERA, newUri.toString())
 
             this.action = MediaStore.ACTION_IMAGE_CAPTURE
             this.putExtra(MediaStore.EXTRA_OUTPUT, newUri)
@@ -159,12 +159,12 @@ class EditViewModel(private val memoRepository: MemoRepository,
             when (requestCode) {
                 REQ_PICK_FROM_ALBUM -> {
                     if (data?.data != null) {
-                        imageUriRepository.createCopiedUri(data.data!!)?.let { newUri ->
+                        imgUriRepository.createCopiedUri(data.data!!)?.let { newUri ->
                             addImg(newUri.toString()) }
                     }
                 }
                 REQ_PICK_FROM_CAMERA -> {
-                    addImg(preferenceRepository.getPref(URI_FROM_CAMERA))
+                    addImg(prefRepository.getPref(URI_FROM_CAMERA))
                 }
 
             }

@@ -4,16 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.db.Memo
-import hyunju.com.memo2020.model.ImageUriRepository
 import hyunju.com.memo2020.model.MemoRepository
-import hyunju.com.memo2020.model.PreferenceRepository
+import hyunju.com.memo2020.model.PrefRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 
 class ListViewModel(private val memoRepository: MemoRepository,
-                    private val preferenceRepository: PreferenceRepository) {
+                    private val prefRepository: PrefRepository) {
 
     private var disposable: Disposable? = null
     val uiEvent = PublishSubject.create<ListUiEvent>()
@@ -34,7 +33,7 @@ class ListViewModel(private val memoRepository: MemoRepository,
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                val msg = preferenceRepository.getStringFromResId(R.string.memo_delete)
+                val msg = prefRepository.getStringFromResId(R.string.memo_delete)
                 uiEvent.onNext(ListUiEvent.ShowToast(msg))
 
             }, {

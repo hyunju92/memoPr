@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import hyunju.com.memo2020.util.ImgUtil
 
-class ImageUriRepository(private val context: Context) {
+class ImgUriRepository(private val context: Context) {
 
     fun createNewUri(): Uri? {
         return ImgUtil.createNewUri(context)
