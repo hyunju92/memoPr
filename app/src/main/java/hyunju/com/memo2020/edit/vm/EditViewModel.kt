@@ -15,11 +15,14 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
 import java.lang.Exception
 import java.util.*
+import javax.inject.Inject
 import kotlin.collections.ArrayList
 
-class EditViewModel(private val memoRepository: MemoRepository,
-                    private val imgUriRepository: ImgUriRepository,
-                    private val prefRepository: PrefRepository) {
+class EditViewModel @Inject constructor(
+    private val memoRepository: MemoRepository,
+    private val imgUriRepository: ImgUriRepository,
+    private val prefRepository: PrefRepository
+) {
 
     private val disposable = CompositeDisposable()
     val uiEvent = PublishSubject.create<EditUiEvent>()

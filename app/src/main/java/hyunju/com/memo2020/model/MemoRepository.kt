@@ -7,11 +7,9 @@ import hyunju.com.memo2020.db.Memo
 import hyunju.com.memo2020.db.MemoDao
 import hyunju.com.memo2020.db.MemoDatabase
 import io.reactivex.rxjava3.core.Completable
+import javax.inject.Inject
 
-class MemoRepository(memoDatabase: MemoDatabase) {
-    /**
-     * db
-     */
+class MemoRepository @Inject constructor(memoDatabase: MemoDatabase) {
     private val memoDao: MemoDao = memoDatabase.memoDao()
 
     val allMemos: LiveData<PagedList<Memo>> = LivePagedListBuilder(

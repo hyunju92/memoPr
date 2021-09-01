@@ -3,8 +3,9 @@ package hyunju.com.memo2020.model
 import android.content.Context
 import android.net.Uri
 import hyunju.com.memo2020.util.ImgUtil
+import javax.inject.Inject
 
-class ImgUriRepository(private val context: Context) {
+class ImgUriRepository @Inject constructor(private val context: Context) {
 
     fun createNewUri(): Uri? {
         return ImgUtil.createNewUri(context)

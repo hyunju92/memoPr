@@ -3,8 +3,9 @@ package hyunju.com.memo2020.model
 import android.content.Context
 import android.content.SharedPreferences
 import hyunju.com.memo2020.R
+import javax.inject.Inject
 
-class PrefRepository(private val context: Context)  {
+class PrefRepository @Inject constructor(private val context: Context)  {
     private var pref : SharedPreferences =
         context.getSharedPreferences(context.getString(R.string.pref_file_name), 0)
 

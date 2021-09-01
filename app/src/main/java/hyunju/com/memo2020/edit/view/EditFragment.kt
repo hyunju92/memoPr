@@ -20,11 +20,12 @@ import hyunju.com.memo2020.model.MemoRepository
 import hyunju.com.memo2020.model.PrefRepository
 import hyunju.com.memo2020.util.replaceAll
 import io.reactivex.rxjava3.disposables.Disposable
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class EditFragment : Fragment() {
+class EditFragment @Inject constructor(): Fragment() {
 
-    private lateinit var editViewModel: EditViewModel
+    @Inject lateinit var editViewModel: EditViewModel
     private lateinit var binding: EditFragmentBinding
     private var eventDisposable: Disposable? = null
 
@@ -44,11 +45,11 @@ class EditFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         context?.let {
-            val memoRepository = MemoRepository(MemoDatabase.get(it.applicationContext))
-            val imageUriRepository = ImgUriRepository(it.applicationContext)
-            val preferenceRepository = PrefRepository(it.applicationContext)
-
-            editViewModel = EditViewModel(memoRepository, imageUriRepository, preferenceRepository)
+//            val memoRepository = MemoRepository(MemoDatabase.get(it.applicationContext))
+//            val imageUriRepository = ImgUriRepository(it.applicationContext)
+//            val preferenceRepository = PrefRepository(it.applicationContext)
+//
+//            editViewModel = EditViewModel(memoRepository, imageUriRepository, preferenceRepository)
         }
         initData()
     }
