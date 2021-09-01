@@ -1,6 +1,7 @@
 package hyunju.com.memo2020
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-class MemoApplication : Application() {
-}
+@HiltAndroidApp
+class MemoApplication : Application() {}

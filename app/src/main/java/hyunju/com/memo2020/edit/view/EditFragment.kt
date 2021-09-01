@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.hilt.android.AndroidEntryPoint
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.EditFragmentBinding
 import hyunju.com.memo2020.db.MemoDatabase
@@ -20,7 +21,7 @@ import hyunju.com.memo2020.model.PrefRepository
 import hyunju.com.memo2020.util.replaceAll
 import io.reactivex.rxjava3.disposables.Disposable
 
-
+@AndroidEntryPoint
 class EditFragment : Fragment() {
 
     private lateinit var editViewModel: EditViewModel

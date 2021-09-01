@@ -9,11 +9,12 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import dagger.hilt.android.AndroidEntryPoint
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ActivityMainBinding
 import java.util.ArrayList
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding

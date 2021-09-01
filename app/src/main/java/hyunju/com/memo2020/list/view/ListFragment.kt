@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.hilt.android.AndroidEntryPoint
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.ListFragmentBinding
 import hyunju.com.memo2020.db.MemoDatabase
@@ -21,6 +22,7 @@ import hyunju.com.memo2020.model.MemoRepository
 import hyunju.com.memo2020.model.PrefRepository
 import io.reactivex.rxjava3.disposables.Disposable
 
+@AndroidEntryPoint
 class ListFragment : Fragment() {
 
     private lateinit var listViewModel: ListViewModel
