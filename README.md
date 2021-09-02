@@ -14,17 +14,18 @@
   > - Model
   >   - room과 paging DataSource를 활용하여 db 구성
   >   - MemoDao의 function return 값을 rx의 Observable로 정의
-  >   - Repository에서 db작업 수행. vm은 이를 주입받아 사용
+  >   - Repository에서 db작업 수행함 (ViewModel에서 이를 주입받아 사용함)
   >
   > - View
+  >   - ViewModel의 LiveData, Observable 변수를 구독하여 메모 값의 변경, 이벤트의 발생 등을 관찰해 화면에 반영함
   >   - Navigation 적용. 화면 전환 시, argument를 활용하여 type safe하게 data를 전달
   >   - 메모 리스트를 보여줄 때에 Paging의 PagedListAdapter를 사용
   >    
   > - ViewModel
-  >   - ViewModel에서 메모 데이터를 LiveData로 갖고 있고, View에서 이를 관찰하여 메모 데이터의 변경 사항 발생시 화면에 반영함
-  >   - ViewModel에서 rx-Subject로 화면 이벤트 발생에 대한 객체를 갖고 있고, View에서 이를 관찰하여 이벤트 발생시 화면에 표시함
-  >   - db관련 작업은 rx를 활용하여 비동기로 수행 (Reopository에서 return받은 Observable객체를 구독. disposable, CompositeDisposable을 활용하여 생명주기에 맞게 해제)
-  
+  >   - ViewModel에서 메모 데이터를 LiveData로 갖고 있음 (View에서 이를 구독하여 관찰)
+  >   - ViewModel에서 rx-Subject로 화면 이벤트 발생에 대한 객체를 갖고 있음 (View에서 이를 구독하여 관찰)
+  >   - Repository를 주입받아 db작업을 수행하는데 이때 rx를 활용하여 비동기로 수행
+
 
 ## Android 11 범위저장소 정책 대응
   > - 현재 targetSdkVersion 30으로, 설치 단말 Android 10 이상에선 Scoped Storage가, Android 9 이하에선 Legacy External Storage가 적용됨
@@ -39,7 +40,12 @@
 
 ## 학습
   >  - MVVM 디자인 패턴의 적용
+  >  - Hilt를 사용해서 의존성 주입 (model->viewModel->View)
   >  - RxJava 활용하여 비동기 작업 처리
   >  - ViewModel, LiveData, Paging 등 AAC 라이브러리 적용
   >  - Room, Navigation 등 Jetpack 라이브러리 적용
   >  - 코틀린 사용에 익숙해지기
+
+## 앞으로 학습하고 싶은 부분
+  >  - 비동기 작업에 코루틴 사용해보기
+  >  - Unit 테스트 적용
