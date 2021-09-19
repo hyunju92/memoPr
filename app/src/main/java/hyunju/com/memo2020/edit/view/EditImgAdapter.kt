@@ -17,9 +17,11 @@ class EditImgAdapter(private val vm: EditViewModel)
     companion object { private const val LAST_ITEM_STR = "LAST_ITEM_STR" }
 
     override fun replaceAll(recyclerView: RecyclerView, listItem: List<String>?) {
-        listItem?.let { newList ->
+        listItem?.toMutableList()?.apply {
+            remove("")
+        }?.toList()?.let {
             imgItemList.clear()
-            imgItemList.addAll(newList)
+            imgItemList.addAll(it)
             imgItemList.add(LAST_ITEM_STR)
             notifyDataSetChanged()
         }

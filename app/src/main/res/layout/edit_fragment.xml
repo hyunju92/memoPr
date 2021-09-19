@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <import
             alias="ExtensionUtil"
             type="hyunju.com.memo2020.util.ExtensionUtilKt" />
@@ -25,6 +26,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/img_rv"
                 matchHeightToDeviceWidth="@{true}"
+                replaceAll="@{memo.imageUriList}"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:orientation="horizontal"

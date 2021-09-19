@@ -27,6 +27,7 @@ interface RecyclerAdapter<T> {
     fun replaceAll(recyclerView: RecyclerView, listItem: List<T>?)
 }
 
+@BindingAdapter("replaceAll")
 fun <T> RecyclerView.replaceAll(listItem: List<T>?) {
     (this.adapter as? RecyclerAdapter<T>)?.replaceAll(this, listItem)
 }

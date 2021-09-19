@@ -3,6 +3,7 @@ package hyunju.com.memo2020.edit.vm
 import android.app.Activity
 import android.content.Intent
 import android.provider.MediaStore
+import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import hyunju.com.memo2020.R
 import hyunju.com.memo2020.db.Memo
@@ -32,9 +33,9 @@ class EditViewModel @Inject constructor(
     val memoItem: LiveData<Memo?>
         get() = _memoItem
 
-    private val _imgList = MutableLiveData<ArrayList<String>>()
-    val imgList: LiveData<ArrayList<String>>
-        get() = _imgList
+    private val _imgList = ObservableField<ArrayList<String>>()
+//    val imgList: LiveData<ArrayList<String>>
+//        get() = _imgList
 
     companion object {
         private const val REQ_PICK_FROM_ALBUM = 1000
@@ -45,15 +46,11 @@ class EditViewModel @Inject constructor(
 
     fun setMemoItem(memo: Memo?) {
         _memoItem.value = memo
-
-        val imgList = memo?.let { ArrayList(it.imageUriList) } ?: ArrayList()
-        _imgList.value = imgList.apply { removeIf { it.isNullOrEmpty() } }  // 버그수정중-방어코드
-
     }
 
     fun save(title: String, contents: String) {
         if (_memoItem.value == null) {  // create
-            Memo(title = title, contents = contents, imageUriList = _imgList.value ?: ArrayList(), date = Date()).let { newMemo ->
+            Memo(title = title, contents = contents, imageUriList = ObservableField<List<String>>(), date = Date()).let { newMemo ->
                 if (isEmptyMemo(newMemo)) {
                     val msg = prefRepository.getStringFromResId(R.string.memo_empty)
                     uiEvent.onNext(EditUiEvent.ShowToast(msg))
@@ -65,7 +62,7 @@ class EditViewModel @Inject constructor(
             }
 
         } else {    // update
-            _memoItem.value?.copy(title = title, contents = contents, imageUriList = _imgList.value ?: ArrayList(), date = Date())?.let { newMemo ->
+            _memoItem.value?.copy(title = title, contents = contents, imageUriList =ObservableField<List<String>>(), date = Date())?.let { newMemo ->
                 updateMemo(newMemo)
             }
 
@@ -73,7 +70,7 @@ class EditViewModel @Inject constructor(
     }
 
     private fun isEmptyMemo(memo: Memo): Boolean {
-        return memo.imageUriList.isNullOrEmpty() && memo.title.isEmpty() && memo.contents.isEmpty()
+        return memo.title.isEmpty() && memo.contents.isEmpty() // imgurl null check
     }
 
     private fun createMemo(newMemo: Memo) {
@@ -123,11 +120,11 @@ class EditViewModel @Inject constructor(
     fun deleteImg(position: Int) {
         try {
             // DB 삭제
-            _imgList.value?.get(position)?.let { targetDeleteUri ->
-                imgUriRepository.deleteUri(targetDeleteUri) } ?: return
-            // livedata value 갱신
-            _imgList.value?.toMutableList()?.apply { removeAt(position) }?.let { newList ->
-                _imgList.value = ArrayList(newList) } ?: return
+//            _imgList.value?.get(position)?.let { targetDeleteUri ->
+//                imgUriRepository.deleteUri(targetDeleteUri) } ?: return
+//            // livedata value 갱신
+//            _imgList.value?.toMutableList()?.apply { removeAt(position) }?.let { newList ->
+//                _imgList.value = ArrayList(newList) } ?: return
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -176,9 +173,9 @@ class EditViewModel @Inject constructor(
 
     private fun addImg(uriStr: String) {
         if (uriStr.isNotEmpty()) {
-            val newList: ArrayList<String> = _imgList.value ?: ArrayList()
-            newList.add(uriStr)
-            _imgList.value = newList
+//            val newList: ArrayList<String> = _imgList.value ?: ArrayList()
+//            newList.add(uriStr)
+//            _imgList.value = newList
         }
     }
 

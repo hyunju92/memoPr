@@ -1,6 +1,7 @@
 package hyunju.com.memo2020.db
 
 import android.content.Context
+import androidx.databinding.ObservableField
 import androidx.room.*
 import java.util.*
 
@@ -10,7 +11,7 @@ abstract class MemoDatabase : RoomDatabase() {
     abstract fun memoDao() : MemoDao
 
     companion object {
-        private val DB_NAME = "memoDb"
+        private const val DB_NAME = "memoDb"
         private var INSTANCE : MemoDatabase? = null
 
         @Synchronized
@@ -42,14 +43,28 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromString(stringListString: String): List<String> {
-        return stringListString.split(",").map { it }
+    fun fromString(str: String): List<String> {
+        return str.split(",").map { it }
     }
 
     @TypeConverter
     fun toString(stringList: List<String>): String {
         return stringList.joinToString(separator = ",")
     }
+
+    @TypeConverter
+    fun fromList(list: List<String>) : ObservableField<List<String>>{
+        return ObservableField<List<String>>().apply {
+            set(list)
+        }
+
+    }
+
+    @TypeConverter
+    fun toList(observableList : ObservableField<List<String>> ) : List<String> {
+        return observableList.get() ?: listOf()
+    }
+
 }
 
 

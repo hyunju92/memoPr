@@ -45,7 +45,7 @@ class ListItemAdapter(private val vm: ListViewModel) :
         fun bind(memo: Memo) {
             binding.data = memo
 
-            val loadImg = memo.imageUriList.let { if (it.isNotEmpty()) it[0] else null } ?: R.drawable.ic_image_black_24dp
+            val loadImg = memo.imageUriList.get()?.let { if (it.isNotEmpty()) it[0] else null } ?: R.drawable.ic_image_black_24dp
             val errorImg = R.drawable.ic_sms_failed_black_24dp
 
             Glide.with(binding.root.context)

@@ -14,7 +14,6 @@ import hyunju.com.memo2020.R
 import hyunju.com.memo2020.databinding.EditFragmentBinding
 import hyunju.com.memo2020.edit.vm.EditUiEvent
 import hyunju.com.memo2020.edit.vm.EditViewModel
-import hyunju.com.memo2020.util.replaceAll
 import io.reactivex.rxjava3.disposables.Disposable
 import javax.inject.Inject
 
@@ -59,14 +58,9 @@ class EditFragment @Inject constructor(): Fragment() {
     }
 
     private fun observeLiveData() {
-        // observe imgList (changed when editing)
-        editViewModel.imgList.observe(viewLifecycleOwner, {
-            binding.imgRv.replaceAll(it)
-        })
         eventDisposable = editViewModel.uiEvent.subscribe {
             handleUiEvent(it)
         }
-
     }
 
     private fun initData() {
