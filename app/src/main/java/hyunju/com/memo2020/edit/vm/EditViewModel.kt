@@ -112,14 +112,16 @@ class EditViewModel @Inject constructor(
     }
 
     // delete img
-    fun deleteImg(position: Int) {
+    fun deleteImg(imgStr: String) {
         try {
             // DB 삭제
-//            _imgList.value?.get(position)?.let { targetDeleteUri ->
-//                imgUriRepository.deleteUri(targetDeleteUri) } ?: return
-//            // livedata value 갱신
-//            _imgList.value?.toMutableList()?.apply { removeAt(position) }?.let { newList ->
-//                _imgList.value = ArrayList(newList) } ?: return
+            imgUriRepository.deleteUri(imgStr)
+
+//           // livedata value 갱신
+            _memoItem.value?.let { currentMemo ->
+                val newImgUri = currentMemo.imageUriList.get()?.toMutableList()?.apply { remove(imgStr) }
+                currentMemo.imageUriList.set(newImgUri)
+            }
 
         } catch (e: Exception) {
             e.printStackTrace()

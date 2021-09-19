@@ -43,10 +43,14 @@ class EditImgAdapter(private val vm: EditViewModel)
         return imgItemList.size
     }
 
+    fun getItemList(): List<String> {
+        return imgItemList.toList()
+    }
+
     class EditImgViewHolder(private val binding: EditImgItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(position: Int, imgStr: String) {
-            binding.position = position
+            binding.imgStr = imgStr
             binding.isLastItem = imgStr == "LAST_ITEM_STR"
 
             val loadImg = if (imgStr.isNotEmpty()) imgStr else R.drawable.ic_image_black_24dp

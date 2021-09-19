@@ -11,8 +11,8 @@
             type="hyunju.com.memo2020.edit.vm.EditViewModel" />
 
         <variable
-            name="position"
-            type="Integer" />
+            name="imgStr"
+            type="String" />
 
         <variable
             name="isLastItem"
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="1dp"
                 android:background="@color/colorPrimary"
-                android:onClick="@{() -> viewModel.deleteImg(position)}"
+                android:onClick="@{() -> viewModel.deleteImg(imgStr)}"
                 android:padding="@dimen/padding_small"
                 android:src="@drawable/ic_delete_white_24dp"
                 app:layout_constraintRight_toLeftOf="@id/edit_btn_edit_img"
