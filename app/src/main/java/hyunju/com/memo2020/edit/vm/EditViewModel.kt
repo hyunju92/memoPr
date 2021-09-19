@@ -17,7 +17,6 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 import java.lang.Exception
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 class EditViewModel @Inject constructor(
     private val memoRepository: MemoRepository,
@@ -32,10 +31,6 @@ class EditViewModel @Inject constructor(
     private val _memoItem = MutableLiveData<Memo?>()
     val memoItem: LiveData<Memo?>
         get() = _memoItem
-
-    private val _imgList = ObservableField<ArrayList<String>>()
-//    val imgList: LiveData<ArrayList<String>>
-//        get() = _imgList
 
     companion object {
         private const val REQ_PICK_FROM_ALBUM = 1000
@@ -173,9 +168,11 @@ class EditViewModel @Inject constructor(
 
     private fun addImg(uriStr: String) {
         if (uriStr.isNotEmpty()) {
-//            val newList: ArrayList<String> = _imgList.value ?: ArrayList()
-//            newList.add(uriStr)
-//            _imgList.value = newList
+            _memoItem.value?.let { currentMemo ->
+                val newImgUri = currentMemo.imageUriList.get()?.toMutableList()?.apply { add(uriStr) }
+                currentMemo.imageUriList.set(newImgUri)
+            }
+
         }
     }
 
