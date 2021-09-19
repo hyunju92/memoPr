@@ -19,9 +19,9 @@ class EditImgAdapter(private val vm: EditViewModel)
     override fun replaceAll(recyclerView: RecyclerView, listItem: List<String>?) {
         listItem?.toMutableList()?.apply {
             remove("")
-        }?.toList()?.let {
+        }?.toList().let {
             imgItemList.clear()
-            imgItemList.addAll(it)
+            if(!it.isNullOrEmpty()) imgItemList.addAll(it)
             imgItemList.add(LAST_ITEM_STR)
             notifyDataSetChanged()
         }
@@ -36,7 +36,7 @@ class EditImgAdapter(private val vm: EditViewModel)
     }
 
     override fun onBindViewHolder(holder: EditImgViewHolder, position: Int) {
-        holder.bind(position, imgItemList[position])
+        holder.bind(imgItemList[position])
     }
 
     override fun getItemCount(): Int {
@@ -44,12 +44,12 @@ class EditImgAdapter(private val vm: EditViewModel)
     }
 
     fun getItemList(): List<String> {
-        return imgItemList.toList()
+        return imgItemList.apply { if(isNotEmpty()) removeLast() }.toList()
     }
 
     class EditImgViewHolder(private val binding: EditImgItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(position: Int, imgStr: String) {
+        fun bind(imgStr: String) {
             binding.imgStr = imgStr
             binding.isLastItem = imgStr == "LAST_ITEM_STR"
 

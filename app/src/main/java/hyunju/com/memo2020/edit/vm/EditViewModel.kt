@@ -28,8 +28,8 @@ class EditViewModel @Inject constructor(
     val uiEvent = PublishSubject.create<EditUiEvent>()
 
     // memo - LiveData
-    private val _memoItem = MutableLiveData<Memo?>()
-    val memoItem: LiveData<Memo?>
+    private val _memoItem = MutableLiveData<Memo>()
+    val memoItem: LiveData<Memo>
         get() = _memoItem
 
     companion object {
@@ -40,32 +40,35 @@ class EditViewModel @Inject constructor(
     }
 
     fun setMemoItem(memo: Memo?) {
-        _memoItem.value = memo
+        _memoItem.value = memo ?: Memo(title = "", contents = "", imageUriList = ObservableField(listOf<String>()), date = Date())
     }
 
-    fun save(title: String, contents: String) {
-        if (_memoItem.value == null) {  // create
-            Memo(title = title, contents = contents, imageUriList = ObservableField<List<String>>(), date = Date()).let { newMemo ->
-                if (isEmptyMemo(newMemo)) {
-                    val msg = prefRepository.getStringFromResId(R.string.memo_empty)
-                    uiEvent.onNext(EditUiEvent.ShowToast(msg))
-                    uiEvent.onNext(EditUiEvent.MoveListFragment)
+    fun save(title: String, contents: String, imgList: List<String>) {
+        if (isNullMemo(_memoItem.value)) {  // create
+            val newMemo = Memo(title = title, contents = contents, imageUriList = ObservableField(imgList), date = Date())
+            if (isEmptyMemo(newMemo)) {
+                val msg = prefRepository.getStringFromResId(R.string.memo_empty)
+                uiEvent.onNext(EditUiEvent.ShowToast(msg))
+                uiEvent.onNext(EditUiEvent.MoveListFragment)
 
-                } else {
-                    createMemo(newMemo)
-                }
+            } else {
+                createMemo(newMemo)
             }
 
         } else {    // update
-            _memoItem.value?.copy(title = title, contents = contents, imageUriList =ObservableField<List<String>>(), date = Date())?.let { newMemo ->
+            _memoItem.value?.copy(title = title, contents = contents, imageUriList =ObservableField(imgList), date = Date())?.let { newMemo ->
                 updateMemo(newMemo)
             }
 
         }
     }
 
-    private fun isEmptyMemo(memo: Memo): Boolean {
-        return memo.title.isEmpty() && memo.contents.isEmpty() // imgurl null check
+    private fun isNullMemo(memo: Memo?) : Boolean {
+        return memo == null || memo.id == 0L
+    }
+
+    private fun isEmptyMemo(memo: Memo?): Boolean {
+        return memo == null || (memo.title.isEmpty() && memo.contents.isEmpty() && memo.imageUriList.get().isNullOrEmpty())
     }
 
     private fun createMemo(newMemo: Memo) {
@@ -174,7 +177,6 @@ class EditViewModel @Inject constructor(
                 val newImgUri = currentMemo.imageUriList.get()?.toMutableList()?.apply { add(uriStr) }
                 currentMemo.imageUriList.set(newImgUri)
             }
-
         }
     }
 

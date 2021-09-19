@@ -100,7 +100,9 @@ class EditFragment @Inject constructor(): Fragment() {
     }
 
     private fun save() {
-        editViewModel.save(binding.titleEt.text.toString(), binding.contentsEt.text.toString())
+        editViewModel.save(binding.titleEt.text.toString(),
+            binding.contentsEt.text.toString(),
+            (binding.imgRv.adapter as EditImgAdapter).getItemList())
     }
 
     private fun showToast(msg : String) {
