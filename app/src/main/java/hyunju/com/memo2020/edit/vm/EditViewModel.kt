@@ -1,8 +1,8 @@
 package hyunju.com.memo2020.edit.vm
 
-import android.app.Activity
 import android.content.Intent
 import android.provider.MediaStore
+import androidx.activity.result.ActivityResult
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import hyunju.com.memo2020.R
@@ -33,9 +33,6 @@ class EditViewModel @Inject constructor(
         get() = _memoItem
 
     companion object {
-        private const val REQ_PICK_FROM_ALBUM = 1000
-        private const val REQ_PICK_FROM_CAMERA = 1001
-
         private const val URI_FROM_CAMERA = "URI_FROM_CAMERA"
     }
 
@@ -133,11 +130,10 @@ class EditViewModel @Inject constructor(
 
     fun pickImgFromAlbum() {
         Intent().apply {
-            this.action = Intent.ACTION_PICK
-            this.type = MediaStore.Images.Media.CONTENT_TYPE
-
+            action = Intent.ACTION_PICK
+            type = MediaStore.Images.Media.CONTENT_TYPE
         }.let {
-            uiEvent.onNext(EditUiEvent.StartActivityForImgUri(REQ_PICK_FROM_ALBUM, it))
+            uiEvent.onNext(EditUiEvent.StartAlbum(it))
         }
     }
 
@@ -150,24 +146,19 @@ class EditViewModel @Inject constructor(
             this.putExtra(MediaStore.EXTRA_OUTPUT, newUri)
 
         }.let {
-            uiEvent.onNext(EditUiEvent.StartActivityForImgUri(REQ_PICK_FROM_CAMERA, it))
+            uiEvent.onNext(EditUiEvent.StartCamera(it))
         }
     }
 
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                REQ_PICK_FROM_ALBUM -> {
-                    if (data?.data != null) {
-                        imgUriRepository.createCopiedUri(data.data!!)?.let { newUri ->
-                            addImg(newUri.toString()) }
-                    }
-                }
-                REQ_PICK_FROM_CAMERA -> {
-                    addImg(prefRepository.getPref(URI_FROM_CAMERA))
-                }
+    fun onAlbumResult(result: ActivityResult) {
+        result.data?.data?.let {
+            imgUriRepository.createCopiedUri(it)?.let { newUri -> addImg(newUri.toString()) }
+        }
+    }
 
-            }
+    fun onCameraResult() {
+        prefRepository.getPref(URI_FROM_CAMERA).let {
+            if(it.isNotEmpty()) addImg(it)
         }
     }
 
@@ -189,6 +180,7 @@ class EditViewModel @Inject constructor(
 
 sealed class EditUiEvent {
     data class ShowToast(val msg: String) : EditUiEvent()
-    data class StartActivityForImgUri(val requestCode: Int, val intent: Intent) : EditUiEvent()
+    data class StartAlbum(val intent: Intent) : EditUiEvent()
+    data class StartCamera(val intent: Intent) : EditUiEvent()
     object MoveListFragment : EditUiEvent()
 }

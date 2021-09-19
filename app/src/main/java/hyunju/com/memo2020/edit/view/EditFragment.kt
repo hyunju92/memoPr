@@ -1,6 +1,6 @@
 package hyunju.com.memo2020.edit.view
 
-import android.content.Intent
+import android.app.Activity.RESULT_OK
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -16,6 +16,8 @@ import hyunju.com.memo2020.edit.vm.EditUiEvent
 import hyunju.com.memo2020.edit.vm.EditViewModel
 import io.reactivex.rxjava3.disposables.Disposable
 import javax.inject.Inject
+import androidx.activity.result.contract.ActivityResultContracts
+
 
 @AndroidEntryPoint
 class EditFragment @Inject constructor(): Fragment() {
@@ -24,6 +26,12 @@ class EditFragment @Inject constructor(): Fragment() {
     private lateinit var binding: EditFragmentBinding
     private var eventDisposable: Disposable? = null
 
+    private val requestAlbum = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == RESULT_OK) editViewModel.onAlbumResult(it)
+    }
+    private val requestCamera = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == RESULT_OK) editViewModel.onCameraResult()
+    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
@@ -72,7 +80,8 @@ class EditFragment @Inject constructor(): Fragment() {
     private fun handleUiEvent(uiEvent: EditUiEvent) = when(uiEvent) {
         EditUiEvent.MoveListFragment -> moveListFragment()
         is EditUiEvent.ShowToast -> showToast(uiEvent.msg)
-        is EditUiEvent.StartActivityForImgUri -> startActivityForImgUri(uiEvent.requestCode, uiEvent.intent)
+        is EditUiEvent.StartAlbum -> requestAlbum.launch(uiEvent.intent)
+        is EditUiEvent.StartCamera -> requestCamera.launch(uiEvent.intent)
     }
 
     private fun initView() {
@@ -86,11 +95,6 @@ class EditFragment @Inject constructor(): Fragment() {
             layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
             adapter = EditImgAdapter(editViewModel)
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        editViewModel.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onDestroyView() {
@@ -107,10 +111,6 @@ class EditFragment @Inject constructor(): Fragment() {
 
     private fun showToast(msg : String) {
         context?.let { Toast.makeText(it, msg, Toast.LENGTH_SHORT).show() }
-    }
-
-    private fun startActivityForImgUri(requestCode: Int, intent: Intent) {
-        startActivityForResult(intent, requestCode)
     }
 
     private fun moveListFragment() {
