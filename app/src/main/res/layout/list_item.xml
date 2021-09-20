@@ -34,6 +34,7 @@
 
             <ImageView
                 android:id="@+id/thumb_iv"
+                setFirstImgUri="@{data.imageUriList}"
                 android:layout_width="@dimen/img_width"
                 android:layout_height="@dimen/img_heigth"
                 app:layout_constraintHorizontal_bias="0.05"
