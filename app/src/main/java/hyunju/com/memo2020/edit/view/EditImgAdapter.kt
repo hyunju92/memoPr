@@ -20,29 +20,26 @@ class EditImgAdapter(private val vm: EditViewModel) :
     }
 
     override fun replaceAll(recyclerView: RecyclerView, listItem: List<String>?) {
-
-        listItem?.toMutableList()?.apply {
+        val newList = listItem?.toMutableList()?.apply {
             remove("")
-        }?.toList().let { newList ->
-            if(imgItemList == null) {
-                imgItemList = mutableListOf()
-                if (!newList.isNullOrEmpty()) imgItemList!!.addAll(newList)
-                imgItemList!!.add(LAST_ITEM_STR)
+        } ?: listOf()
 
-                notifyDataSetChanged()
+        if (imgItemList == null) {
+            imgItemList = mutableListOf()
+            imgItemList!!.addAll(newList)
+            imgItemList!!.add(LAST_ITEM_STR)
 
-            } else {
-                imgItemList!!.clear()
+            notifyDataSetChanged()
 
-                if (!newList.isNullOrEmpty()) imgItemList!!.addAll(newList)
-                imgItemList!!.add(LAST_ITEM_STR)
+        } else {
+            imgItemList!!.clear()
+            imgItemList!!.addAll(newList)
+            imgItemList!!.add(LAST_ITEM_STR)
 
-
-                val diffResult = DiffUtil.calculateDiff(EditDiffUtil(imgItemList!!, newList as List<String>))
-                diffResult.dispatchUpdatesTo(this)
-            }
-
+            val diffResult = DiffUtil.calculateDiff(EditDiffUtil(imgItemList!!, newList))
+            diffResult.dispatchUpdatesTo(this)
         }
+
     }
 
     // override
