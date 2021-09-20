@@ -3,6 +3,7 @@ package hyunju.com.memo2020.list.view
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -42,6 +43,9 @@ class ListItemAdapter(private val vm: ListViewModel) :
             return oldItem == newItem
         }
 
+        override fun getChangePayload(oldItem: Memo, newItem: Memo): Any? {
+            return newItem
+        }
     }
 
     class ListItemViewHolder(private val binding: ListItemBinding) :

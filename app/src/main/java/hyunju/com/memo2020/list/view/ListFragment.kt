@@ -45,7 +45,6 @@ class ListFragment @Inject constructor() : Fragment() {
         listViewModel.allMemos.observe(viewLifecycleOwner, {
                 val adapter = binding.listRv.adapter as ListItemAdapter
                 adapter.submitList(it)
-                adapter.notifyDataSetChanged()
             }
         )
 
